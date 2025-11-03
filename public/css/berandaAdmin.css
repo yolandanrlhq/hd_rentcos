@@ -1,0 +1,150 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background-color: #0c0c11;
+  color: #fff;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: #2b2a2f;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  margin-bottom: 2rem;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar li {
+  padding: 12px 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #cfcfcf;
+  transition: 0.3s;
+}
+
+.sidebar li span {
+  margin-right: 10px;
+}
+
+.sidebar li.active,
+.sidebar li:hover {
+  color: #b34bf5;
+}
+
+/* Main Content */
+.main {
+  flex: 1;
+  background: #0f0f17;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+/* Cards */
+.cards {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  flex: 1;
+  background: #111c3c;
+  padding: 1.2rem;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card .icon {
+  font-size: 1.8rem;
+}
+
+.card h4 {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.card p {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+/* Card Colors */
+.purple { border-top: 3px solid #b34bf5; }
+.orange { border-top: 3px solid #f5a14b; }
+.green  { border-top: 3px solid #52e084; }
+.blue   { border-top: 3px solid #4b9df5; }
+
+/* Chart */
+.chart {
+  background: #fff;
+  color: #000;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.chart h3 {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+}
+
+.week {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.bars {
+  margin-top: 1rem;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.bar span {
+  width: 40px;
+  color: #666;
+}
+
+.progress {
+  height: 20px;
+  background: linear-gradient(90deg, #6a74f7, #5f6ff3);
+  border-radius: 10px;
+  position: relative;
+  transition: width 0.4s;
+}
+
+.progress.highlight {
+  background: linear-gradient(90deg, #3d3af5, #2a25d4);
+  color: #fff;
+  text-align: right;
+  padding-right: 8px;
+  font-size: 0.8rem;
+  line-height: 20px;
+}
