@@ -26,3 +26,13 @@ Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.lo
 // ----------------------------
 Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard');
 Route::get('/user/profile', [UserController::class, 'profile'])->name('user.profile');
+Route::get('/produk', function () {
+    return view('user.produk');
+})->name('user.produk');
+Route::get('/jadwalEvent', function () {
+    return view('user.jadwalEvent');
+})->name('user.jadwalEvent');
+Route::get('/wishlist', function () {
+    return view('user.wishlist');
+})->name('user.wishlist');
+

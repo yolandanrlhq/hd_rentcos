@@ -1,31 +1,3 @@
-<header class="navbar">
-    <a href="#" class="logo">HD <span>RENTCOS</span></a>
-
-    <nav class="nav-links">
-      <a href="detailProduk.html">Produk</a>
-      <a href="jadwalEvent.html">Jadwal Event</a>
-      <a href="wishlist.html">Wishlist</a>
-    </nav>
-
-    <div class="search-box">
-      <i class="fas fa-search"></i>
-      <input type="text" placeholder="Search">
-    </div>
-
-    <div class="icons">
-      <a href="Notifikasi.html"><i class="ri-notification-3-fill"></i></a>
-      <a href="keranjang.html"><i class="ri-shopping-cart-fill"></i></a>
-      <a href="pesan.html"><i class="ri-message-3-fill"></i></a>
-    </div>
-
-    <div class="profil">
-      <!-- <a href="#" class="login">Login</a>
-      <span>|</span>
-      <a href="#" class="register">Register</a> -->
-      <a href="Profil.html"><i class="ri-user-3-fill"></i></a>
-    </div>
-  </header>
-
     <!-- ===== Hero Section ===== -->
     <section class="hero">
         <div class="hero-text">

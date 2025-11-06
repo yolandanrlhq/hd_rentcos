@@ -1,0 +1,277 @@
+/* ===== RESET & BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f7fb;
+    color: #333;
+}
+
+
+.navbar {
+  width: 100%;
+  background-color: #d9d9d9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 40px;
+  flex-wrap: wrap;
+}
+
+/* Logo */
+.logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: #000;
+}
+
+.logo span {
+  font-weight: 700;
+}
+
+/* Navigation links */
+.nav-links a {
+  margin: 0 12px;
+  text-decoration: none;
+  color: #000;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: #333;
+}
+
+/* Search box */
+.search-box {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  width: 220px;
+}
+
+.search-box i {
+  color: #555;
+  font-size: 13px;
+  margin-right: 6px;
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 13px;
+  background: transparent;
+}
+
+/* Icons */
+.icons i {
+  font-size: 16px;
+  color: #000;
+  margin: 0 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.icons i:hover {
+  color: #333;
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profil i {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: #000;
+}
+
+/* Auth section
+.auth {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.auth a {
+  text-decoration: none;
+  color: #000;
+  margin: 0 5px;
+}
+
+.auth span {
+  color: #000;
+} */
+
+/* Responsif */
+@media (max-width: 900px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .nav-links {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .icons, .auth {
+    align-self: flex-end;
+  }
+}
+/* ===== EVENT SECTION ===== */
+.event-container {
+    padding: 50px 10%;
+    background-color: #f4f7fb;
+}
+
+.event-container h2 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 40px;
+    color: #1a1a1a;
+    position: relative;
+}
+
+.event-container h2::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background-color: #0078ff;
+    margin: 10px auto 0;
+    border-radius: 2px;
+}
+
+/* ===== EVENT CARD ===== */
+.event-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 25px 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    border-left: 6px solid #0078ff;
+    transition: all 0.3s ease;
+}
+
+.event-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 120, 255, 0.1);
+}
+
+/* ===== EVENT INFO ===== */
+.event-info h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 15px;
+}
+
+.event-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+}
+
+.event-details p {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #555;
+}
+
+.event-details i {
+    color: #0078ff;
+    font-size: 16px;
+}
+
+/* ===== EVENT IMAGE ===== */
+.event-image {
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #eaf1ff;
+    border: 1px dashed #0078ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s;
+}
+
+.event-image:hover {
+    background-color: #dce9ff;
+    border-style: solid;
+}
+
+.img-placeholder {
+    font-size: 13px;
+    color: #0078ff;
+    font-weight: 500;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 992px) {
+    .event-container {
+        padding: 40px 5%;
+    }
+}
+
+@media (max-width: 768px) {
+    .event-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px;
+    }
+
+    .event-info h3 {
+        font-size: 16px;
+    }
+
+    .event-image {
+        width: 100%;
+        height: 180px;
+        margin-top: 15px;
+    }
+
+    .event-details {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .event-container h2 {
+        font-size: 22px;
+    }
+
+    .event-info h3 {
+        font-size: 15px;
+    }
+
+    .event-details p {
+        font-size: 13px;
+    }
+}
