@@ -3,6 +3,7 @@
   padding: 0;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
+  text-decoration: none;
 }
 
 body {
@@ -22,6 +23,15 @@ body {
   padding: 2rem 1rem;
   display: flex;
   flex-direction: column;
+}
+
+.sidebar a {
+  color: white;
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  color: #b34bf5;
 }
 
 .logo {

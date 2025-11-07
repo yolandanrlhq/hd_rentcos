@@ -1,4 +1,3 @@
-
 @extends('layouts.admin')
 
 @section('title', 'Dashboard Admin')
@@ -10,7 +9,7 @@
 
     {{-- Konten utama --}}
     <div class="main">
-        @include('admin.sections.dashboard')
+        @include('admin.sections.produk')
     </div>
 </div>
 @endsection
