@@ -2,6 +2,10 @@
 
 @section('title', 'Dashboard Admin')
 
+@section('extra-css')
+<link rel="stylesheet" href="{{ asset('css/produkAdmin.css') }}">
+@endsection
+
 @section('content')
 <div class="container">
     {{-- Sidebar --}}
