@@ -25,7 +25,7 @@ Route::prefix('admin')->group(function () {
 
     // Produk
     Route::get('/produk', [AdminProdukController::class, 'produk'])->name('admin.produk');
-    Route::get('/produk/create', [AdminProdukController::class, 'create'])->name('admin.produk.create');
+    Route::get('/produk/create', [AdminProdukController::class, 'create'])->name('admin.create');
     Route::post('/produk', [AdminProdukController::class, 'store'])->name('admin.produk.store');
 });
 

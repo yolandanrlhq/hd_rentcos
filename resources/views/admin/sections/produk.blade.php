@@ -1,6 +1,6 @@
 <div class="header-bar">
   <h2>Daftar Produk</h2>
-  <a href="{{ route('admin.produk.create') }}" class="btn-tambah">+ Tambah Produk</a>
+  <a href="{{ route('admin.create') }}" class="btn-tambah">+ Tambah Produk</a>
 </div>
 
 <table class="table-produk">

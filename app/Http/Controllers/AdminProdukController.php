@@ -17,7 +17,7 @@ class AdminProdukController extends Controller
     public function create()
     {
         $kategori = Kategori::all();
-        return view('admin.produk.create', compact('kategori'));
+        return view('admin.create', compact('kategori'));
     }
 
     public function store(Request $request)

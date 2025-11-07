@@ -3,7 +3,7 @@
 @section('title', 'Dashboard Admin')
 
 @section('extra-css')
-<link rel="stylesheet" href="{{ asset('css/produkAdmin.css') }}">
+<link rel="stylesheet" href="{{ asset('css/create.css') }}">
 @endsection
 
 @section('content')
@@ -13,7 +13,7 @@
 
     {{-- Konten utama --}}
     <div class="main">
-        @include('admin.sections.produk', ['produk' => $produk])
+        @include('admin.sections.create')
     </div>
 </div>
 @endsection
