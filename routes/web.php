@@ -8,6 +8,7 @@ use App\Http\Controllers\UserProdukController;
 use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 
+
 // ----------------------------
 // AUTH
 // ----------------------------
@@ -60,3 +61,38 @@ Route::get('/wishlist', function () {
     return view('user.wishlist');
 })->name('user.wishlist');
 
+
+//iot LED control routes
+Route::get('/control-led', function () {
+    $command = request('command');  // Mendapatkan perintah dari input teks
+
+    // Daftar perintah yang valid
+    $validCommands = ['naruto', 'sasuke', 'sakura'];
+
+    if (!$command || !in_array(strtolower($command), $validCommands)) {
+        return view('control', ['response' => 'Invalid command! Please try again.']);
+    }
+
+    $esp32_ip = 'http://192.168.1.6/control?command=' . $command;
+    $response = file_get_contents($esp32_ip);  // Mengirimkan permintaan HTTP GET ke ESP32
+
+    return view('control', ['response' => $response]);
+});
+
+// Route untuk kontrol LED berdasarkan perintah yang ditentukan dalam URL (seperti tombol)
+Route::get('/control-led/{command}', function ($command) {
+    $validCommands = ['naruto', 'sasuke', 'sakura'];
+
+    if (!in_array(strtolower($command), $validCommands)) {
+        return response()->json(['response' => 'Invalid command! Please try again.']);
+    }
+
+    $esp32_ip = 'http://192.168.1.6/control?command=' . $command;
+    $response = file_get_contents($esp32_ip);  // Mengirimkan permintaan HTTP GET ke ESP32
+
+    return response()->json(['response' => $response]);
+});
+// Route untuk pencarian kostum
+Route::get('/admin/iot-control', function () {
+    return view('admin.iotControl');
+})->name('admin.iotControl');

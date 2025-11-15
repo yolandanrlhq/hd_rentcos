@@ -1,4 +1,3 @@
-{{-- resources/views/admin/sections/header.blade.php --}}
 <div class="container">
   <!-- Sidebar -->
   <aside class="sidebar">
@@ -15,6 +14,13 @@
         <li><span>🎉</span> <a href="#">Event</a></li>
         <li><span>🧾</span> <a href="#">Pesanan</a></li>
         <li><span>👤</span> <a href="#">User</a></li>
+
+        <!-- Menu Pencarian Kostum -->
+        <li>
+          <span>🔎</span>
+          <a href="{{ route('admin.iotControl') }}" class="{{ request()->routeIs('admin.iotControl') ? 'active' : '' }}">Pencarian Kostum</a>
+        </li>
+
         <li>
           <span>🔒</span>
           <form method="POST" action="{{ route('admin.logout') }}">
