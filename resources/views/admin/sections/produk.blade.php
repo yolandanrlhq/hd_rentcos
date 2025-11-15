@@ -12,7 +12,9 @@
       <th>Harga</th>
       <th>Stok</th>
       <th>Ukuran</th>
+      <th>Deskripsi</th>
       <th>Foto</th>
+      <th>Aksi</th>
     </tr>
   </thead>
   <tbody>
@@ -23,13 +25,40 @@
       <td>{{ $item->kategori->nama_kategori }}</td>
       <td>Rp{{ number_format($item->harga_produk, 0, ',', '.') }}</td>
       <td>{{ $item->stok_produk }}</td>
-      <td>{{ $item->ukuran_produk ?? '-' }}</td>
+
+      <!-- ====== TAMPILKAN SEMUA UKURAN PRODUK ====== -->
+      <td>
+        @if($item->ukuran->isNotEmpty())
+          @foreach($item->ukuran as $u)
+            <span class="badge-ukuran">{{ $u->nama_ukuran }}</span>
+          @endforeach
+        @else
+          <span>-</span>
+        @endif
+      </td>
+
+      <!-- ====== DESKRIPSI PRODUK (PENDEK) ====== -->
+      <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+        {{ $item->deskripsi ?? '-' }}
+      </td>
+
+      <!-- ====== FOTO PRODUK ====== -->
       <td>
         @if($item->foto)
-          <img src="{{ asset('storage/'.$item->foto) }}" width="50" />
+          <img src="{{ asset('storage/'.$item->foto) }}" width="50" alt="{{ $item->nama_produk }}">
         @else
           Tidak ada
         @endif
+      </td>
+
+      <!-- ====== AKSI ====== -->
+      <td>
+        <a href="{{ route('admin.editProduk', $item->id_produk) }}" class="btn-edit">Edit</a>
+        <form action="{{ route('admin.produk.destroy', $item->id_produk) }}" method="POST" style="display:inline;">
+          @csrf
+          @method('DELETE')
+          <button type="submit" class="btn-delete" onclick="return confirm('Yakin hapus produk ini?')">Hapus</button>
+        </form>
       </td>
     </tr>
     @endforeach

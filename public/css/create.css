@@ -56,6 +56,40 @@ body {
   margin-top: 1.5rem;
 }
 
+.ukuran-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+}
+.ukuran-item input {
+    flex: 1;
+    padding: 5px;
+}
+.btn-remove {
+    margin-left: 8px;
+    background: #ff4d4d;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 5px 8px;
+}
+.btn-add {
+    margin-top: 6px;
+    background: #4caf50;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 6px 10px;
+}
+textarea {
+    width: 100%;
+    padding: 6px;
+    border-radius: 4px;
+    resize: vertical;
+}
+
 .btn-submit {
   background: #b34bf5;
   color: #fff;

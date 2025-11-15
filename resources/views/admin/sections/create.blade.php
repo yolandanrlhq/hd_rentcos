@@ -11,7 +11,7 @@
 
         <div class="form-group">
             <label for="kategori_id">Kategori</label>
-            <select name="kategori_id" id="kategori_id" required>
+            <select name="id_kategori" id="id_kategori" required>
                 <option value="">-- Pilih Kategori --</option>
                 @foreach($kategori as $item)
                     <option value="{{ $item->id_kategori }}">{{ $item->nama_kategori }}</option>
@@ -25,13 +25,27 @@
         </div>
 
         <div class="form-group">
-            <label for="stok_produk">Stok</label>
-            <input type="number" name="stok_produk" id="stok_produk" required>
+            <label for="stok_produk">Stok Total</label>
+            <input type="number" name="stok_produk" id="stok_produk" placeholder="Total stok (opsional, bisa dihitung dari ukuran)" required>
         </div>
 
+        <!-- ====== BAGIAN UKURAN PRODUK (DINAMIS DENGAN STOK) ====== -->
         <div class="form-group">
-            <label for="ukuran_produk">Ukuran (Opsional)</label>
-            <input type="text" name="ukuran_produk" id="ukuran_produk" placeholder="Contoh: S, M, L, XL">
+            <label>Ukuran Produk & Stok</label>
+            <div id="ukuran-wrapper">
+                <div class="ukuran-item">
+                    <input type="text" name="ukuran[0][nama_ukuran]" placeholder="Ukuran (misal: S)" required>
+                    <input type="number" name="ukuran[0][stok]" placeholder="Stok ukuran ini" required>
+                    <button type="button" class="btn-remove" onclick="hapusUkuran(this)">❌</button>
+                </div>
+            </div>
+            <button type="button" id="btn-tambah-ukuran" class="btn-add">+ Tambah Ukuran</button>
+        </div>
+        <!-- ============================================ -->
+
+        <div class="form-group">
+            <label for="deskripsi">Deskripsi Produk</label>
+            <textarea name="deskripsi" id="deskripsi" rows="4" placeholder="Tulis deskripsi produk..." required></textarea>
         </div>
 
         <div class="form-group">
@@ -45,3 +59,23 @@
         </div>
     </form>
 </div>
+
+<!-- ====== SCRIPT TAMBAH/HAPUS UKURAN ====== -->
+<script>
+document.getElementById('btn-tambah-ukuran').addEventListener('click', function() {
+    const wrapper = document.getElementById('ukuran-wrapper');
+    const index = wrapper.querySelectorAll('.ukuran-item').length;
+    const div = document.createElement('div');
+    div.classList.add('ukuran-item');
+    div.innerHTML = `
+        <input type="text" name="ukuran[${index}][nama_ukuran]" placeholder="Ukuran (misal: M)" required>
+        <input type="number" name="ukuran[${index}][stok]" placeholder="Stok ukuran ini" required>
+        <button type="button" class="btn-remove" onclick="hapusUkuran(this)">❌</button>
+    `;
+    wrapper.appendChild(div);
+});
+
+function hapusUkuran(button) {
+    button.parentElement.remove();
+}
+</script>
