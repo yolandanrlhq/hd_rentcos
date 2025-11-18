@@ -13,11 +13,16 @@
   align-items: center;
   border-bottom: 1px solid #eee;
   padding: 1rem 0;
+  transition: background 0.3s;
+}
+
+/* Highlight saat hover */
+.cart-item:hover {
+  background: #f9fafb;
 }
 
 .cart-header {
   font-weight: 600;
-  background: #f9fafb;
   border-radius: 6px;
 }
 
@@ -47,6 +52,13 @@
   border-radius: 6px;
   padding: 4px 10px;
   cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* Hover untuk tombol + / - */
+.qty-btn:hover {
+  background: #000;
+  color: #fff;
 }
 
 .hapus-btn {
@@ -54,6 +66,12 @@
   background: none;
   border: none;
   cursor: pointer;
+  transition: color 0.2s;
+}
+
+/* Hover untuk tombol hapus */
+.hapus-btn:hover {
+  color: #be123c;
 }
 
 .cart-summary {
@@ -71,8 +89,9 @@
   font-weight: 600;
   border: none;
   cursor: pointer;
+  transition: background 0.1s;
 }
 
 .checkout-btn:hover {
-  background: #111;
+  background: #616161;
 }

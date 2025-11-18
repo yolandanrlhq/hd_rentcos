@@ -1,3 +1,16 @@
+@if(session('error'))
+<script>
+    alert("{{ session('error') }}");
+</script>
+@endif
+
+@if(session('success'))
+<script>
+    alert("{{ session('success') }}");
+</script>
+@endif
+
+
 <main class="product-detail-section">
   <div class="container">
 
@@ -45,8 +58,6 @@
           <span class="duration">/ 3 hari</span>
         </div>
 
-        <p>{{ $produk->deskripsi ?? 'Deskripsi produk belum tersedia.' }}</p>
-
         <!-- Pilih Ukuran -->
         <div class="ukuran-buttons">
             @foreach($stok as $ukuran => $jumlah)
@@ -73,7 +84,7 @@
                 <div class="quantity-box">
                 <button type="button" id="minusBtn">−</button>
                 <span id="qtyDisplay">1</span>
-                <button type="button" id="plusBtn">+</button>
+                <button type="button" id="plusBtn" class="disabled">+</button>
                 </div>
 
                 <button type="submit" id="addCartBtn" class="add-cart-btn disabled" disabled>+ Tambah ke Keranjang</button>
@@ -123,9 +134,9 @@
   </div>
 </main>
 
-<!-- Script untuk Tab -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+  /* -------- TAB -------- */
   const buttons = document.querySelectorAll('.tab-buttons button');
   const tabs = document.querySelectorAll('.tab-content');
 
@@ -138,8 +149,9 @@ document.addEventListener('DOMContentLoaded', () => {
       tabs[index].classList.add('active');
     });
   });
-});
-document.addEventListener('DOMContentLoaded', () => {
+
+
+  /* -------- UKURAN & CART -------- */
   const sizeButtons = document.querySelectorAll('.ukuran-btn');
   const addBtn = document.getElementById('addCartBtn');
   const selectedSizeInput = document.getElementById('selectedSize');
@@ -152,7 +164,31 @@ document.addEventListener('DOMContentLoaded', () => {
   let maxStok = 0;
   let qty = 1;
 
-  // Klik ukuran
+  /* ------ FUNGSI TAMBAHAN ------ */
+
+  // Update kondisi tombol +
+  function updatePlusButton() {
+    if (qty >= maxStok) {
+      plusBtn.classList.add('disabled');
+      plusBtn.disabled = true;
+    } else {
+      plusBtn.classList.remove('disabled');
+      plusBtn.disabled = false;
+    }
+  }
+
+  // Update tombol tambah keranjang
+  function updateAddButton() {
+    if (maxStok === 0) {
+      addBtn.classList.add('disabled');
+      addBtn.disabled = true;
+    } else {
+      addBtn.classList.remove('disabled');
+      addBtn.disabled = false;
+    }
+  }
+
+  /* ------ KLIK UKURAN ------ */
   sizeButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       if (btn.classList.contains('disabled')) return;
@@ -164,34 +200,50 @@ document.addEventListener('DOMContentLoaded', () => {
       maxStok = parseInt(btn.dataset.stok);
 
       selectedSizeInput.value = selectedSize;
+
+      // Reset qty
       qty = 1;
       qtyDisplay.textContent = qty;
       qtyInput.value = qty;
 
-      addBtn.classList.remove('disabled');
-      addBtn.disabled = false;
+      // Update tombol
+      updatePlusButton();
+      updateAddButton();
     });
   });
 
-  // Tombol plus
+  /* ------ TOMBOL PLUS ------ */
   plusBtn.addEventListener('click', () => {
     if (!selectedSize) return alert('Pilih ukuran terlebih dahulu!');
+
     if (qty < maxStok) {
       qty++;
       qtyDisplay.textContent = qty;
       qtyInput.value = qty;
+      updatePlusButton();
     } else {
       alert('Jumlah melebihi stok tersedia!');
     }
   });
 
-  // Tombol minus
+  /* ------ TOMBOL MINUS ------ */
   minusBtn.addEventListener('click', () => {
     if (qty > 1) {
       qty--;
       qtyDisplay.textContent = qty;
       qtyInput.value = qty;
+      updatePlusButton();
     }
   });
+});
+
+/* ------ CEK FORM SUBMIT ------ */
+document.getElementById('cartForm').addEventListener('submit', function(e) {
+  let ukuran = document.getElementById('selectedSize').value;
+  if (!ukuran) {
+      e.preventDefault();
+      alert("Pilih ukuran terlebih dahulu!");
+      return false;
+  }
 });
 </script>

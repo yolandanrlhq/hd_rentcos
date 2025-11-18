@@ -1,20 +1,112 @@
-form {
-    margin-bottom: 20px;
+/* ====== WRAPPER ====== */
+.iot-wrapper {
+    max-width: 1000; /* 🔥 awalnya 600px → sekarang lebih panjang */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding: 10px;
 }
 
-button {
-    background-color: #007BFF;
-    color: white;
+/* ====== CARD ====== */
+.iot-card {
+    background: #1b1b26;
+    padding: 28px 32px; /* 🔥 padding diperbesar agar lebih panjang */
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.45);
+}
+
+/* ====== JUDUL ====== */
+.iot-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #b34bf5;
+    margin-bottom: 22px;
+    text-align: center;
+}
+
+/* ====== SEARCH BOX ====== */
+.search-box {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.search-box input {
+    flex: 1;
+    padding: 14px 16px; /* 🔥 lebih panjang & tinggi */
+    border-radius: 10px;
+    border: 1px solid #3b3a40;
+    background: #2b2a2f;
+    color: #eee;
+    font-size: 1rem;
+}
+
+.search-box button {
+    padding: 14px 20px; /* 🔥 lebih besar */
+    background: #b34bf5;
     border: none;
-    padding: 10px 20px;
+    color: white;
+    border-radius: 10px;
+    font-weight: 600;
     cursor: pointer;
+    transition: 0.3s ease;
 }
 
-button:hover {
-    background-color: #0056b3;
+.search-box button:hover {
+    background: #9a34e6;
 }
 
-input[type="text"] {
-    padding: 5px;
-    margin-right: 10px;
+/* ====== HASIL PENCARIAN ====== */
+.result-text {
+    background: #242432;
+    padding: 14px;
+    border-radius: 10px;
+    color: #ddd;
+    font-size: 1rem;
+    border: 1px solid #2e2e3a;
+    text-align: center;
+}
+
+/* ====== RFID BOX ====== */
+.rfid-box {
+    border: 2px dashed #3b3a40;
+    background: #22222d;
+    padding: 26px; /* 🔥 lebih besar */
+    border-radius: 12px;
+    text-align: center;
+}
+
+.rfid-icon {
+    font-size: 38px; /* lebih besar */
+    color: #b34bf5;
+}
+
+#rfidStatus {
+    margin-top: 12px;
+    color: #aaa;
+    font-size: 1rem;
+}
+
+/* RFID RESULT */
+.rfid-result {
+    margin-top: 18px;
+    background: #b34bf5;
+    padding: 16px; /* 🔥 lebih besar */
+    color: white;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 480px) {
+    .search-box {
+        flex-direction: column;
+    }
+
+    .search-box button {
+        width: 100%;
+    }
 }

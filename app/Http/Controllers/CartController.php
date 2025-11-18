@@ -37,24 +37,57 @@ class CartController extends Controller
 
         $produk = Produk::findOrFail($request->id_produk);
 
-        // Ambil atau buat cart pending user
+        // ----------------------------
+        // CEK STOK BERDASARKAN UKURAN
+        // ----------------------------
+        if ($request->ukuran) {
+            // cari stok dari tabel UKURAN
+            $ukuran = \DB::table('ukuran_produk')
+                ->where('id_produk', $produk->id_produk)
+                ->where('nama_ukuran', $request->ukuran)
+                ->first();
+
+            if (!$ukuran) {
+                return redirect()->back()->with('error', 'Ukuran tidak ditemukan.');
+            }
+
+            $stokTersedia = $ukuran->stok;
+        } else {
+            // tanpa ukuran → pakai stok_produk
+            $stokTersedia = $produk->stok_produk;
+        }
+
+        // CEK JUMLAH MELEBIHI STOK
+        if ($request->jumlah > $stokTersedia) {
+            return redirect()->back()->with('error', 'Jumlah melebihi stok tersedia.');
+        }
+
+        // Ambil / buat cart pending
         $cart = Cart::firstOrCreate([
             'user_id' => Auth::id(),
             'status' => 'pending'
         ]);
 
-        // Cek apakah item sudah ada di cart
+        // Cek item sudah ada atau belum
         $cartItem = CartItem::where('cart_id', $cart->id)
                             ->where('id_produk', $produk->id_produk)
                             ->where('ukuran', $request->ukuran)
                             ->first();
 
         if ($cartItem) {
-            // Update jumlah
-            $cartItem->jumlah += $request->jumlah;
+
+            $newJumlah = $cartItem->jumlah + $request->jumlah;
+
+            // CEK LAGI (UPDATE JUMLAH)
+            if ($newJumlah > $stokTersedia) {
+                return redirect()->back()->with('error', 'Jumlah melebihi stok tersedia.');
+            }
+
+            $cartItem->jumlah = $newJumlah;
             $cartItem->save();
+
         } else {
-            // Buat baru
+
             CartItem::create([
                 'cart_id' => $cart->id,
                 'id_produk' => $produk->id_produk,
@@ -70,6 +103,27 @@ class CartController extends Controller
     public function update(Request $request, $id)
     {
         $item = CartItem::findOrFail($id);
+        $produk = Produk::findOrFail($item->id_produk);
+
+        // CEK STOK BY UKURAN
+        if ($item->ukuran) {
+            $ukuran = \DB::table('ukuran_produk')
+                ->where('id_produk', $produk->id_produk)
+                ->where('nama_ukuran', $item->ukuran)
+                ->first();
+
+            $stokTersedia = $ukuran->stok;
+        } else {
+            $stokTersedia = $produk->stok_produk;
+        }
+
+        if ($request->jumlah > $stokTersedia) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Jumlah melebihi stok tersedia.'
+            ], 400);
+        }
+
         $item->jumlah = $request->jumlah;
         $item->save();
 

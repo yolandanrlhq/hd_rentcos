@@ -59,6 +59,7 @@
   color: #666;
 }
 
+/* === Tombol ukuran === */
 .ukuran-buttons {
   display: flex;
   gap: 10px;
@@ -80,22 +81,42 @@
   color: #fff;
 }
 
+/* Disable ukuran stok habis */
 .ukuran-buttons button.disabled {
   opacity: 0.5;
-  cursor: not-allowed;
-  background: #eee;
+  cursor: not-allowed !important;
+  background: #eee !important;
+  color: #666 !important;
 }
-
-.add-cart-btn.disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 
 .ukuran-buttons button:hover {
   background: #eee;
 }
 
+/* === Add to Cart === */
+.add-cart-btn {
+  background: black;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+/* Add to cart disabled */
+.add-cart-btn.disabled {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+  background: #777 !important;
+}
+
+.add-cart-btn:hover {
+  background: #333;
+}
+
+/* === Quantity === */
 .cart-actions {
   display: flex;
   align-items: center;
@@ -118,22 +139,14 @@
   font-size: 16px;
 }
 
+/* Disable plus/minus */
+.quantity-box button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
 .quantity-box span {
   padding: 0 10px;
-}
-
-.add-cart-btn {
-  background: black;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 15px;
-}
-
-.add-cart-btn:hover {
-  background: #333;
 }
 
 /* ==== Tabs Section ==== */

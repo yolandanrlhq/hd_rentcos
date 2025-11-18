@@ -21,6 +21,7 @@ return new class extends Migration
             // Tambahkan foreign key di sini, tapi hati-hati kalau tabel tujuan belum ada
             // Contoh:
             $table->foreign('cart_id')->references('id')->on('carts')->onDelete('cascade');
+            
             // $table->foreign('id_produk')->references('id')->on('produk')->onDelete('cascade');
         });
     }

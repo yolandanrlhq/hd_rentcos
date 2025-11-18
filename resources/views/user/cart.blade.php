@@ -1,6 +1,6 @@
 @extends('layouts.user')
 
-@section('title', 'Detail Produk - HD RENTCOS')
+@section('title', 'Keranjang - HD RENTCOS')
 
 @section('extra-css')
 <link rel="stylesheet" href="{{ asset('css/cart.css') }}">
