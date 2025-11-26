@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\ProdukFoto;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,6 +37,14 @@ class Produk extends Model
     public function ukuran()
     {
         return $this->hasMany(UkuranProduk::class, 'id_produk');
+    }
+
+    /**
+     * Relasi ke foto produk (multiple photos)
+     */
+    public function fotos()
+    {
+        return $this->hasMany(ProdukFoto::class, 'id_produk');
     }
 
     /**

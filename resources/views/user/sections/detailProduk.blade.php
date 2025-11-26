@@ -18,9 +18,115 @@
     <div class="grid-container">
       <!-- Gambar Produk -->
       <div class="product-image">
-        <img src="{{ asset('storage/' . $produk->foto) }}"
-             alt="{{ $produk->nama_produk }}">
+        @if($produk->fotos->count() > 0)
+          <div class="slider-container">
+            <img id="mainPhoto" src="{{ asset('storage/' . $produk->fotos->first()->foto_path) }}" alt="{{ $produk->nama_produk }}">
+            <div class="slider-controls">
+              <button id="prevBtn">&#10094;</button>
+              <button id="nextBtn">&#10095;</button>
+            </div>
+            <div class="thumbnail-container">
+              @foreach($produk->fotos as $foto)
+                <img class="thumbnail" src="{{ asset('storage/' . $foto->foto_path) }}" alt="{{ $produk->nama_produk }}">
+              @endforeach
+            </div>
+          </div>
+        @else
+          <img src="{{ asset('storage/' . $produk->foto) }}" alt="{{ $produk->nama_produk }}">
+        @endif
       </div>
+
+      <style>
+        .slider-container {
+          position: relative;
+          max-width: 400px;
+        }
+        #mainPhoto {
+          width: 100%;
+          height: auto;
+        }
+        .slider-controls {
+          position: absolute;
+          top: 50%;
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          transform: translateY(-50%);
+          pointer-events: none;
+        }
+        .slider-controls button {
+          background-color: rgba(0,0,0,0.3);
+          border: none;
+          color: white;
+          font-size: 24px;
+          cursor: pointer;
+          pointer-events: all;
+          padding: 5px 10px;
+        }
+        .thumbnail-container {
+          display: flex;
+          justify-content: center;
+          gap: 5px;
+          margin-top: 8px;
+        }
+        .thumbnail {
+          width: 50px;
+          height: 50px;
+          object-fit: cover;
+          cursor: pointer;
+          opacity: 0.7;
+          border: 2px solid transparent;
+          border-radius: 4px;
+        }
+        .thumbnail.active {
+          opacity: 1;
+          border-color: #007bff;
+        }
+      </style>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          const mainPhoto = document.getElementById('mainPhoto');
+          const thumbnails = document.querySelectorAll('.thumbnail');
+          const prevBtn = document.getElementById('prevBtn');
+          const nextBtn = document.getElementById('nextBtn');
+          let currentIndex = 0;
+
+          function setActiveThumbnail(index) {
+            thumbnails.forEach((thumb, i) => {
+              if (i === index) {
+                thumb.classList.add('active');
+              } else {
+                thumb.classList.remove('active');
+              }
+            });
+          }
+
+          function updateMainPhoto(index) {
+            mainPhoto.src = thumbnails[index].src;
+            setActiveThumbnail(index);
+            currentIndex = index;
+          }
+
+          thumbnails.forEach((thumb, index) => {
+            thumb.addEventListener('click', () => {
+              updateMainPhoto(index);
+            });
+          });
+
+          prevBtn.addEventListener('click', () => {
+            let newIndex = (currentIndex - 1 + thumbnails.length) % thumbnails.length;
+            updateMainPhoto(newIndex);
+          });
+
+          nextBtn.addEventListener('click', () => {
+            let newIndex = (currentIndex + 1) % thumbnails.length;
+            updateMainPhoto(newIndex);
+          });
+
+          setActiveThumbnail(0);
+        });
+      </script>
 
       <!-- Informasi Produk -->
       <div class="product-info">
@@ -60,13 +166,14 @@
 
         <!-- Pilih Ukuran -->
         <div class="ukuran-buttons">
-            @foreach($stok as $ukuran => $jumlah)
+            @foreach($stok as $ukuran => $detail)
                 <button
                 type="button"
-                class="ukuran-btn {{ $jumlah == 0 ? 'disabled' : '' }}"
+                class="ukuran-btn {{ ($detail['stok'] == 0 || $detail['is_rented']) ? 'disabled' : '' }}"
                 data-ukuran="{{ $ukuran }}"
-                data-stok="{{ $jumlah }}"
-                {{ $jumlah == 0 ? 'disabled' : '' }}
+                data-stok="{{ $detail['stok'] }}"
+                {{ ($detail['stok'] == 0 || $detail['is_rented']) ? 'disabled' : '' }}
+                title="{{ $detail['is_rented'] ? 'Ukuran ini sedang disewa' : '' }}"
                 >
                 {{ $ukuran }}
                 </button>

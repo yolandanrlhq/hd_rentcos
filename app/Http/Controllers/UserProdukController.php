@@ -17,16 +17,25 @@ class UserProdukController extends Controller
     {
         $produk = Produk::with('ukuran')->findOrFail($id);
 
-        // ambil stok dari database (misal hasilnya ['M' => 3, 'L' => 2])
-        $stokDB = $produk->ukuran->pluck('stok', 'nama_ukuran')->toArray();
+        // ambil stok dan is_rented dari database (misal hasilnya ['M' => ['stok'=>3,'is_rented'=>false], ...])
+        $ukuranCollection = $produk->ukuran;
 
-        // daftar semua ukuran yang ingin ditampilkan
         $ukuranList = ['S', 'M', 'L', 'XL'];
 
-        // buat array stok lengkap (kalau ukuran gak ada di DB, stok = 0)
         $stok = [];
         foreach ($ukuranList as $uk) {
-            $stok[$uk] = $stokDB[$uk] ?? 0;
+            $ukuranData = $ukuranCollection->firstWhere('nama_ukuran', $uk);
+            if ($ukuranData) {
+                $stok[$uk] = [
+                    'stok' => $ukuranData->stok,
+                    'is_rented' => $ukuranData->is_rented
+                ];
+            } else {
+                $stok[$uk] = [
+                    'stok' => 0,
+                    'is_rented' => false
+                ];
+            }
         }
 
         $rekomendasi = Produk::where('id_kategori', $produk->id_kategori)

@@ -32,7 +32,7 @@
 
             <div class="price-row">
               <div class="price">IDR {{ number_format($produk->harga_produk, 0, ',', '.') }}</div>
-              <div class="duration">/ 3 day</div>
+              <div class="duration">/ 3 days</div>
             </div>
           </div>
         </article>

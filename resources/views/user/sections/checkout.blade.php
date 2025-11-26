@@ -9,11 +9,11 @@
       </div>
       <div class="alamat-info">
         <div class="nama">
-          <strong>Adnan</strong> <span>(+62) 838 9620 6981</span>
+          <strong>{{ auth()->user()->name }}</strong>
+          <span>{{ auth()->user()->phone ?? '' }}</span>
         </div>
         <div class="alamat">
-          Jalan Cemara Blok Jongor, RT.12/RW.4, Cemara, Cantigi <br>
-          (Anaknya ali sodiqin), KAB. INDRAMAYU - CANTIGI, JAWA BARAT, ID 45251
+          {!! nl2br(e(auth()->user()->address ?? '')) !!}
         </div>
         <a href="#" class="ubah">Ubah</a>
       </div>
@@ -31,87 +31,99 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
+          @foreach(($items ?? collect()) as $item)
+          <tr data-item-id="{{ $item->id }}">
             <td class="produk-info">
-              <img src="assets/naruto.webp" alt="Naruto">
-              <span>Naruto</span>
+              <img src="{{ asset('storage/' . ($item->produk->foto ?? '')) }}" alt="{{ $item->produk->nama_produk ?? '' }}">
+              <span>{{ $item->produk->nama_produk ?? 'Produk' }} @if($item->ukuran) ({{ $item->ukuran }}) @endif</span>
             </td>
-            <td>Rp109.000</td>
+            <td class="price-cell">Rp{{ number_format($item->harga_satuan,0,',','.') }}</td>
             <td class="qty-cell">
-              <button class="qty-btn minus">−</button>
-              <input type="number" value="1" min="1" id="qty">
-              <button class="qty-btn plus">+</button>
+              <span class="qty-display">{{ $item->jumlah }}</span>
             </td>
-            <td id="total-harga">Rp109.000</td>
+            <td class="row-total" id="total-{{ $item->id }}">Rp{{ number_format($item->harga_satuan * $item->jumlah,0,',','.') }}</td>
           </tr>
+          @endforeach
         </tbody>
       </table>
     </section>
 
-    <!-- Metode Pembayaran -->
+    <!-- Metode Pengiriman -->
     <section class="pembayaran-box">
-      <h3>Metode Pembayaran</h3>
-      <div class="payment-methods">
-        <button class="active">COD</button>
-        <button>Ambil ditempat</button>
-        <button>Qris</button>
-      </div>
+      <h3>Metode Pengiriman</h3>
+      <form id="checkout-form" method="POST" action="{{ route('cart.checkout', ['selected' => request()->query('selected')]) }}">
+        @csrf
 
-      <div class="payment-summary">
-        <div><span>Subtotal Pesanan</span><span id="subtotal">Rp109.000</span></div>
-        <div><span>Subtotal Pengiriman</span><span>Rp6.500</span></div>
-        <div><span>Voucher Diskon</span><span>-Rp3.000</span></div>
-        <hr>
-        <div class="total"><span>Total Pembayaran</span><span class="red" id="total-bayar">Rp113.500</span></div>
-      </div>
+        <div class="payment-methods">
+          <button type="button" data-method="cod" class="active">COD</button>
+          <button type="button" data-method="ambil_ditempat">Ambil ditempat</button>
+          <button type="button" data-method="antar_ke_rumah">
+            Antar ke rumah
+            <a href="{{ url('/faq') }}" target="_blank" style="font-weight: normal; font-size: 0.8em; margin-left: 5px;">(baca FAQ)</a>
+          </button>
+          <button type="button" data-method="via_ekspedisi">Via ekspedisi</button>
+        </div>
 
-      <div class="checkout-btn-container">
-        <a href="struk.html"><button class="checkout-btn">Sewa Sekarang</button></a>
-      </div>
+        <input type="hidden" name="delivery_method" id="delivery_method" value="cod">
+
+        @php
+          $subtotalVal = ($items ?? collect())->sum(fn($i) => $i->harga_satuan * $i->jumlah);
+          $ongkir = 6500; // default, adjust as needed
+        @endphp
+        <div class="payment-summary">
+          <div><span>Subtotal Pesanan</span><span id="subtotal">Rp{{ number_format($subtotalVal,0,',','.') }}</span></div>
+          <hr>
+          <div class="total"><span>Total Pembayaran</span><span class="red" id="total-bayar">Rp{{ number_format($subtotalVal) }}</span></div>
+        </div>
+
+        <div class="checkout-btn-container">
+          <button type="submit" class="checkout-btn">Sewa Sekarang</button>
+        </div>
+      </form>
     </section>
   </main>
 
   <script>
-    // === Interaktif Tambah/Kurang Jumlah ===
-    const qtyInput = document.getElementById("qty");
-    const minusBtn = document.querySelector(".minus");
-    const plusBtn = document.querySelector(".plus");
-    const totalHarga = document.getElementById("total-harga");
-    const subtotal = document.getElementById("subtotal");
-    const totalBayar = document.getElementById("total-bayar");
-
-    const hargaPerItem = 109000;
-    const ongkir = 6500;
-    const diskon = 3000;
-
-    function updateTotal() {
-      const qty = parseInt(qtyInput.value);
-      const subtotalVal = hargaPerItem * qty;
-      const totalVal = subtotalVal + ongkir - diskon;
-      subtotal.textContent = "Rp" + subtotalVal.toLocaleString("id-ID");
-      totalHarga.textContent = "Rp" + subtotalVal.toLocaleString("id-ID");
-      totalBayar.textContent = "Rp" + totalVal.toLocaleString("id-ID");
+    // Utilities
+    function parseRupiahToNumber(text) {
+      return Number(String(text).replace(/[^0-9]/g, '')) || 0;
     }
 
-    minusBtn.addEventListener("click", () => {
-      if (qtyInput.value > 1) {
-        qtyInput.value--;
-        updateTotal();
-      }
-    });
+    function formatRupiah(number) {
+      return 'Rp' + number.toLocaleString('id-ID');
+    }
 
-    plusBtn.addEventListener("click", () => {
-      qtyInput.value++;
-      updateTotal();
-    });
+    function recalcTotals() {
+      const rows = document.querySelectorAll('tbody tr');
+      let subtotalVal = 0;
+      rows.forEach(r => {
+        const id = r.dataset.itemId;
+        const rowTotalEl = document.getElementById('total-' + id);
+        const val = parseRupiahToNumber(rowTotalEl.textContent);
+        subtotalVal += val;
+      });
 
-    qtyInput.addEventListener("input", updateTotal);
+      const ongkir = parseRupiahToNumber(document.getElementById('ongkir').textContent);
+      //const diskon = parseRupiahToNumber(document.getElementById('diskon').textContent);
+      const diskon = 0;
 
-    // === Highlight metode pembayaran aktif ===
-    document.querySelectorAll(".payment-methods button").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".payment-methods button").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
+      document.getElementById('subtotal').textContent = formatRupiah(subtotalVal);
+      document.getElementById('total-bayar').textContent = formatRupiah(subtotalVal + ongkir - diskon);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      // ensure totals reflect rendered rows
+      recalcTotals();
+
+      const buttons = document.querySelectorAll('.payment-methods button');
+      const hiddenInput = document.getElementById('delivery_method');
+
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          buttons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          hiddenInput.value = btn.dataset.method;
+        });
       });
     });
   </script>

@@ -1,3 +1,19 @@
+@if ($errors->any())
+    <div class="alert alert-danger" style="background-color:#f8d7da; color:#721c24; padding:10px; border-radius:5px; margin-bottom:15px;">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+@if (session('error'))
+    <div class="alert alert-danger" style="background-color:#f8d7da; color:#721c24; padding:10px; border-radius:5px; margin-bottom:15px;">
+        {{ session('error') }}
+    </div>
+@endif
+
 <div class="form-container">
     <h2>Tambah Produk Baru</h2>
 
@@ -49,8 +65,8 @@
         </div>
 
         <div class="form-group">
-            <label for="foto">Foto Produk</label>
-            <input type="file" name="foto" id="foto" accept="image/*">
+            <label for="fotos">Foto Produk</label>
+            <input type="file" name="fotos[]" id="fotos" accept="image/*" multiple>
         </div>
 
         <div class="form-actions">

@@ -51,6 +51,12 @@ Route::prefix('user')->group(function () {
     Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/delete/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
     Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+
+    // Status rented costumes
+    Route::get('/status', [CartController::class, 'status'])->name('cart.status');
+    Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout.post');
+
+    Route::get('/sewa', [CartController::class, 'sewa'])->name('cart.sewa');
 });
 
 
