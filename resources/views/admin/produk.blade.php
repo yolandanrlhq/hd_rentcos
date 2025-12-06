@@ -82,7 +82,7 @@
                     <form action="{{ route('admin.produk.destroy', $item->id_produk) }}" method="POST" style="display:inline;">
                     @csrf
                     @method('DELETE')
-                    <a type="submit" class="btn-delete" onclick="return confirm('Yakin hapus produk ini?')">Hapus</a>
+                    <button type="submit" class="btn-delete" onclick="return confirm('Yakin hapus produk ini?')"><i class="fa-solid fa-trash"></i></button  >
                     </form>
                 </td>
                 </tr>

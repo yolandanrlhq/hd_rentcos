@@ -1,20 +1,18 @@
-/* Variabel Warna */
 :root {
-    --bg-dark: #12121e; /* Background Utama Gelap */
-    --sidebar-bg: #1e1e2d; /* Background Sidebar */
-    --text-light: #f0f0f0; /* Teks Cerah */
-    --text-faded: #a0a0c0; /* Teks Faded/Sekunder */
-    --accent-purple: #9b59b6; /* Ungu untuk Aksen/Aktif */
-    --accent-pink: #d9489f; /* Pink/Magenta untuk Tombol */
-    --search-bg: #2a2a3e; /* Background Search Bar */
-    --table-header-bg: #2b3a4a; /* Header Tabel */
-    --table-row-bg-odd: #202b3a; /* Warna cell di body yang lebih gelap */
-    --table-row-bg-highlight: #314050; /* Baris pertama di body yang sedikit lebih terang */
-    --table-border: #444; /* Border Tabel */
+    --bg-dark: #12121e;
+    --sidebar-bg: #1e1e2d;
+    --text-light: #f0f0f0;
+    --text-faded: #a0a0c0;
+    --accent-purple: #9b59b6;
+    --accent-pink: #d9489f;
+    --search-bg: #2a2a3e;
+    --table-header-bg: #2b3a4a;
+    --table-row-bg-odd: #202b3a;
+    --table-row-bg-highlight: #314050;
+    --table-border: #444;
     --table-cell-padding: 8px 12px;
 }
 
-/* Reset Dasar */
 * {
     margin: 0;
     padding: 0;
@@ -34,7 +32,7 @@ body {
     min-height: 100vh;
 }
 
-/* --- Sidebar (Menu Kiri) --- */
+/* --- Sidebar --- */
 .sidebar {
     width: 250px;
     background-color: var(--sidebar-bg);
@@ -47,7 +45,6 @@ body {
     font-weight: bold;
     color: var(--text-light);
     padding: 0 20px 30px 20px;
-    text-align: left;
 }
 
 .nav-menu ul {
@@ -61,7 +58,7 @@ body {
     color: var(--text-faded);
     text-decoration: none;
     font-size: 0.95em;
-    transition: background-color 0.2s;
+    transition: .2s;
 }
 
 .nav-menu li a i {
@@ -81,7 +78,7 @@ body {
     background-color: #2c2c40;
 }
 
-/* --- Main Content (Area Utama Kanan) --- */
+/* --- Main Content --- */
 .main-content {
     flex-grow: 1;
     padding: 20px;
@@ -89,7 +86,7 @@ body {
     flex-direction: column;
 }
 
-/* --- Header Utama (kostum, Search, Tambah Kostum) --- */
+/* Header (Search + Tambah Produk) */
 .main-header {
     display: flex;
     align-items: center;
@@ -105,7 +102,7 @@ body {
     padding: 10px 15px;
     flex-grow: 1;
     max-width: 400px;
-    border: 1px solid var(--table-border); /* Tambah border tipis agar mirip di gambar */
+    border: 1px solid var(--table-border);
 }
 
 .search-bar i {
@@ -120,13 +117,12 @@ body {
     width: 100%;
     outline: none;
 }
-
 .search-bar input::placeholder {
     color: var(--text-faded);
 }
 
+/* Tombol Tambah Produk */
 .add-button {
-    /* Menggunakan background solid purple dari gambar */
     background-color: var(--accent-purple);
     color: var(--text-light);
     border: none;
@@ -138,28 +134,24 @@ body {
     align-items: center;
     gap: 10px;
     font-size: 0.9em;
-    transition: opacity 0.2s;
+    transition: opacity .2s;
 }
-
 .add-button:hover {
-    opacity: 0.9;
+    opacity: .9;
 }
-
-/* Ikon Plus untuk tombol Tambah Kostum */
 .add-button .fa-plus-circle {
-    background-color: var(--text-light);
-    color: var(--accent-purple); /* Menggunakan warna tombol untuk ikon plus */
+    background: var(--text-light);
+    color: var(--accent-purple);
     border-radius: 50%;
     padding: 2px;
-    font-size: 1.1em;
 }
 
-/* --- Area Tabel Data --- */
+/* --- Tabel Data --- */
 .data-table-section {
     background-color: var(--sidebar-bg);
     border-radius: 12px;
     padding: 15px 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .3);
     flex-grow: 1;
 }
 
@@ -169,22 +161,14 @@ body {
     align-items: center;
     margin-bottom: 15px;
     padding-bottom: 10px;
-    color: var(--text-faded);
     border-bottom: 1px solid var(--table-border);
+    color: var(--text-faded);
 }
 
 .status {
     font-weight: bold;
     color: var(--text-light);
     text-transform: uppercase;
-}
-
-.pagination-summary {
-    font-size: 0.9em;
-}
-
-.table-wrapper {
-    overflow-x: auto;
 }
 
 .data-table {
@@ -196,9 +180,8 @@ body {
 .data-table th,
 .data-table td {
     padding: var(--table-cell-padding);
-    text-align: left;
     white-space: nowrap;
-    border-right: 1px solid #202b3a; /* Border kanan antar kolom */
+    border-right: 1px solid #202b3a;
 }
 
 .data-table th {
@@ -206,8 +189,7 @@ body {
     font-size: 0.85em;
     font-weight: 500;
     text-transform: uppercase;
-    color: var(--text-light);
-    border-bottom: 2px solid var(--accent-purple); /* Garis bawah accent */
+    border-bottom: 2px solid var(--accent-purple);
 }
 
 .data-table tbody tr {
@@ -218,75 +200,102 @@ body {
     border-bottom: none;
 }
 
-/* Cell khusus untuk meniru tampilan yang diberikan */
-.data-table td {
+/* .data-table td {
     background-color: var(--table-row-bg-odd);
     color: var(--text-faded);
     font-size: 0.9em;
+} */
+.data-table td {
+    color: var(--text-faded);
+    font-size: 0.9em;
+    transition: .25s;
 }
 
-/* Baris pertama di body memiliki warna agak berbeda di contoh */
-.data-table tbody tr:first-child td {
+/* .data-table tbody tr:first-child td {
     background-color: var(--table-row-bg-highlight);
-    color: var(--text-light);
-}
-
-/* Warna dan Ikon khusus Edit/Hapus */
-.data-table td:nth-last-child(2) { /* Edit column */
-    color: var(--accent-pink);
-    font-size: 1.1em;
-    cursor: pointer;
-}
-
-.data-table td:last-child { /* Hapus column */
-    color: #ff6347; /* Sedikit merah/oranye untuk hapus */
-    cursor: pointer;
-    text-transform: lowercase;
-}
-
-/* Menghapus border kanan pada kolom terakhir */
-.data-table th:last-child,
-.data-table td:last-child {
-    border-right: none;
-}
-
-/* --- Footer/Pagination Bawah --- */
-.main-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 0 5px 0;
-    font-size: 0.9em;
     color: var(--text-faded);
-    margin-top: auto; /* Dorong ke bawah */
+} */
+
+tbody tr:nth-child(odd) {
+    background-color: #1F2937; /* baris ganjil */
 }
 
-.pagination-controls {
+tbody tr:nth-child(even) {
+    background-color: #111827; /* baris genap */
+}
+
+/* Hover Baris */
+.data-table tbody tr:hover {
+    background-color: #374151 !important;
+}
+
+.data-table tbody tr:hover td {
+    background-color: #374151;
+    color: var(--text-faded);
+    transition: .25s;
+}
+
+/* Badge ukuran */
+.badge-ukuran {
+    background: var(--accent-purple);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    color: #fff;
+}
+
+/* Foto zoom */
+.data-table td img {
+    border-radius: 6px;
+    transition: .25s;
+}
+.data-table td img:hover {
+    transform: scale(2);
+    box-shadow: 0 0 12px rgba(255, 255, 255, .3);
+    z-index: 10;
+    position: relative;
+}
+
+.aksi {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
-.row-count {
-    color: var(--text-light);
-    font-weight: bold;
-}
-
-.nav-button {
+/* Edit */
+.btn-edit {
     background: none;
-    border: 1px solid var(--table-border);
-    color: var(--text-faded);
-    width: 30px;
-    height: 30px;
-    border-radius: 4px;
+    border: none;
     cursor: pointer;
-    transition: background-color 0.2s;
+}
+.btn-edit i {
+    color: var(--accent-pink);
+    font-size: 1em;
+    transition: .25s;
+}
+.btn-edit:hover i {
+    color: #ffb4e1;
+    text-shadow: 0 0 8px #ff62c5;
+    transform: scale(1.28) rotate(-4deg);
 }
 
-.nav-button:hover {
-    background-color: var(--search-bg);
+/* Delete */
+.btn-delete {
+    background: none;
+    border: none;
+    cursor: pointer;
 }
-
-.nav-button i {
-    font-size: 0.9em;
+.btn-delete i {
+    color: #ff5e5e;
+    font-size: 1em;
+    transition: .25s;
+}
+.btn-delete:hover i {
+    color: #ff2a2a;
+    text-shadow: 0 0 10px rgba(255, 0, 0, .6);
+    transform: scale(1.28) rotate(-4deg);
+}
+.hapus-form {
+    display: flex;
+    align-items: center;
 }

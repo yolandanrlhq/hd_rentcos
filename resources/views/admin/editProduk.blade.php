@@ -7,9 +7,9 @@
 @endsection
 
 @section('content')
-<div class="container">
+<div class="dashboard-container">
     @include('admin.sections.sidebar')
-    <div class="main">
+    <div class="main-content">
         <div class="form-container">
             <h2>Edit Produk</h2>
 
