@@ -1,24 +1,32 @@
 @extends('layouts.admin')
 
-@section('title', 'Pencarian Kostum')
+@section('title', 'Dashboard Admin')
 
 @section('extra-css')
 <link rel="stylesheet" href="{{ asset('css/iotControl.css') }}">
 @endsection
 
 @section('content')
-<div class="container">
+<div class="dashboard-container">
     @include('admin.sections.sidebar')
-    <div class="main">
+    <div class="main-content">
         <div class="iot-wrapper">
-            <!-- ================= LED SEARCH ================= -->
+
+            <!-- ================= LED CONTROL ================= -->
             <div class="card iot-card">
-                <h2 class="title">🔦 Pencarian Kostum</h2>
+                <h2 class="title">🔦 Pencarian Kostum / LED Control</h2>
 
                 <form id="command-form" class="search-box">
                     <input type="text" id="command" placeholder="Contoh: naruto, sasuke, sakura" required>
                     <button type="submit">Kirim</button>
                 </form>
+
+                <div class="button-wrapper" style="margin-top: 15px;">
+                    <button onclick="sendCommand('naruto')">Naruto</button>
+                    <button onclick="sendCommand('sasuke')">Sasuke</button>
+                    <button onclick="sendCommand('sakura')">Sakura</button>
+                    <button onclick="sendCommand('off')" style="background:red; color:white;">Matikan LED</button>
+                </div>
 
                 <div id="searchResult" class="result-text">Menunggu perintah...</div>
             </div>
@@ -38,33 +46,52 @@
         </div>
 
         <script>
-            // ================= SEND COMMAND =================
             const form = document.getElementById("command-form");
             const result = document.getElementById("searchResult");
 
-            form.addEventListener("submit", function(e){
+            form.addEventListener("submit", function (e) {
                 e.preventDefault();
-
                 const cmd = document.getElementById("command").value.toLowerCase();
-
-                fetch(`/control-led/${cmd}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        result.innerText = data.response;
-                    });
+                sendCommand(cmd);
             });
 
-            // ================= RFID LISTENING =================
-            setInterval(() => {
-                fetch("/rfid-scan")
+            function sendCommand(cmd) {
+                fetch(`/control-led/${cmd}`)
+                    .then(res => res.json())
+                    .then(data => result.innerText = data.response)
+                    .catch(() => result.innerText = "Gagal menghubungi ESP32!");
+            }
+
+            let rfidPolling = true;
+
+            async function checkRFID() {
+                if (!rfidPolling) return;
+
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 2000); // stop kalau 2 detik tidak ada respon
+
+                fetch("/rfid-scan", { signal: controller.signal })
                     .then(res => res.json())
                     .then(data => {
-                        if(data.tag){
+                        if (data.tag && data.kostum) {
                             document.getElementById("rfidStatus").innerText = "RFID Terdeteksi!";
                             document.getElementById("rfidResult").innerText = data.kostum;
+                            rfidPolling = false; // stop polling setelah dapat tag
+                        } else {
+                            document.getElementById("rfidStatus").innerText = "RFID belum discan...";
+                            document.getElementById("rfidResult").innerText = "";
                         }
+                    })
+                    .catch(() => {
+                        console.warn("RFID timeout / gagal");
+                    })
+                    .finally(() => {
+                        clearTimeout(timeout);
+                        if (rfidPolling) setTimeout(checkRFID, 2000); // ulang hanya jika masih polling
                     });
-            }, 1500);
+            }
+
+            checkRFID(); // mulai polling
         </script>
     </div>
 </div>

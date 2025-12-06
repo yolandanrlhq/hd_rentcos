@@ -7,7 +7,8 @@ use App\Http\Controllers\AdminProdukController;
 use App\Http\Controllers\UserProdukController;
 use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\Request;
 
 // ----------------------------
 // AUTH
@@ -18,7 +19,7 @@ Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('regi
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// -------A---------------------
+// ----------------------------
 // ADMIN (tanpa middleware)
 // ----------------------------
 Route::prefix('admin')->group(function () {
@@ -72,21 +73,6 @@ Route::get('/wishlist', function () {
 
 
 // ===================== LED CONTROL =====================
-Route::get('/control-led', function () {
-    $command = request('command');  // Mendapatkan perintah dari input teks
-
-    $validCommands = ['naruto', 'sasuke', 'sakura'];
-
-    if (!$command || !in_array(strtolower($command), $validCommands)) {
-        return view('control', ['response' => 'Invalid command! Please try again.']);
-    }
-
-    $esp32_ip = 'http://10.230.141.139/control?command=' . $command;
-    $response = file_get_contents($esp32_ip);
-
-    return view('control', ['response' => $response]);
-});
-
 Route::get('/control-led/{command}', function ($command) {
     $validCommands = ['naruto', 'sasuke', 'sakura', 'off'];
 
@@ -95,24 +81,55 @@ Route::get('/control-led/{command}', function ($command) {
     }
 
     $esp32_ip = 'http://10.230.141.139/control?command=' . $command;
-$response = file_get_contents($esp32_ip);
+    $context = stream_context_create([
+        'http' => ['timeout' => 1] // biar tidak nunggu lama
+    ]);
 
-// ambil teks status LED saja
-preg_match('/<p><b>Status LED:<\/b>\s*(.*?)<\/p>/', $response, $matches);
-$status = $matches[1] ?? 'Status tidak diketahui';
+    $response = @file_get_contents($esp32_ip, false, $context);
 
-return response()->json(['response' => $status]);
+    if (!$response) {
+        return response()->json(['response' => 'ESP32 tidak merespon']);
+    }
 
+    preg_match('/<p><b>Status LED:<\/b>\s*(.*?)<\/p>/', $response, $matches);
+    $status = $matches[1] ?? 'Status tidak diketahui';
+
+    return response()->json(['response' => $status]);
 });
 
 
-// ===================== RFID SCAN =====================
-// Endpoint baru untuk fetch data RFID dari ESP32
+// ===================== RFID SCAN (VERSI CEPAT, TANPA LAG) =====================
 Route::get('/rfid-scan', function () {
-    $esp32_ip = 'http://10.230.141.139/rfid-scan'; // endpoint Arduino JSON
-    $response = file_get_contents($esp32_ip);      // ambil data dari ESP32
-    return response()->json(json_decode($response));
+
+    // Ambil data dari cache dulu
+    $cached = Cache::get('rfid_data');
+    if ($cached) {
+        return response()->json($cached);
+    }
+
+    $esp32_ip = 'http://10.230.141.139/rfid-scan';
+
+    $context = stream_context_create([
+        'http' => ['timeout' => 0.5] // timeout 0.5 detik biar web tidak ngelag
+    ]);
+
+    $response = @file_get_contents($esp32_ip, false, $context);
+
+    if ($response === false) {
+        // Jika ESP32 tidak merespon → tetap balikin data ringan
+        return response()->json([
+            'tag' => null,
+            'kostum' => null
+        ]);
+    }
+
+    // Simpan ke cache selama 3 detik
+    $json = json_decode($response, true);
+    Cache::put('rfid_data', $json, 3);
+
+    return response()->json($json);
 });
+
 
 // ===================== HALAMAN ADMIN IoT =====================
 Route::get('/admin/iot-control', function () {
