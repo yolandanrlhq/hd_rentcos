@@ -1,17 +1,32 @@
-/* Variabel Warna */
+/* Variabel Warna (Sama seperti sebelumnya untuk konsistensi dashboard) */
 :root {
     --bg-dark: #12121e; /* Background Utama Gelap */
     --sidebar-bg: #1e1e2d; /* Background Sidebar */
     --text-light: #f0f0f0; /* Teks Cerah */
     --text-faded: #a0a0c0; /* Teks Faded/Sekunder */
     --accent-purple: #9b59b6; /* Ungu untuk Aksen/Aktif */
-    --accent-pink: #d9489f; /* Pink/Magenta untuk Tombol */
     --search-bg: #2a2a3e; /* Background Search Bar */
     --table-header-bg: #2b3a4a; /* Header Tabel */
     --table-row-bg-odd: #202b3a; /* Warna cell di body yang lebih gelap */
     --table-row-bg-highlight: #314050; /* Baris pertama di body yang sedikit lebih terang */
     --table-border: #444; /* Border Tabel */
-    --table-cell-padding: 8px 12px;
+    --table-cell-padding: 10px 12px;
+
+    /* Warna Status Badge */
+    --status-online: #38b17c; /* Hijau untuk Online */
+    --status-offline: #5d6d7e; /* Abu-abu untuk Offline */
+
+    /* Warna Ikon Perusahaan (Untuk membedakan) */
+    --color-google: #4285f4;
+    --color-webflow: #4353ff;
+    --color-facebook: #1877f2;
+    --color-twitter: #1da1f2;
+    --color-youtube: #ff0000;
+    --color-reddit: #ff4500;
+    --color-spotify: #1db954;
+    --color-pinterest: #e60023;
+    --color-twitch: #9146ff;
+    --color-linkedin: #0a66c2;
 }
 
 /* Reset Dasar */
@@ -19,7 +34,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'poppins', sans-serif;
 }
 
 body {
@@ -70,6 +85,7 @@ body {
     width: 20px;
 }
 
+/* Mengubah .active untuk User */
 .nav-menu li.active a {
     color: var(--accent-purple);
     background-color: var(--bg-dark);
@@ -89,12 +105,20 @@ body {
     flex-direction: column;
 }
 
-/* --- Header Utama (kostum, Search, Tambah Kostum) --- */
+/* --- Header Utama (Users dan Search) --- */
 .main-header {
     display: flex;
     align-items: center;
     gap: 20px;
     margin-bottom: 20px;
+}
+
+.page-title {
+    font-size: 1.5em;
+    font-weight: 500;
+    color: var(--text-light);
+    text-transform: uppercase;
+    margin-right: 40px;
 }
 
 .search-bar {
@@ -105,7 +129,7 @@ body {
     padding: 10px 15px;
     flex-grow: 1;
     max-width: 400px;
-    border: 1px solid var(--table-border); /* Tambah border tipis agar mirip di gambar */
+    border: 1px solid var(--table-border);
 }
 
 .search-bar i {
@@ -119,39 +143,6 @@ body {
     color: var(--text-light);
     width: 100%;
     outline: none;
-}
-
-.search-bar input::placeholder {
-    color: var(--text-faded);
-}
-
-.add-button {
-    /* Menggunakan background solid purple dari gambar */
-    background-color: var(--accent-purple);
-    color: var(--text-light);
-    border: none;
-    border-radius: 8px;
-    padding: 10px 20px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.9em;
-    transition: opacity 0.2s;
-}
-
-.add-button:hover {
-    opacity: 0.9;
-}
-
-/* Ikon Plus untuk tombol Tambah Kostum */
-.add-button .fa-plus-circle {
-    background-color: var(--text-light);
-    color: var(--accent-purple); /* Menggunakan warna tombol untuk ikon plus */
-    border-radius: 50%;
-    padding: 2px;
-    font-size: 1.1em;
 }
 
 /* --- Area Tabel Data --- */
@@ -171,16 +162,16 @@ body {
     padding-bottom: 10px;
     color: var(--text-faded);
     border-bottom: 1px solid var(--table-border);
+    font-size: 0.9em;
 }
 
 .status {
     font-weight: bold;
     color: var(--text-light);
-    text-transform: uppercase;
 }
 
 .pagination-summary {
-    font-size: 0.9em;
+    color: var(--text-light);
 }
 
 .table-wrapper {
@@ -198,7 +189,7 @@ body {
     padding: var(--table-cell-padding);
     text-align: left;
     white-space: nowrap;
-    border-right: 1px solid #202b3a; /* Border kanan antar kolom */
+    border-right: 1px solid #202b3a;
 }
 
 .data-table th {
@@ -206,48 +197,112 @@ body {
     font-size: 0.85em;
     font-weight: 500;
     text-transform: uppercase;
-    color: var(--text-light);
-    border-bottom: 2px solid var(--accent-purple); /* Garis bawah accent */
+    color: var(--text-faded);
+    border-bottom: 2px solid var(--accent-purple);
 }
 
 .data-table tbody tr {
     border-bottom: 1px solid #202b3a;
 }
 
-.data-table tbody tr:last-child {
-    border-bottom: none;
-}
-
-/* Cell khusus untuk meniru tampilan yang diberikan */
 .data-table td {
     background-color: var(--table-row-bg-odd);
-    color: var(--text-faded);
+    color: var(--text-light);
     font-size: 0.9em;
 }
 
-/* Baris pertama di body memiliki warna agak berbeda di contoh */
-.data-table tbody tr:first-child td {
-    background-color: var(--table-row-bg-highlight);
+/* --- Styling Kolom Spesifik --- */
+
+/* Kolom Nama (User) */
+.data-table td:nth-child(2) {
+    width: 250px;
+}
+
+.user-cell {
+    display: flex;
+    align-items: center;
+}
+
+.avatar {
+    color: var(--accent-purple);
+    font-size: 1.6em;
+    margin-right: 10px;
+}
+
+.user-name {
+    display: block;
+    font-weight: bold;
     color: var(--text-light);
 }
 
-/* Warna dan Ikon khusus Edit/Hapus */
-.data-table td:nth-last-child(2) { /* Edit column */
-    color: var(--accent-pink);
+.user-email {
+    display: block;
+    font-size: 0.8em;
+    color: var(--text-faded);
+}
+
+/* Kolom Perusahaan */
+.company-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.company-icon {
     font-size: 1.1em;
+}
+
+/* Warna Ikon Perusahaan */
+.company-icon.google { color: var(--color-google); }
+.company-icon.webflow { color: var(--color-webflow); }
+.company-icon.facebook { color: var(--color-facebook); }
+.company-icon.twitter { color: var(--color-twitter); }
+.company-icon.youtube { color: var(--color-youtube); }
+.company-icon.reddit { color: var(--color-reddit); }
+.company-icon.spotify { color: var(--color-spotify); }
+.company-icon.pinterest { color: var(--color-pinterest); }
+.company-icon.twitch { color: var(--color-twitch); }
+.company-icon.linkedin { color: var(--color-linkedin); }
+
+/* Status Badge */
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.status-badge.online {
+    background-color: rgba(56, 177, 124, 0.2); /* Hijau transparan */
+    color: var(--status-online);
+}
+
+.status-badge.offline {
+    background-color: rgba(93, 109, 126, 0.2); /* Abu-abu transparan */
+    color: var(--status-offline);
+}
+
+/* Kolom Aksi (Edit/Hapus) */
+.edit-icon {
+    color: var(--accent-purple);
+    margin-right: 10px;
     cursor: pointer;
 }
 
-.data-table td:last-child { /* Hapus column */
-    color: #ff6347; /* Sedikit merah/oranye untuk hapus */
+.delete-icon {
+    color: var(--text-faded);
     cursor: pointer;
-    text-transform: lowercase;
 }
 
 /* Menghapus border kanan pada kolom terakhir */
 .data-table th:last-child,
 .data-table td:last-child {
     border-right: none;
+    width: 80px;
+    text-align: center;
 }
 
 /* --- Footer/Pagination Bawah --- */
@@ -258,7 +313,7 @@ body {
     padding: 15px 0 5px 0;
     font-size: 0.9em;
     color: var(--text-faded);
-    margin-top: auto; /* Dorong ke bawah */
+    margin-top: auto;
 }
 
 .pagination-controls {

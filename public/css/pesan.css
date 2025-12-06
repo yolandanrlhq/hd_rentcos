@@ -1,0 +1,384 @@
+/* Variabel Warna (Disesuaikan dengan skema warna dashboard) */
+:root {
+    --bg-dark: #12121e;
+    --sidebar-bg: #1e1e2d;
+    --text-light: #f0f0f0;
+    --text-faded: #a0a0c0;
+    --accent-purple: #9b59b6;
+    --chat-bg: #191928; /* Warna latar belakang chat yang sedikit lebih terang */
+    --contact-active-bg: #14141e; /* Warna latar belakang kontak aktif */
+
+    /* Warna Balon Chat */
+    --bubble-received: #2a2a3e; /* Balon pesan masuk */
+    --bubble-sent: #7f6e9b; /* Balon pesan keluar (ungu) */
+    --call-button-bg: #523e7f; /* Tombol Call */
+}
+
+/* Reset Dasar (Sama seperti file-file sebelumnya) */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'poppins', sans-serif;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+/* --- Container Dashboard Utama --- */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* --- Sidebar (Menu Kiri) --- */
+.sidebar {
+    width: 250px;
+    background-color: var(--sidebar-bg);
+    padding: 20px 0;
+    flex-shrink: 0;
+}
+
+.logo {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--text-light);
+    padding: 0 20px 30px 20px;
+    text-align: left;
+}
+
+.nav-menu ul {
+    list-style: none;
+}
+
+.nav-menu li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: var(--text-faded);
+    text-decoration: none;
+    font-size: 0.95em;
+    transition: background-color 0.2s;
+}
+
+.nav-menu li a i {
+    margin-right: 15px;
+    font-size: 1.1em;
+    width: 20px;
+}
+
+/* Mengubah .active untuk Pesan */
+.nav-menu li.active a {
+    color: var(--accent-purple);
+    background-color: var(--bg-dark);
+    border-right: 5px solid var(--accent-purple);
+    font-weight: bold;
+}
+
+.nav-menu li:hover a:not(.active) {
+    background-color: #2c2c40;
+}
+
+/* --- Main Content (Area Utama Kanan) --- */
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+/* --- Message Container (Flexbox untuk Kontak dan Chat) --- */
+.message-container {
+    display: flex;
+    height: calc(100vh - 40px); /* Sesuaikan tinggi agar mengisi viewport */
+    background-color: var(--chat-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Bagian Kiri: Daftar Kontak --- */
+.contact-list-section {
+    width: 350px;
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid #2c2c40;
+    padding: 15px 0;
+    overflow-y: auto;
+}
+
+.contact-list-section .search-bar {
+    display: flex;
+    align-items: center;
+    background-color: var(--chat-bg);
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin: 0 15px 20px 15px;
+    border: 1px solid #3c3c4f;
+}
+
+.contact-list-section .search-bar input {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    width: 100%;
+    outline: none;
+}
+
+.active-users {
+    padding: 0 15px 15px 15px;
+    border-bottom: 1px solid #2c2c40;
+}
+
+.active-title {
+    font-size: 0.9em;
+    color: var(--text-faded);
+    display: block;
+    margin-bottom: 10px;
+}
+
+.active-avatars {
+    display: flex;
+    gap: 5px;
+}
+
+.active-avatar {
+    font-size: 2em;
+    color: var(--accent-purple);
+    border: 2px solid var(--accent-purple);
+    border-radius: 50%;
+}
+
+.message-counts {
+    padding: 15px;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: var(--text-light);
+    border-bottom: 1px solid #2c2c40;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    position: relative;
+    border-left: 3px solid transparent;
+}
+
+.contact-item:hover {
+    background-color: #2c2c40;
+}
+
+.contact-item.active-chat {
+    background-color: var(--contact-active-bg);
+    border-left-color: var(--accent-purple);
+}
+
+.contact-avatar {
+    font-size: 2.2em;
+    color: var(--accent-purple);
+    margin-right: 15px;
+}
+
+.contact-info {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.contact-name {
+    display: block;
+    font-weight: bold;
+    color: var(--text-light);
+}
+
+.contact-preview {
+    display: block;
+    font-size: 0.85em;
+    color: var(--text-faded);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.time-stamp {
+    font-size: 0.75em;
+    color: var(--text-faded);
+    position: absolute;
+    top: 10px;
+    right: 15px;
+}
+
+/* --- Bagian Kanan: Area Chat --- */
+.chat-area {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--chat-bg);
+    padding: 20px;
+    position: relative;
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #2c2c40;
+    margin-bottom: 15px;
+}
+
+.chat-user-info {
+    display: flex;
+    align-items: center;
+}
+
+.chat-avatar {
+    font-size: 2.5em;
+    color: var(--accent-purple);
+    margin-right: 15px;
+}
+
+.chat-user-name {
+    display: block;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.chat-user-status {
+    display: block;
+    font-size: 0.85em;
+    color: var(--text-faded);
+}
+
+.call-button {
+    background-color: var(--call-button-bg);
+    color: var(--text-light);
+    border: none;
+    border-radius: 6px;
+    padding: 10px 15px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9em;
+}
+
+.call-button i {
+    color: #38b17c; /* Icon telepon hijau */
+}
+
+.chat-body {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding-right: 10px; /* Ruang untuk scrollbar */
+    padding-bottom: 50px; /* Ruang untuk input */
+}
+
+/* Styling Pesan */
+.message {
+    display: flex;
+    margin-bottom: 15px;
+    align-items: flex-end;
+}
+
+.message-avatar {
+    font-size: 2em;
+    color: var(--accent-purple);
+    margin-right: 10px;
+}
+
+.message-content {
+    padding: 10px 15px;
+    border-radius: 12px;
+    max-width: 60%;
+    position: relative;
+}
+
+.message-content p {
+    margin: 0;
+    word-wrap: break-word;
+}
+
+.message-time {
+    font-size: 0.7em;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 5px;
+    text-align: right;
+}
+
+/* Pesan Masuk (Received) */
+.message.received {
+    justify-content: flex-start;
+}
+
+.message.received .message-content {
+    background-color: var(--bubble-received);
+    color: var(--text-light);
+    border-bottom-left-radius: 2px; /* Meniru tampilan balon chat */
+}
+
+/* Pesan Keluar (Sent) */
+.message.sent {
+    justify-content: flex-end;
+}
+
+.message.sent .message-content {
+    background-color: var(--bubble-sent);
+    color: var(--text-light);
+    margin-left: auto;
+    border-bottom-right-radius: 2px; /* Meniru tampilan balon chat */
+}
+
+/* Pesan Keluar dengan Gambar */
+.message.sent.with-image .message-content {
+    padding: 8px; /* Padding lebih kecil untuk gambar */
+}
+
+.image-placeholder {
+    width: 250px;
+    height: 150px;
+    background-color: #3e3e60;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-faded);
+    font-size: 0.9em;
+    overflow: hidden;
+}
+
+/* Input Placeholder (Disembunyikan di gambar, tetapi ditambahkan untuk kelengkapan UI) */
+.chat-input-placeholder {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    background-color: var(--bubble-received);
+    border-radius: 12px;
+}
+
+.chat-input-placeholder input {
+    flex-grow: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    color: var(--text-light);
+    outline: none;
+}
+
+.chat-input-placeholder button {
+    background-color: var(--accent-purple);
+    border: none;
+    color: var(--text-light);
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+}

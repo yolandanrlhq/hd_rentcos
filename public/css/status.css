@@ -1,0 +1,157 @@
+.status-page {
+  padding: 40px 0;
+  background: #faf8ff;
+  min-height: 80vh;
+}
+
+.status-container {
+  width: 90%;
+  max-width: 1050px;
+  margin: auto;
+}
+
+.status-container h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 26px;
+  margin-bottom: 25px;
+  color: #4d3b8c;
+}
+
+.status-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  transition: .25s;
+}
+
+.status-card:hover {
+  transform: translateY(-3px);
+}
+
+.status-left {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.status-left img {
+  width: 95px;
+  height: 95px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.status-left h3 {
+  font-size: 20px;
+  margin-bottom: 4px;
+  color: #2d246b;
+}
+
+.status-right {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.badge-menunggu { background: #ffe9a6; color: #8a6e00; }
+.badge-diproses { background: #bee1ff; color: #004d85; }
+.badge-dikirim  { background: #c9ffcb; color: #006b1b; }
+.badge-selesai  { background: #d7d7fd; color: #3d328e; }
+.badge-dibatalkan { background: #ffb6b6; color: #950808; }
+
+.btn-wrapper {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-detail,
+.btn-complete {
+  border: none;
+  padding: 8px 15px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: .2s;
+  font-weight: 600;
+}
+
+.btn-detail {
+  background: #e3ddff;
+  color: #4d3b8c;
+}
+.btn-detail:hover {
+  background: #d5ccff;
+}
+
+.btn-complete {
+  background: #5c46d1;
+  color: white;
+}
+.btn-complete:hover {
+  background: #4a38b3;
+}
+
+.no-data {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 18px;
+  color: #8073b4;
+}
+
+.status-tabs {
+    display: flex;
+    gap: 20px;
+    margin: 15px 0 25px;
+    border-bottom: 2px solid #e5e5e5;
+    padding-bottom: 10px;
+}
+
+.status-tabs a {
+    text-decoration: none;
+    padding-bottom: 6px;
+    color: #555;
+    font-weight: 500;
+}
+
+.status-tabs a.active {
+    color: #d32f2f;
+    border-bottom: 2px solid #d32f2f;
+}
+
+/* responsive */
+@media(max-width: 768px) {
+  .status-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .status-right {
+    text-align: left;
+    width: 100%;
+  }
+  .btn-wrapper {
+    flex-direction: column;
+    width: 100%;
+  }
+  .btn-wrapper button,
+  .btn-wrapper a {
+    width: 100%;
+    text-align: center;
+  }
+}

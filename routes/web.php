@@ -33,6 +33,10 @@ Route::prefix('admin')->group(function () {
     Route::get('/admin/produk/{id}/edit', [AdminProdukController::class, 'edit'])->name('admin.editProduk');
     Route::put('/admin/produk/{id}', [AdminProdukController::class, 'update'])->name('admin.produk.update');
     Route::delete('/admin/produk/{id}', [AdminProdukController::class, 'destroy'])->name('admin.produk.destroy');
+    Route::get('/jadwalEvent', [AdminController::class, 'jadwalEvent'])->name('admin.jadwalEvent');
+    Route::get('/pesanan', [AdminController::class, 'pesanan'])->name('admin.pesanan');
+    Route::get('/user', [AdminController::class, 'user'])->name('admin.user');
+    Route::get('/pesan', [AdminController::class, 'pesan'])->name('admin.pesan');
 });
 
 
@@ -51,12 +55,11 @@ Route::prefix('user')->group(function () {
     Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/delete/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
     Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
-
-    // Status rented costumes
-    Route::get('/status', [CartController::class, 'status'])->name('cart.status');
     Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout.post');
-
     Route::get('/sewa', [CartController::class, 'sewa'])->name('cart.sewa');
+    Route::get('/cart/status/{status?}', [CartController::class, 'status'])->name('cart.status');
+    Route::get('/cart/detail/{id}', [CartController::class, 'detail'])->name('cart.detail');
+    Route::post('/cart/complete/{id}', [CartController::class, 'complete'])->name('cart.complete');
 });
 
 
@@ -68,37 +71,50 @@ Route::get('/wishlist', function () {
 })->name('user.wishlist');
 
 
-//iot LED control routes
+// ===================== LED CONTROL =====================
 Route::get('/control-led', function () {
     $command = request('command');  // Mendapatkan perintah dari input teks
 
-    // Daftar perintah yang valid
     $validCommands = ['naruto', 'sasuke', 'sakura'];
 
     if (!$command || !in_array(strtolower($command), $validCommands)) {
         return view('control', ['response' => 'Invalid command! Please try again.']);
     }
 
-    $esp32_ip = 'http://192.168.1.6/control?command=' . $command;
-    $response = file_get_contents($esp32_ip);  // Mengirimkan permintaan HTTP GET ke ESP32
+    $esp32_ip = 'http://10.230.141.139/control?command=' . $command;
+    $response = file_get_contents($esp32_ip);
 
     return view('control', ['response' => $response]);
 });
 
-// Route untuk kontrol LED berdasarkan perintah yang ditentukan dalam URL (seperti tombol)
 Route::get('/control-led/{command}', function ($command) {
-    $validCommands = ['naruto', 'sasuke', 'sakura'];
+    $validCommands = ['naruto', 'sasuke', 'sakura', 'off'];
 
     if (!in_array(strtolower($command), $validCommands)) {
-        return response()->json(['response' => 'Invalid command! Please try again.']);
+        return response()->json(['response' => 'Invalid command!']);
     }
 
-    $esp32_ip = 'http://192.168.1.6/control?command=' . $command;
-    $response = file_get_contents($esp32_ip);  // Mengirimkan permintaan HTTP GET ke ESP32
+    $esp32_ip = 'http://10.230.141.139/control?command=' . $command;
+$response = file_get_contents($esp32_ip);
 
-    return response()->json(['response' => $response]);
+// ambil teks status LED saja
+preg_match('/<p><b>Status LED:<\/b>\s*(.*?)<\/p>/', $response, $matches);
+$status = $matches[1] ?? 'Status tidak diketahui';
+
+return response()->json(['response' => $status]);
+
 });
-// Route untuk pencarian kostum
+
+
+// ===================== RFID SCAN =====================
+// Endpoint baru untuk fetch data RFID dari ESP32
+Route::get('/rfid-scan', function () {
+    $esp32_ip = 'http://10.230.141.139/rfid-scan'; // endpoint Arduino JSON
+    $response = file_get_contents($esp32_ip);      // ambil data dari ESP32
+    return response()->json(json_decode($response));
+});
+
+// ===================== HALAMAN ADMIN IoT =====================
 Route::get('/admin/iot-control', function () {
     return view('admin.iotControl');
 })->name('admin.iotControl');

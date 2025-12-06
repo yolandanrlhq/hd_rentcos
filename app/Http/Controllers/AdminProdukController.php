@@ -170,4 +170,6 @@ class AdminProdukController extends Controller
             return back()->with('error', 'Gagal memperbarui produk: ' . $e->getMessage());
         }
     }
+
+    
 }

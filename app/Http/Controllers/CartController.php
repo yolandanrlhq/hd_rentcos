@@ -23,15 +23,46 @@ class CartController extends Controller
         return view('user.cart', compact('cartItems', 'total'));
     }
 
-    public function status()
-    {
-        $carts = Cart::where('user_id', Auth::id())
-                ->where('status', '!=', 'pending') // exclude pending cart
-                ->with(['items' => function($query) {
-                    $query->with('produk')->whereHas('produk');
-                }])->get();
+    public function status($status = null)
+{
+    $userId = Auth::id();
 
-        return view('user.status', compact('carts'));
+    $query = Cart::with('produk')
+        ->where('user_id', $userId)
+        ->where('status', '!=', 'pending'); // agar yang belum checkout tidak ditampilkan
+
+    if ($status && $status != 'semua') {
+        $query->where('status', $status);
+    }
+
+    $carts = $query->orderBy('updated_at', 'DESC')->get();
+
+    return view('user.status', [
+        'carts' => $carts,
+        'filter' => $status ?? 'semua'
+    ]);
+}
+
+    public function complete($id)
+    {
+        $cart = Cart::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $cart->status = 'Selesai';
+        $cart->save();
+
+        return redirect()->back()->with('success', 'Penyewaan selesai — terima kasih!');
+    }
+
+    public function detail($id)
+    {
+        $cart = Cart::with('produk')
+            ->where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        return view('user.cart', compact('cart'));
     }
 
     public function store(Request $request)
@@ -165,7 +196,14 @@ class CartController extends Controller
             ]);
 
             $cart->delivery_method = $request->input('delivery_method');
+            $cart->status = 'menunggu_konfirmasi';
             $cart->save();
+
+            $cartItems = CartItem::where('cart_id', $cart->id)->get();
+            foreach ($cartItems as $cartItem) {
+                $cartItem->is_checked_out = true;
+                $cartItem->save();
+            }
 
             // After saving shipping method, mark the rented items
             $selected = $request->query('selected', []);
@@ -212,7 +250,7 @@ class CartController extends Controller
     public function sewa(Request $request)
     {
         $cart = Cart::where('user_id', Auth::id())
-                    ->where('status', 'pending')
+                    ->where('status', 'menunggu_konfirmasi')
                     ->first();
 
         if (!$cart) {
@@ -236,6 +274,6 @@ class CartController extends Controller
             return redirect()->route('cart.index')->with('error', 'Item yang dipilih tidak ditemukan.');
         }
 
-        return view('user.sections.sewa', compact('items'));
+        return view('user.sewa', compact('items'));
     }
 }

@@ -1,34 +1,16 @@
-<div class="container">
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <h2 class="logo">HDRENTCOS</h2>
-    <nav>
-      <ul>
-        <li class="{{ request()->is('admin/dashboard') ? 'active' : '' }}">
-          <span>🏠</span> <a href="{{ route('admin.dashboard') }}">Dasbor</a>
-        </li>
-        <li>
-          <span>📦</span>
-          <a href="{{ route('admin.produk') }}" class="{{ request()->routeIs('admin.produk') ? 'active' : '' }}">Produk</a>
-        </li>
-        <li><span>🎉</span> <a href="#">Event</a></li>
-        <li><span>🧾</span> <a href="#">Pesanan</a></li>
-        <li><span>👤</span> <a href="#">User</a></li>
-
-        <!-- Menu Pencarian Kostum -->
-        <li>
-          <span>🔎</span>
-          <a href="{{ route('admin.iotControl') }}" class="{{ request()->routeIs('admin.iotControl') ? 'active' : '' }}">Pencarian Kostum</a>
-        </li>
-
-        <li>
-          <span>🔒</span>
-          <form method="POST" action="{{ route('admin.logout') }}">
-            @csrf
-            <button type="submit" style="background:none;border:none;color:inherit;cursor:pointer;">Logout</button>
-          </form>
-        </li>
-      </ul>
-    </nav>
-  </aside>
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <h1 class="logo">HDRENTCOS</h1>
+            <nav class="nav-menu">
+                <ul>
+                    <li class="{{ request()->is('admin/dashboard') ? 'active' : '' }}"><a href="{{ route('admin.dashboard') }}"><i class="fas fa-home"></i> Dasbor</a></li>
+                    <li class="{{ request()->routeIs('admin.produk') ? 'active' : '' }}"><a href="{{ route('admin.produk') }}"><i class="fas fa-box"></i> Produk</a></li>
+                    <li class="{{ request()->routeIs('admin.jadwalEvent') ? 'active' : '' }}"><a href="{{ route('admin.jadwalEvent') }}"><i class="fas fa-calendar-alt"></i> Event</a></li>
+                    <li class="{{ request()->routeIs('admin.pesanan') ? 'active' : '' }}"><a href="{{ route('admin.pesanan') }}"><i class="fas fa-file-alt"></i> Pesanan</a></li>
+                    <li class="{{ request()->routeIs('admin.user') ? 'active' : '' }}"><a href="{{ route('admin.user') }}"><i class="fas fa-user-friends"></i> User</a></li>
+                    <li class="{{ request()->routeIs('admin.pesan') ? 'active' : '' }}"><a href="{{ route('admin.pesan') }}"><i class="fas fa-envelope"></i> Pesan</a></li>
+                    <li class="{{ request()->routeIs('admin.produk') ? 'active' : '' }}"><a href="{{ route('admin.produk') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+    </aside>
 </div>
