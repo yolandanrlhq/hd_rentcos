@@ -7,6 +7,8 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Produk;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Sewa;
+use App\Models\SewaItem;
 
 class CartController extends Controller
 {
@@ -24,24 +26,24 @@ class CartController extends Controller
     }
 
     public function status($status = null)
-{
-    $userId = Auth::id();
+    {
+        $userId = Auth::id();
 
-    $query = Cart::with('produk')
-        ->where('user_id', $userId)
-        ->where('status', '!=', 'pending'); // agar yang belum checkout tidak ditampilkan
+        $query = Sewa::with('items.produk')
+            ->where('user_id', $userId)
+            ->where('status', '!=', 'pending');
 
-    if ($status && $status != 'semua') {
-        $query->where('status', $status);
+        if ($status && $status != 'semua') {
+            $query->where('status', $status);
+        }
+
+        $sewas = $query->orderBy('updated_at', 'DESC')->get();
+
+        return view('user.status', [
+            'sewas' => $sewas,
+            'filter' => $status ?? 'semua'
+        ]);
     }
-
-    $carts = $query->orderBy('updated_at', 'DESC')->get();
-
-    return view('user.status', [
-        'carts' => $carts,
-        'filter' => $status ?? 'semua'
-    ]);
-}
 
     public function complete($id)
     {
@@ -180,6 +182,48 @@ class CartController extends Controller
 
     public function checkout(Request $request)
     {
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        $cart = Cart::where('user_id', Auth::id())
+                    ->where('status', 'pending')
+                    ->first();
+
+        if (!$cart) {
+            return redirect()->route('cart.index')->with('error', 'Keranjang tidak ditemukan.');
+        }
+
+        $selected = $request->query('selected', []);
+
+        if (empty($selected)) {
+            return redirect()->route('cart.index')->with('error', 'Pilih minimal satu produk sebelum checkout.');
+        }
+
+        $selectedArray = is_array($selected) ? $selected : explode(',', $selected);
+
+        $items = CartItem::with('produk')
+            ->where('cart_id', $cart->id)
+            ->whereIn('id', $selectedArray)
+            ->get();
+
+        if ($items->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Item yang dipilih tidak ditemukan.');
+        }
+
+        $total = $items->sum(fn($i) => $i->harga_satuan * $i->jumlah);
+
+        return view('user.checkout', compact('cart', 'items', 'total', 'selectedArray'));
+    }
+
+
+    public function sewa(Request $request)
+    {
+        $request->validate([
+            'delivery_method' => 'required|string',
+            'selected' => 'required|array'
+        ]);
+
         $cart = Cart::where('user_id', Auth::id())
                     ->where('status', 'pending')
                     ->first();
@@ -188,92 +232,66 @@ class CartController extends Controller
             return redirect()->route('cart.index')->with('error', 'Keranjang kosong.');
         }
 
-        $validDeliveryMethods = ['cod', 'ambil_ditempat', 'antar_ke_rumah', 'via_ekspedisi'];
+        $items = CartItem::with('produk')
+            ->where('cart_id', $cart->id)
+            ->whereIn('id', $request->selected)
+            ->get();
 
-        if ($request->isMethod('post')) {
-            $request->validate([
-                'delivery_method' => ['required', 'string', 'in:' . implode(',', $validDeliveryMethods)]
+        if ($items->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Produk tidak ditemukan.');
+        }
+
+        // hitung total harga
+        $totalHarga = $items->sum(fn($i) => $i->harga_satuan * $i->jumlah);
+
+        // 1️⃣ Buat data di tabel sewa
+        $sewa = Sewa::create([
+            'user_id' => Auth::id(),
+            'status' => 'menunggu_konfirmasi',
+            'tanggal_sewa' => now(),
+            'tanggal_kembali' => null,
+            'total_harga' => $totalHarga
+        ]);
+
+        // 2️⃣ Insert ke tabel sewa_items + kurangi stok produk
+        foreach ($items as $i) {
+
+            // buat sewa item
+            SewaItem::create([
+                'sewa_id' => $sewa->id,
+                'produk_id' => $i->id_produk,
+                'ukuran' => $i->ukuran,
+                'jumlah' => $i->jumlah,
+                'harga_satuan' => $i->harga_satuan,
+                'subtotal' => $i->harga_satuan * $i->jumlah
             ]);
 
-            $cart->delivery_method = $request->input('delivery_method');
-            $cart->status = 'menunggu_konfirmasi';
-            $cart->save();
+            // KURANGI STOK BERDASARKAN UKURAN
+            if ($i->ukuran) {
+                // decrement stok di ukuran_produk
+                \DB::table('ukuran_produk')
+                    ->where('id_produk', $i->id_produk)
+                    ->where('nama_ukuran', $i->ukuran)
+                    ->decrement('stok', $i->jumlah);
 
-            $cartItems = CartItem::where('cart_id', $cart->id)->get();
-            foreach ($cartItems as $cartItem) {
-                $cartItem->is_checked_out = true;
-                $cartItem->save();
+                // reload produk dari DB untuk update stok total
+                $produk = Produk::find($i->id_produk);
+                $produk->updateStokTotal(); // update stok_produk = sum(stok ukuran)
+            } else {
+                // tanpa ukuran → decrement stok_produk langsung
+                $i->produk->decrement('stok_produk', $i->jumlah);
             }
-
-            // After saving shipping method, mark the rented items
-            $selected = $request->query('selected', []);
-            $selectedArray = is_array($selected) ? $selected : explode(',', $selected);
-
-            // Update ukuran_produk is_rented to true for each selected cart item ukuran
-            $cartItems = \App\Models\CartItem::where('cart_id', $cart->id)
-                ->whereIn('id', $selectedArray)
-                ->get();
-
-            foreach ($cartItems as $cartItem) {
-                if ($cartItem->ukuran) {
-                    \DB::table('ukuran_produk')
-                        ->where('id_produk', $cartItem->id_produk)
-                        ->where('nama_ukuran', $cartItem->ukuran)
-                        ->update(['is_rented' => true]);
-                }
-            }
-
-            return redirect()->route('cart.sewa', ['selected' => implode(',', $selectedArray)]);
         }
 
-        // if selected ids are provided (from cart page), only include those items
-        $selected = $request->query('selected', []);
+        // 3️⃣ Hapus item dari cart (yang di-checkout saja)
+        CartItem::whereIn('id', $request->selected)->delete();
 
-        if (empty($selected)) {
-            // no selected items — require user to pick at least one from cart
-            return redirect()->route('cart.index')->with('error', 'Pilih minimal satu produk sebelum checkout.');
-        }
+        // 4️⃣ Update cart status (bukan pending lagi)
+        $cart->status = 'menunggu_konfirmasi';
+        $cart->delivery_method = $request->delivery_method;
+        $cart->save();
 
-        // load only items that belong to this cart and were selected
-        $items = \App\Models\CartItem::where('cart_id', $cart->id)
-                    ->whereIn('id', (array) $selected)
-                    ->with('produk')
-                    ->get();
-
-        if ($items->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Item terpilih tidak ditemukan di keranjang Anda.');
-        }
-
-        return view('user.checkout', compact('cart', 'items'));
-    }
-
-    public function sewa(Request $request)
-    {
-        $cart = Cart::where('user_id', Auth::id())
-                    ->where('status', 'menunggu_konfirmasi')
-                    ->first();
-
-        if (!$cart) {
-            return redirect()->route('cart.index')->with('error', 'Keranjang kosong.');
-        }
-
-        $selected = $request->query('selected', []);
-
-        if (empty($selected)) {
-            return redirect()->route('cart.index')->with('error', 'Tidak ada produk yang dipilih.');
-        }
-
-        $selectedArray = is_array($selected) ? $selected : explode(',', $selected);
-
-        $items = \App\Models\CartItem::where('cart_id', $cart->id)
-                    ->whereIn('id', $selectedArray)
-                    ->with('produk')
-                    ->get();
-
-        if ($items->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Item yang dipilih tidak ditemukan.');
-        }
-
-        return view('user.sewa', compact('items'));
+        return redirect()->route('cart.status')
+            ->with('success', 'Checkout berhasil! Silakan tunggu konfirmasi admin.');
     }
 }

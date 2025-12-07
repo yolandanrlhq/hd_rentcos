@@ -7,13 +7,10 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
-    /**
-     * Halaman dashboard admin
-     */
     public function index()
     {
         // Cek user login dan role
-        $user = Auth::user(); // VSCode/Intelephense akan mengenali User
+        $user = Auth::user();
         if (!$user || $user->role !== 'admin') {
             abort(403, 'Akses ditolak.');
         }
@@ -21,9 +18,6 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('user'));
     }
 
-    /**
-     * Contoh halaman manajemen user (opsional)
-     */
     public function manageUsers()
     {
         $user = Auth::user();

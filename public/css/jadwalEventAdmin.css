@@ -36,7 +36,7 @@ body {
 
 /* --- Sidebar (Menu Kiri) --- */
 .sidebar {
-    width: 250px;
+    width: 210px;
     background-color: var(--sidebar-bg);
     padding: 20px 0;
     flex-shrink: 0;
@@ -221,27 +221,29 @@ body {
     border-bottom: none;
 }
 
-/* Cell body styling */
 .data-table td {
     background-color: var(--table-row-bg-odd);
     color: var(--text-faded);
     font-size: 0.9em;
 }
 
-/* Baris pertama di body memiliki warna agak berbeda di contoh */
+.data-table td.tempat-event {
+    max-width: 200px;
+    white-space: normal;
+    word-break: break-word;
+}
+
 .data-table tbody tr:first-child td {
     background-color: var(--table-row-bg-highlight);
     color: var(--text-light);
 }
 
-/* Kolom 'edit' memiliki warna pink/accent */
 .data-table td:last-child {
     color: var(--accent-pink);
     font-size: 1.1em;
     cursor: pointer;
 }
 
-/* Menghapus border kanan pada kolom terakhir */
 .data-table th:last-child,
 .data-table td:last-child {
     border-right: none;

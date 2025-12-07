@@ -10,6 +10,9 @@
 @include('user.sections.header')
 
 <main class="status-page">
+    {{-- <pre>
+        {{ dd($sewas->toArray()) }}
+    </pre> --}}
     <div class="status-container">
         <h2><i class="fas fa-truck"></i> Status Penyewaan</h2>
 
@@ -21,43 +24,38 @@
             <a href="{{ route('cart.status', ['status' => 'dibatalkan']) }}" class="{{ $filter == 'dibatalkan' ? 'active' : '' }}">Dibatalkan</a>
         </div>
 
-        {{-- Filter: tampilkan hanya yang masih memiliki produk --}}
-        @php
-            $validCarts = $carts->filter(fn($c) => $c->produk != null);
-        @endphp
+        @forelse ($sewas as $sewa)
+            @foreach($sewa->items as $item)
+            <div class="status-card">
+                <div class="status-left">
+                    <img src="{{ $item->produk ? asset('storage/' . $item->produk->foto) : asset('storage/default.jpg') }}" alt="">
+                    <div>
+                        <h3>{{ optional($item->produk)->nama_produk ?? 'Produk tidak tersedia' }}</h3>
+                        <p>Ukuran: <strong>{{ $item->ukuran }}</strong></p>
+                        <p>Jumlah: <strong>{{ $item->jumlah }}</strong></p>
+                        <p>Tanggal Sewa: <strong>{{ $sewa->tanggal_sewa }}</strong></p>
+                        <p>Total: <strong>Rp{{ number_format($item->subtotal, 0, ',', '.') }}</strong></p>
+                    </div>
+                </div>
 
-        @forelse ($validCarts as $item)
-        <div class="status-card">
-            <div class="status-left">
-                <img src="{{ asset('storage/' . $item->produk->foto) }}" alt="">
+                <div class="status-right">
+                    <span class="badge badge-{{ strtolower($sewa->status) }}">
+                        {{ ucfirst($sewa->status) }}
+                    </span>
 
-                <div>
-                    <h3>{{ $item->produk->nama_produk }}</h3>
-                    <p>Ukuran: <strong>{{ $item->ukuran }}</strong></p>
-                    <p>Tanggal Sewa: <strong>{{ $item->tanggal_sewa }}</strong></p>
-                    <p>Total: <strong>Rp{{ number_format($item->total,0,',','.') }}</strong></p>
+                    <div class="btn-wrapper">
+                        <a href="{{ route('cart.detail', $sewa->id) }}" class="btn-detail">Detail</a>
+
+                        @if(strtolower($sewa->status) === 'dikirim')
+                            <form action="{{ route('cart.complete', $sewa->id) }}" method="POST">
+                                @csrf
+                                <button class="btn-complete">Barang Diterima</button>
+                            </form>
+                        @endif
+                    </div>
                 </div>
             </div>
-
-            <div class="status-right">
-                <span class="badge badge-{{ strtolower($item->status) }}">
-                    {{ $item->status }}
-                </span>
-
-                <div class="btn-wrapper">
-                    <a href="{{ route('cart.detail', $item->id) }}" class="btn-detail">Detail</a>
-
-                    @if(strtolower($item->status) === 'dikirim')
-                        <form action="{{ route('cart.complete', $item->id) }}" method="POST">
-                            @csrf
-                            <button class="btn-complete">
-                                Barang Diterima
-                            </button>
-                        </form>
-                    @endif
-                </div>
-            </div>
-        </div>
+            @endforeach
         @empty
             <p class="no-data">Belum ada riwayat penyewaan.</p>
         @endforelse

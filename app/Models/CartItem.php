@@ -19,12 +19,16 @@ class CartItem extends Model
 
     public function produk()
     {
-        // FK: cart_items.id_produk -> produk.id_produk
-        return $this->belongsTo(Produk::class, 'id_produk');
+        return $this->belongsTo(Produk::class, 'id_produk', 'id_produk');
     }
 
     public function cart()
     {
         return $this->belongsTo(Cart::class);
+    }
+
+    public function getSubtotalAttribute()
+    {
+        return $this->harga_satuan * $this->jumlah;
     }
 }

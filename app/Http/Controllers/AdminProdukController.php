@@ -12,7 +12,7 @@ class AdminProdukController extends Controller
 {
     public function produk()
     {
-        $produk = Produk::with(['kategori', 'ukuran'])->get();
+        $produk = Produk::with(['kategori', 'ukuran'])->paginate(10);
         return view('admin.produk', compact('produk'));
     }
 
@@ -119,19 +119,23 @@ class AdminProdukController extends Controller
                 'deskripsi' => $validated['deskripsi'] ?? null,
             ]);
 
-            // Hapus ukuran lama dan simpan ukuran baru jika ada
-            $produk->ukuran()->delete();
-
+            // UPDATE / INSERT ukuran per produk
             if ($request->has('ukuran')) {
                 foreach ($request->ukuran as $ukuran) {
                     if (!empty($ukuran['nama_ukuran'])) {
-                        UkuranProduk::create([
-                            'id_produk' => $produk->id_produk,
-                            'nama_ukuran' => $ukuran['nama_ukuran'],
-                            'stok' => $ukuran['stok'] ?? 0,
-                        ]);
+                        UkuranProduk::updateOrCreate(
+                            [
+                                'id_produk' => $produk->id_produk,
+                                'nama_ukuran' => $ukuran['nama_ukuran'],
+                            ],
+                            [
+                                'stok' => $ukuran['stok'] ?? 0,
+                            ]
+                        );
                     }
                 }
+
+                $produk->updateStokTotal();
             }
 
             // Jika ada foto baru, hapus foto lama dulu lalu simpan foto baru
@@ -171,5 +175,5 @@ class AdminProdukController extends Controller
         }
     }
 
-    
+
 }

@@ -1,0 +1,110 @@
+/* Reset sedikit style dasar */
+.event-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+}
+
+.event-container h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #4b4bff;
+    position: relative;
+}
+
+.event-container h2::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: #4b4bff;
+    margin: 8px auto 0;
+    border-radius: 2px;
+}
+
+.event-card {
+    display: flex;
+    flex-wrap: wrap;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.event-info {
+    flex: 1;
+    padding: 1.5rem;
+    min-width: 250px;
+}
+
+.event-info h3 {
+    padding-left: 10px;
+    margin-bottom: 1rem;
+    color: #222;
+}
+
+.event-details p {
+    padding-left: 10px;
+    margin: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    color: #555;
+}
+
+.event-details p i {
+    margin-right: 0.7rem;
+    color: #4b4bff;
+}
+
+.event-image {
+    flex: 1;
+    min-width: 200px;       /* ubah kalau mau lebih besar */
+    max-width: 240px;       /* ubah kalau mau lebih besar */
+    border-radius: 8px;     /* sudut melengkung */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+.event-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;       /* gambar memenuhi kotak proporsional */
+    border-radius: 8px;     /* sudut melengkung sama seperti kotak */
+}
+
+.img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #4b4bff, #d9489f);
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .event-card {
+        flex-direction: column;
+    }
+
+    .event-image {
+        max-width: 100%;
+        height: 200px; /* bisa diubah lebih besar/kecil */
+    }
+}

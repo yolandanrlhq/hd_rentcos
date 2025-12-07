@@ -1,17 +1,18 @@
 :root {
   --bg: #f8f8f9;
-  --card-bg: linear-gradient(180deg, rgba(0,0,0,0.06), rgba(0,0,0,0.18));
+  --card-bg: rgba(0,0,0,0.04);
   --accent: #ffcc00;
   --muted: #6b7280;
   --text: #111827;
-  --radius: 12px;
+  --radius: 14px;
   --container-w: 1200px;
+  --transition: 0.25s ease;
 }
 
 .products-section {
   background: var(--bg);
-  padding: 40px 16px 80px;
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  padding:40px 16px 100px;
+  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   color: var(--text);
 }
 
@@ -21,43 +22,61 @@
 }
 
 .section-title {
-  font-size: 20px;
-  margin: 0 0 20px;
-  font-weight: 700;
-  letter-spacing: -0.2px;
+    text-align: center;
+    font-size: 24px;
+    position: relative;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    color: #4b4bff;
 }
 
+.section-title::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: #4b4bff;
+    margin: 8px auto 0;
+    margin-bottom: 40px;
+    border-radius: 2px;
+}
+
+/* Products Grid */
 .products-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 28px;
+  gap: 30px;
 }
 
 /* Responsive breakpoints */
 @media (max-width: 1100px) {
-  .products-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .products-grid { grid-template-columns: repeat(3, 1fr); gap: 25px; }
 }
 @media (max-width: 800px) {
-  .products-grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .products-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
 }
 @media (max-width: 480px) {
-  .products-grid { grid-template-columns: 1fr; gap: 14px; }
+  .products-grid { grid-template-columns: 1fr; gap: 16px; }
 }
 
+/* Product Card */
 .product-card {
-  background: white;
+  background: #fff;
   border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: 0 6px 18px rgba(16,24,40,0.06);
-  transition: transform .18s ease, box-shadow .18s ease;
+  box-shadow: 0 4px 12px rgba(16,24,40,0.08);
+  transition: transform var(--transition), box-shadow var(--transition);
   display: flex;
   flex-direction: column;
-}
-.product-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 40px rgba(16,24,40,0.12);
+  cursor: pointer;
 }
 
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(16,24,40,0.15);
+}
+
+/* Image */
 .img-wrap {
   background: var(--card-bg);
   height: 220px;
@@ -65,36 +84,52 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden; /* 🔥 penting biar gambar ga keluar kotak */
+  overflow: hidden;
   border-bottom: 1px solid rgba(0,0,0,0.05);
+  transition: background var(--transition);
+}
+
+.product-card:hover .img-wrap {
+  background: rgba(0,0,0,0.06);
 }
 
 .img-wrap img {
   width: 100%;
   height: 100%;
-  object-fit: contain; /* 🔥 menjaga proporsi gambar */
+  object-fit: contain;
   display: block;
-  border-radius: 0; /* biar ga ikut radius parent */
+  transition: transform var(--transition);
 }
 
+.product-card:hover .img-wrap img {
+  transform: scale(1.05);
+}
+
+/* Card Body */
 .card-body {
   padding: 16px 14px 18px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .product-title {
-  font-size: 14px;
+  font-size: 15px;
   margin: 0;
   font-weight: 700;
   color: var(--text);
+  transition: color var(--transition);
 }
 
+.product-card:hover .product-title {
+  color: var(--accent);
+}
+
+/* Rating */
 .rating {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-size: 13px;
   color: var(--muted);
 }
@@ -110,8 +145,9 @@
   color: var(--muted);
 }
 
+/* Price */
 .price-row {
-  margin-top: 6px;
+  margin-top: 8px;
   display: flex;
   align-items: baseline;
   gap: 10px;
@@ -119,7 +155,7 @@
 
 .price {
   font-weight: 800;
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .duration {
@@ -127,7 +163,16 @@
   color: var(--muted);
 }
 
+/* Links */
 .product-card a {
   color: inherit;
   text-decoration: none;
+  transition: color var(--transition);
+}
+
+/* Responsif kecil */
+@media (max-width: 480px) {
+  .product-title { font-size: 14px; }
+  .price { font-size: 15px; }
+  .img-wrap { height: 180px; }
 }

@@ -5,6 +5,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminProdukController;
 use App\Http\Controllers\UserProdukController;
+use App\Http\Controllers\EventUserController;
+use App\Http\Controllers\EventAdminController;
 use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Cache;
@@ -31,10 +33,15 @@ Route::prefix('admin')->group(function () {
     Route::get('/produk', [AdminProdukController::class, 'produk'])->name('admin.produk');
     Route::get('/produk/create', [AdminProdukController::class, 'create'])->name('admin.create');
     Route::post('/produk', [AdminProdukController::class, 'store'])->name('admin.produk.store');
-    Route::get('/admin/produk/{id}/edit', [AdminProdukController::class, 'edit'])->name('admin.editProduk');
-    Route::put('/admin/produk/{id}', [AdminProdukController::class, 'update'])->name('admin.produk.update');
-    Route::delete('/admin/produk/{id}', [AdminProdukController::class, 'destroy'])->name('admin.produk.destroy');
-    Route::get('/jadwalEvent', [AdminController::class, 'jadwalEvent'])->name('admin.jadwalEvent');
+    Route::get('/produk/{id}/edit', [AdminProdukController::class, 'edit'])->name('admin.editProduk');
+    Route::put('/produk/{id}', [AdminProdukController::class, 'update'])->name('admin.produk.update');
+    Route::delete('/produk/{id}', [AdminProdukController::class, 'destroy'])->name('admin.produk.destroy');
+    Route::get('/event', [EventAdminController::class, 'index'])->name('admin.event.index');
+    Route::get('/event/create', [EventAdminController::class, 'create'])->name('admin.event.create');
+    Route::post('/event', [EventAdminController::class, 'store'])->name('admin.event.store');
+    Route::get('/event/{id}/edit', [EventAdminController::class, 'edit'])->name('admin.event.edit');
+    Route::put('/event/{id}', [EventAdminController::class, 'update'])->name('admin.event.update');
+    Route::delete('/event/{id}', [EventAdminController::class, 'destroy'])->name('admin.event.destroy');
     Route::get('/pesanan', [AdminController::class, 'pesanan'])->name('admin.pesanan');
     Route::get('/user', [AdminController::class, 'user'])->name('admin.user');
     Route::get('/pesan', [AdminController::class, 'pesan'])->name('admin.pesan');
@@ -51,22 +58,18 @@ Route::prefix('user')->group(function () {
     Route::put('/update-profile', [UserController::class, 'updateProfile'])->name('user.updateProfile');
     Route::get('/produk', [UserProdukController::class, 'index'])->name('user.produk');
     Route::get('/produk/{id}', [UserProdukController::class, 'show'])->name('user.produk.show');
+    Route::get('/jadwal-event', [EventUserController::class, 'index'])->name('user.jadwalEvent');
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart', [CartController::class, 'store'])->name('cart.store');
     Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/delete/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
     Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
     Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout.post');
-    Route::get('/sewa', [CartController::class, 'sewa'])->name('cart.sewa');
+    Route::post('/sewa', [CartController::class, 'sewa'])->name('cart.sewa');
     Route::get('/cart/status/{status?}', [CartController::class, 'status'])->name('cart.status');
     Route::get('/cart/detail/{id}', [CartController::class, 'detail'])->name('cart.detail');
     Route::post('/cart/complete/{id}', [CartController::class, 'complete'])->name('cart.complete');
 });
-
-
-Route::get('/jadwalEvent', function () {
-    return view('user.jadwalEvent');
-})->name('user.jadwalEvent');
 Route::get('/wishlist', function () {
     return view('user.wishlist');
 })->name('user.wishlist');

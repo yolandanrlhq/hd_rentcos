@@ -36,7 +36,7 @@ body {
 
 /* --- Sidebar (Menu Kiri) --- */
 .sidebar {
-    width: 250px;
+    width: 210px;
     background-color: var(--sidebar-bg);
     padding: 20px 0;
     flex-shrink: 0;

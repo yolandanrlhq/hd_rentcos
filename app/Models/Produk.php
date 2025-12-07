@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\ProdukFoto;
+use App\Models\Sewa;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,42 +17,43 @@ class Produk extends Model
     protected $fillable = [
         'nama_produk',
         'harga_produk',
-        'stok_produk', // stok total (opsional)
+        'stok_produk',
         'foto',
         'id_kategori',
         'rating',
         'deskripsi',
     ];
 
-    /**
-     * Relasi ke kategori produk.
-     */
     public function kategori()
     {
         return $this->belongsTo(Kategori::class, 'id_kategori');
     }
 
-    /**
-     * Relasi ke ukuran produk (misal S, M, L, XL)
-     */
     public function ukuran()
     {
         return $this->hasMany(UkuranProduk::class, 'id_produk');
     }
 
-    /**
-     * Relasi ke foto produk (multiple photos)
-     */
     public function fotos()
     {
         return $this->hasMany(ProdukFoto::class, 'id_produk');
     }
 
-    /**
-     * Hitung stok total dari semua ukuran
-     */
     public function getTotalStokAttribute()
     {
-        return $this->ukuranProduk->sum('stok');
+        return $this->ukuran->sum('stok');
+    }
+
+    public function sewa()
+    {
+        return $this->hasMany(Sewa::class, 'produk_id', 'id_produk');
+    }
+
+    public function updateStokTotal()
+    {
+        // Hitung total stok dari semua ukuran
+        $total = $this->ukuran()->sum('stok');
+        $this->stok_produk = $total;
+        $this->save();
     }
 }

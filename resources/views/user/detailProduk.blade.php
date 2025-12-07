@@ -46,54 +46,6 @@
             @endif
         </div>
 
-        <style>
-            .slider-container {
-            position: relative;
-            max-width: 400px;
-            }
-            #mainPhoto {
-            width: 100%;
-            height: auto;
-            }
-            .slider-controls {
-            position: absolute;
-            top: 50%;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            transform: translateY(-50%);
-            pointer-events: none;
-            }
-            .slider-controls button {
-            background-color: rgba(0,0,0,0.3);
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            pointer-events: all;
-            padding: 5px 10px;
-            }
-            .thumbnail-container {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            margin-top: 8px;
-            }
-            .thumbnail {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            cursor: pointer;
-            opacity: 0.7;
-            border: 2px solid transparent;
-            border-radius: 4px;
-            }
-            .thumbnail.active {
-            opacity: 1;
-            border-color: #007bff;
-            }
-        </style>
-
         <script>
             document.addEventListener('DOMContentLoaded', function () {
             const mainPhoto = document.getElementById('mainPhoto');
@@ -190,6 +142,8 @@
                 @endforeach
             </div>
 
+            <div id="infoStok" class="info-stok"></div>
+
             <!-- Tambah ke Keranjang -->
             <form id="cartForm" action="{{ route('cart.store') }}" method="POST">
                 @csrf
@@ -276,6 +230,7 @@
     const plusBtn = document.getElementById('plusBtn');
     const minusBtn = document.getElementById('minusBtn');
     const qtyInput = document.getElementById('selectedQty');
+    const infoStok = document.getElementById('infoStok');
 
     let selectedSize = null;
     let maxStok = 0;
@@ -322,6 +277,13 @@
         qty = 1;
         qtyDisplay.textContent = qty;
         qtyInput.value = qty;
+
+        infoStok.textContent = `Stok tersedia: ${maxStok} pcs`;
+        if (maxStok <= 2) {
+            infoStok.style.color = "#e11d48"; // merah
+        } else {
+            infoStok.style.color = "#10b981"; // hijau
+        }
 
         // Update tombol
         updatePlusButton();

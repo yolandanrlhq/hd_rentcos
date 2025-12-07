@@ -34,7 +34,7 @@ body {
 
 /* --- Sidebar --- */
 .sidebar {
-    width: 250px;
+    width: 210px;
     background-color: var(--sidebar-bg);
     padding: 20px 0;
     flex-shrink: 0;
@@ -208,6 +208,7 @@ body {
 .data-table td {
     color: var(--text-faded);
     font-size: 0.9em;
+    color: white;
     transition: .25s;
 }
 
@@ -298,4 +299,51 @@ tbody tr:nth-child(even) {
 .hapus-form {
     display: flex;
     align-items: center;
+}
+
+/* ===== Custom Pagination Table ===== */
+.pagination-wrapper {
+    font-size: 0.85em;
+    color: var(--text-light);
+}
+
+.table-count {
+    font-weight: 500;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.row-count {
+    background-color: var(--table-header-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.nav-button {
+    background-color: var(--table-header-bg);
+    border: none;
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.25s;
+}
+
+.nav-button:hover:not(.disabled) {
+    background-color: var(--accent-purple);
+    color: #fff;
+}
+
+.nav-button.disabled {
+    opacity: 0.5;
+    cursor: default;
 }

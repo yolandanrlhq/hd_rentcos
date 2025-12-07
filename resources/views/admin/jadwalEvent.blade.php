@@ -3,7 +3,7 @@
 @section('title', 'Dashboard Admin')
 
 @section('extra-css')
-<link rel="stylesheet" href="{{ asset('css/jadwalEvent.css') }}">
+<link rel="stylesheet" href="{{ asset('css/jadwalEventAdmin.css') }}">
 @endsection
 
 @section('content')
@@ -16,54 +16,90 @@
                     <i class="fas fa-search"></i>
                     <input type="text" placeholder="Search for...">
                 </div>
-                <button class="add-button">
+                <a href="{{ route('admin.event.create') }}" class="add-button">
                     Tambah Event
                     <i class="fas fa-plus-circle"></i>
-                </button>
+                </a>
             </header>
 
             <section class="data-table-section">
                 <div class="table-info">
                     <span class="status">semua event</span>
-                    <span class="pagination-summary">1-25 of 200</span>
+
                 </div>
                 <div class="table-wrapper">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>id_event</th>
-                                <th>nama_event</th>
-                                <th>tempat_event</th>
-                                <th>tgl_event</th>
+                                <th>id</th>
+                                <th>nama</th>
+                                <th>tempat</th>
+                                <th>tgl</th>
                                 <th>htm</th>
-                                <th>kontak_panitia</th>
-                                <th>edit</th>
+                                <th>kontak</th>
+                                <th>foto</th>
+                                <th>aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>EVT-012</td>
-                                <td>Big Cosplay Bash</td>
-                                <td>Mega Hall</td>
-                                <td>2026-06-19</td>
-                                <td>Rp 150.000</td>
-                                <td>+6281xxxxxx</td>
-                                <td><i class="fas fa-pen"></i></td>
-                            </tr>
+                        @foreach($events as $event)
+                        <tr>
+                            <td>{{ $event->id_event }}</td>
+                            <td>{{ $event->nama_event }}</td>
+                            <td class="tempat-event">{{ $event->tempat_event }}</td>
+                            <td>{{ date('Y-m-d', strtotime($event->tgl_event)) }}</td>
+                            <td>{{ $event->htm }}</td>
+                            <td>{{ $event->kontak_panitia }}</td>
+                            <td>
+                                @if($event->gambar)
+                                <img src="{{ asset('storage/'.$event->gambar) }}" width="50" alt="{{ $event->gambar }}">
+                                @else
+                                Tidak ada
+                                @endif
+                            </td>
+                            <td>
+                                <!-- Edit -->
+                                <a href="{{ route('admin.event.edit', $event->id_event) }}">
+                                    <i class="fas fa-pen"></i>
+                                </a>
+
+                                <!-- Delete -->
+                                <form action="{{ route('admin.event.destroy', $event->id_event) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn-delete" onclick="return confirm('Yakin hapus event ini?')">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        @endforeach
                         </tbody>
                     </table>
                 </div>
             </section>
 
-            <footer class="main-footer">
-                <span class="table-count">1-10 of 460</span>
+            <div class="pagination-wrapper" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                <span class="table-count">
+                    {{ $events->firstItem() ?? 0 }}-{{ $events->lastItem() ?? 0 }} of {{ $events->total() }}
+                </span>
                 <div class="pagination-controls">
                     <span>Rows per page:</span>
-                    <span class="row-count">10</span>
-                    <button class="nav-button"><i class="fas fa-angle-left"></i></button>
-                    <button class="nav-button"><i class="fas fa-angle-right"></i></button>
+                    <span class="row-count">{{ $events->perPage() }}</span>
+
+                    @if($events->onFirstPage())
+                        <button class="nav-button disabled"><i class="fas fa-angle-left"></i></button>
+                    @else
+                        <a href="{{ $events->previousPageUrl() }}" class="nav-button"><i class="fas fa-angle-left"></i></a>
+                    @endif
+
+                    @if($events->hasMorePages())
+                        <a href="{{ $events->nextPageUrl() }}" class="nav-button"><i class="fas fa-angle-right"></i></a>
+                    @else
+                        <button class="nav-button disabled"><i class="fas fa-angle-right"></i></button>
+                    @endif
                 </div>
-            </footer>
+            </div>
     </main>
 </div>
 @endsection
