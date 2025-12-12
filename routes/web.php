@@ -8,6 +8,7 @@ use App\Http\Controllers\UserProdukController;
 use App\Http\Controllers\EventUserController;
 use App\Http\Controllers\EventAdminController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
@@ -43,10 +44,13 @@ Route::prefix('admin')->group(function () {
     Route::put('/event/{id}', [EventAdminController::class, 'update'])->name('admin.event.update');
     Route::delete('/event/{id}', [EventAdminController::class, 'destroy'])->name('admin.event.destroy');
     Route::get('/pesanan', [AdminController::class, 'pesanan'])->name('admin.pesanan');
+    Route::post('/pesanan/{id}/status', [AdminController::class, 'updateStatusPesanan'])->name('admin.pesanan.updateStatus');
     Route::get('/user', [AdminController::class, 'user'])->name('admin.user');
     Route::get('/pesan', [AdminController::class, 'pesan'])->name('admin.pesan');
+    Route::get('/chat/users', [ChatController::class, 'getChatUsers'])->name('admin.chat.users');
+    Route::get('/chat/messages/{userId}', [ChatController::class, 'fetchAdminMessages'])->name('admin.chat.messages');
+    Route::post('/chat/send', [ChatController::class, 'send'])->name('admin.chat.send');
 });
-
 
 // ----------------------------
 // USER (tanpa middleware)
@@ -69,6 +73,11 @@ Route::prefix('user')->group(function () {
     Route::get('/cart/status/{status?}', [CartController::class, 'status'])->name('cart.status');
     Route::get('/cart/detail/{id}', [CartController::class, 'detail'])->name('cart.detail');
     Route::post('/cart/complete/{id}', [CartController::class, 'complete'])->name('cart.complete');
+    Route::post('/cart/cancel/{id}', [CartController::class, 'cancel'])->name('cart.cancel');
+    Route::get('/chat', [UserController::class, 'chat'])->name('user.chat');
+    Route::get('/chat/messages/{adminId}', [ChatController::class, 'fetchUserMessages'])->name('user.chat.messages');
+    Route::post('/chat/send', [ChatController::class, 'send'])->name('user.chat.send');
+    // Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('user.notifikasi');
 });
 Route::get('/wishlist', function () {
     return view('user.wishlist');

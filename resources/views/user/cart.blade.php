@@ -23,7 +23,7 @@
         </div>
 
         <!-- ITEM -->
-        @foreach($cartItems as $item)
+        @foreach($cart->items as $item)
         <div class="cart-item" id="cart-item-{{ $item->id }}">
 
             <div class="cart-col center">
@@ -70,7 +70,7 @@
         </label>
 
         <p class="summary-total">
-            Total (<span id="summary-count">{{ $cartItems->count() }}</span>):
+            Total (<span id="summary-count">{{ $cart->items->count() }}</span>):
             <strong>Rp{{ number_format($total,0,',','.') }}</strong>
         </p>
 

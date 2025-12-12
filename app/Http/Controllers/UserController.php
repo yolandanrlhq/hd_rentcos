@@ -22,18 +22,17 @@ class UserController extends Controller
         return view('user.dashboard', compact('user'));
     }
 
-    /**
-     * Halaman profil user
-     */
+    public function chat()
+    {
+        $user = Auth::user();
+        return view('user.pesan', compact('user'));
+    }
+
     public function profile()
     {
         $user = Auth::user(); // Ambil data user yang login
         return view('user.profil', compact('user'));
     }
-
-    /**
-     * Update profil user
-     */
 
     public function updateProfile(Request $request)
     {

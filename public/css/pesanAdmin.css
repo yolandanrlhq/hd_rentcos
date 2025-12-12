@@ -382,3 +382,16 @@ body {
     border-radius: 8px;
     cursor: pointer;
 }
+
+.user-item {
+    padding: 10px;
+    border-radius: 8px;
+    background: #f1f1f1;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.user-item:hover {
+    background: #e0e0e0;
+}

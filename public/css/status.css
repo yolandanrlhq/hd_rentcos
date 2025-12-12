@@ -182,3 +182,49 @@
     height: 90px;
   }
 }
+
+/* tombol lengkap */
+.btn-complete,
+.btn-cancel {
+  border: none;
+  padding: 12px 22px;
+  font-size: 15px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* tombol selesaai */
+.btn-complete {
+  background: linear-gradient(135deg, #6b46c1, #9f7aea);
+  color: #fff;
+}
+.btn-complete:hover {
+  background: linear-gradient(135deg, #5935a6, #7b5acb);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+}
+
+/* tombol batalkan */
+.btn-cancel {
+  background: linear-gradient(135deg, #ff6b6b, #ff8787);
+  color: #fff;
+}
+.btn-cancel:hover {
+  background: linear-gradient(135deg, #e55a5a, #ff6b6b);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+}
+
+/* responsive */
+@media(max-width: 768px) {
+  .btn-complete,
+  .btn-cancel {
+    width: 100%;
+  }
+}
+

@@ -16,7 +16,8 @@
       <a href="Notifikasi.html"><i class="ri-notification-3-fill"></i></a>
       <a href="{{ route('cart.store') }}" class="{{ request()->routeIs('cart.store') ? 'active' : '' }}">
         <i class="ri-shopping-cart-fill"></i></a>
-      <a href="pesan.html"><i class="ri-message-3-fill"></i></a>
+      <a href="{{ route('user.chat') }}" class="{{ request()->routeIs('user.chat') ? 'active' : '' }}">
+        <i class="ri-message-3-fill"></i></a>
     </div>
 
     <div class="profil">

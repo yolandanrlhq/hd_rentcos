@@ -47,7 +47,27 @@ class AdminController extends Controller
             abort(403, 'Akses ditolak.');
         }
 
-        return view('admin.pesanan', compact('user'));
+        $pesanan = \App\Models\Sewa::with(['user', 'items.produk'])->orderBy('tanggal_sewa', 'desc')->paginate(10);
+
+        $total = \App\Models\Sewa::count();
+        $berhasil = \App\Models\Sewa::where('status', 'selesai')->count();
+        $gagal = \App\Models\Sewa::where('status', 'batal')->count();
+        $pending = \App\Models\Sewa::where('status', 'pending')->count();
+
+        return view('admin.pesanan', compact('user', 'pesanan', 'total', 'berhasil', 'gagal', 'pending'));
+    }
+
+    public function updateStatusPesanan(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,diproses,selesai,dibatalkan',
+        ]);
+
+        $pesanan = \App\Models\Sewa::findOrFail($id);
+        $pesanan->status = $request->status;
+        $pesanan->save();
+
+        return response()->json(['success' => true]);
     }
 
     public function user()
