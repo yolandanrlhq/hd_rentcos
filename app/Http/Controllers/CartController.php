@@ -22,7 +22,7 @@ class CartController extends Controller
         $cartItems = $cart ? $cart->items()->with('produk')->get() : collect();
         $total = $cartItems->sum(fn($item) => $item->harga_satuan * $item->jumlah);
 
-        return view('user.cart', compact('cartItems', 'total'));
+        return view('user.cart', compact('cart', 'cartItems', 'total'));
     }
 
     // Riwayat penyewaan dengan pagination
