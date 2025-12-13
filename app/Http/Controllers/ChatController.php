@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Message;
 use Illuminate\Support\Facades\Auth;
+use App\Events\MessageSent;
 
 class ChatController extends Controller
 {
@@ -43,11 +44,14 @@ class ChatController extends Controller
             $q->where('sender_id', $userId)->where('receiver_id', $adminId);
         })
         ->orderBy('created_at', 'asc')
+        ->with('sender:id,name,foto') // ambil relasi sender
         ->get()
         ->map(function($msg){
             return [
                 'id'          => $msg->id,
                 'sender_id'   => $msg->sender_id,
+                'sender_name' => $msg->sender->name ?? 'Unknown', 
+                'sender_foto' => $msg->sender->foto ?? null, 
                 'receiver_id' => $msg->receiver_id,
                 'message'     => $msg->message,
                 'time'        => $msg->created_at->format('H:i'),
@@ -71,14 +75,13 @@ class ChatController extends Controller
             'message'     => $request->message,
         ]);
 
+        broadcast(new MessageSent($message))->toOthers();
+
         return response()->json([
-            'status'  => 'ok',
-            'message' => [
-                'id'          => $message->id,
-                'sender_id'   => $message->sender_id,
-                'receiver_id' => $message->receiver_id,
-                'message'     => $message->message,
-                'time'        => $message->created_at->format('H:i'),
+            'success' => true,
+            'data' => [
+                'id'      => $message->id,
+                'message' => $message->message,
             ]
         ]);
     }
@@ -86,7 +89,7 @@ class ChatController extends Controller
     public function getChatUsers()
     {
         $users = \App\Models\User::where('id', '!=', 1) // kecuali admin
-                    ->select('id', 'name')
+                    ->select('id', 'name', 'foto')
                     ->orderBy('name', 'asc')
                     ->get();
 

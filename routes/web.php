@@ -78,6 +78,10 @@ Route::prefix('user')->group(function () {
     Route::get('/chat/messages/{adminId}', [ChatController::class, 'fetchUserMessages'])->name('user.chat.messages');
     Route::post('/chat/send', [ChatController::class, 'send'])->name('user.chat.send');
     // Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('user.notifikasi');
+    Route::get('/admin/chat/users', function() {
+    return App\Models\User::select('id', 'name', 'foto')->get();
+});
+
 });
 Route::get('/wishlist', function () {
     return view('user.wishlist');

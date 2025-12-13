@@ -26,7 +26,7 @@
             <section class="chat-area">
                 <header class="chat-header" id="chat-header" style="display:none;">
                     <div class="chat-user-info">
-                        <i class="fas fa-user-circle chat-avatar"></i>
+                        <div class="chat-avatar"></div>
                         <div>
                             <span id="chat-user-name" class="chat-user-name"></span>
                             <span id="chat-user-status" class="chat-user-status"></span>
@@ -45,12 +45,15 @@
             </section>
         </div>
     </main>
-
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
         const ADMIN_CHAT_SEND_URL = "{{ route('admin.chat.send') }}";
         const CSRF_TOKEN_ADMIN = "{{ csrf_token() }}";
-        let currentUserId = null;
+        const PUSHER_KEY = "{{ env('PUSHER_APP_KEY') }}";
+        const PUSHER_CLUSTER = "{{ env('PUSHER_APP_CLUSTER') }}";
     </script>
+
     <script src="{{ asset('js/pesanAdmin.js') }}"></script>
+
 </div>
 @endsection

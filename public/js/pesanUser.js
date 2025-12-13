@@ -2,14 +2,34 @@ const messageInput = document.getElementById('message-input');
 const sendBtn = document.getElementById('send-btn');
 const chatBody = document.getElementById('chat-body');
 
+/* ================= UTIL ================= */
+function scrollToBottom() {
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function appendMessage(msg, type, time = '') {
+    chatBody.innerHTML += `
+        <div class="message-bubble message-${type}">
+            <p>${msg}</p>
+            ${time ? `<span class="time">${time}</span>` : ''}
+        </div>
+    `;
+    scrollToBottom();
+}
+
+/* ================= SEND MESSAGE ================= */
 sendBtn.addEventListener('click', sendMessage);
-messageInput.addEventListener('keypress', e => { if(e.key==='Enter') sendMessage(); });
+
+messageInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
 
 function sendMessage() {
     const message = messageInput.value.trim();
-    if(!message) return;
-
-    appendMessage(message, "sent");
+    if (!message) return;
 
     fetch(CHAT_SEND_URL, {
         method: "POST",
@@ -21,29 +41,51 @@ function sendMessage() {
             receiver_id: ADMIN_ID,
             message: message
         })
-    }).then(res=>res.json())
-      .then(data=>console.log("Pesan terkirim:", data))
-      .catch(err=>console.error(err));
+    });
+
+    // tampil langsung (optimistic UI)
+    appendMessage(
+        message,
+        "sent",
+        new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    );
 
     messageInput.value = "";
 }
 
-function appendMessage(msg, type){
-    chatBody.innerHTML += `<div class="message-bubble message-${type}">${msg}</div>`;
-    chatBody.scrollTop = chatBody.scrollHeight;
-}
-
+/* ================= LOAD CHAT AWAL ================= */
 function loadChatUser() {
     fetch(CHAT_MESSAGES_URL)
-        .then(res=>res.json())
-        .then(messages=>{
+        .then(res => res.json())
+        .then(messages => {
             chatBody.innerHTML = "";
-            messages.forEach(msg=>{
-                const type = msg.sender_id===ADMIN_ID ? "received" : "sent";
-                appendMessage(msg.message, type);
+            messages.forEach(msg => {
+                const type = msg.sender_id === ADMIN_ID ? "received" : "sent";
+                appendMessage(msg.message, type, msg.time);
             });
         });
 }
 
-setInterval(loadChatUser, 3000);
 loadChatUser();
+
+/* ================= PUSHER ================= */
+const pusher = new Pusher(PUSHER_KEY, {
+    cluster: PUSHER_CLUSTER,
+    forceTLS: true
+});
+
+// USER listen ke channel sendiri
+const channel = pusher.subscribe(`chat.${CURRENT_USER_ID}`);
+
+channel.bind('message.sent', data => {
+    // abaikan pesan sendiri
+    if (data.sender_id === CURRENT_USER_ID) return;
+
+    appendMessage(
+        data.message,
+        "received",
+        data.created_at
+            ? data.created_at.slice(11, 16)
+            : ''
+    );
+});

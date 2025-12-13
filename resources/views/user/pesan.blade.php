@@ -42,11 +42,17 @@
 
 @include('user.sections.footer')
 
+<script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
 <script>
     const CHAT_SEND_URL = "{{ route('user.chat.send') }}";
     const CHAT_MESSAGES_URL = "{{ route('user.chat.messages', ['adminId' => 1]) }}";
     const CSRF_TOKEN = "{{ csrf_token() }}";
     const ADMIN_ID = 1;
+</script>
+<script>
+    const CURRENT_USER_ID = {{ auth()->id() }};
+    const PUSHER_KEY = "{{ env('PUSHER_APP_KEY') }}";
+    const PUSHER_CLUSTER = "{{ env('PUSHER_APP_CLUSTER') }}";
 </script>
 <script src="{{ asset('js/pesanUser.js') }}"></script>
 @endsection
