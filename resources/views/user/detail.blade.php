@@ -10,7 +10,7 @@
 
 <main class="status-page">
     <div class="status-container">
-        <h2>Detail Pesanan #{{ $sewa->id }}</h2>
+        <h2>Detail Pesanan #{{ $sewa->kode_pesanan }}</h2>
 
         @foreach($sewa->items as $item)
         <div class="status-card">

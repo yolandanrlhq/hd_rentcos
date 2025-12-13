@@ -28,7 +28,7 @@
                         <h3>Pesanan #{{ $sewa->id }}</h3>
                         <p>Nama: <strong>{{ $sewa->user->name ?? '-' }}</strong></p>
                         <p>Tanggal Sewa: <strong>{{ $sewa->tanggal_sewa }}</strong></p>
-                        <p>Status: <strong>{{ ucfirst($sewa->status) }}</strong></p>
+                        <p>Status: <strong class="{{ $sewa->status }}">{{ ucfirst($sewa->status) }}</strong></p>
                         <p>Total: <strong>Rp{{ number_format($sewa->total_harga,0,',','.') }}</strong></p>
                     </div>
                 </div>

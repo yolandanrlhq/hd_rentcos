@@ -35,7 +35,16 @@
                 </header>
 
                 <div id="chat-body" class="chat-body">
-                    <p class="no-chat-selected">Pilih pelanggan untuk mulai chat.</p>
+                    <div id="empty-chat-state" class="empty-chat-state">
+                        <div class="empty-chat-box">
+                            <div class="empty-chat-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <h3>Belum ada percakapan</h3>
+                            <p>Pilih pelanggan di sebelah kiri untuk mulai membalas pesan.</p>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div id="chat-input-area" class="chat-input-placeholder" style="display:none;">

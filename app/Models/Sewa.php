@@ -12,10 +12,11 @@ class Sewa extends Model
     protected $table = 'sewa';
     protected $fillable = [
         'user_id',
+        'cart_id',
         'status',
         'tanggal_sewa',
         'tanggal_kembali',
-        'total_harga',
+        'total_harga'
     ];
 
     public function user()
@@ -27,4 +28,15 @@ class Sewa extends Model
     {
         return $this->hasMany(SewaItem::class, 'sewa_id');
     }
+
+    public function cart()
+    {
+        return $this->belongsTo(Cart::class, 'cart_id');
+    }
+
+    public function getKodePesananAttribute()
+    {
+        return 'SEWA' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
+    }
+
 }

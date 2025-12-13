@@ -127,6 +127,27 @@
         function hapusUkuran(button) {
             button.parentElement.remove();
         }
+
+        // Fungsi untuk update stok total
+        function updateStokTotal() {
+            const stokInputs = document.querySelectorAll('#ukuran-wrapper input[name$="[stok]"]');
+            let total = 0;
+            stokInputs.forEach(input => {
+                const value = parseInt(input.value) || 0;
+                total += value;
+            });
+            document.getElementById('stok_produk').value = total;
+        }
+
+        // Jalankan update saat stok ukuran berubah
+        document.getElementById('ukuran-wrapper').addEventListener('input', function(e) {
+            if (e.target.name.endsWith('[stok]')) {
+                updateStokTotal();
+            }
+        });
+
+        // Jalankan update saat halaman dimuat
+        updateStokTotal();
         </script>
     </div>
 </div>

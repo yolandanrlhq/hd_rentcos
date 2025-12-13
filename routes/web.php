@@ -69,6 +69,9 @@ Route::prefix('user')->group(function () {
     Route::delete('/cart/delete/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
     Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
     Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout.post');
+    Route::get('/checkout/success/{sewa}', function ($sewa) {
+        return view('user.checkoutSuccess', ['sewa' => $sewa]);})->name('checkout.success');
+    Route::get('/chat/order/{sewa}', [ChatController::class, 'orderChat'])->name('chat.order');
     Route::post('/sewa', [CartController::class, 'sewa'])->name('cart.sewa');
     Route::get('/cart/status/{status?}', [CartController::class, 'status'])->name('cart.status');
     Route::get('/cart/detail/{id}', [CartController::class, 'detail'])->name('cart.detail');

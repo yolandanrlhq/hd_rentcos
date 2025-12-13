@@ -8,9 +8,14 @@ function scrollToBottom() {
 }
 
 function appendMessage(msg, type, time = '') {
+    const safeMsg = msg
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\n/g, "<br>");
+
     chatBody.innerHTML += `
         <div class="message-bubble message-${type}">
-            <p>${msg}</p>
+            <div class="message-text">${safeMsg}</div>
             ${time ? `<span class="time">${time}</span>` : ''}
         </div>
     `;

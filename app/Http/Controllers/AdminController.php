@@ -9,7 +9,6 @@ class AdminController extends Controller
 {
     public function index()
     {
-        // Cek user login dan role
         $user = Auth::user();
         if (!$user || $user->role !== 'admin') {
             abort(403, 'Akses ditolak.');
@@ -25,7 +24,6 @@ class AdminController extends Controller
             abort(403, 'Akses ditolak.');
         }
 
-        // Ambil semua user
         $users = \App\Models\User::all();
         return view('admin.users', compact('users'));
     }
@@ -51,16 +49,18 @@ class AdminController extends Controller
 
         $total = \App\Models\Sewa::count();
         $berhasil = \App\Models\Sewa::where('status', 'selesai')->count();
-        $gagal = \App\Models\Sewa::where('status', 'batal')->count();
+        $gagal = \App\Models\Sewa::where('status', 'dibatalkan')->count();
         $pending = \App\Models\Sewa::where('status', 'pending')->count();
+        $diproses = \App\Models\Sewa::where('status', 'diproses')->count();
+        $dikirim = \App\Models\Sewa::where('status', 'dikirim')->count();
 
-        return view('admin.pesanan', compact('user', 'pesanan', 'total', 'berhasil', 'gagal', 'pending'));
+        return view('admin.pesanan', compact('user', 'pesanan', 'total', 'berhasil', 'gagal', 'pending', 'diproses', 'dikirim'));
     }
 
     public function updateStatusPesanan(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:pending,diproses,selesai,dibatalkan',
+            'status' => 'required|in:menunggu_konfirmasi,diproses,dikirim,selesai,dibatalkan',
         ]);
 
         $pesanan = \App\Models\Sewa::findOrFail($id);

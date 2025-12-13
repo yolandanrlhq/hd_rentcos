@@ -157,6 +157,12 @@
   font-weight: 500;
 }
 
+.pending { color: #fbbf24; } /* kuning */
+.diproses { color: #3b82f6; } /* biru */
+.dikirim { color: #ff0e93; } /* hijau muda */
+.selesai { color: #10b981; } /* hijau */
+.dibatalkan { color: #ef4444; } /* merah */
+
 /* responsive */
 @media(max-width: 768px) {
   .status-card {

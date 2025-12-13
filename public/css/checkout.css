@@ -1,6 +1,6 @@
 /* ===== Checkout Container ===== */
 .checkout-container {
-  max-width: 1100px;  /* 🟢 dari 900px → jadi lebih lebar */
+  max-width: 1100px;
   margin: 50px auto;
   padding: 30px;
   background: #fff;
@@ -107,6 +107,32 @@ th, td {
   text-align: center;
   border: 1px solid #ccc;
   border-radius: 4px;
+}
+
+/* ===== Tanggal Sewa ===== */
+.tanggal-sewa-box {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 25px;
+}
+
+.tanggal-input {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tanggal-input label {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.tanggal-input input[type="date"] {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 200px;
 }
 
 /* ===== Pembayaran ===== */
@@ -222,5 +248,9 @@ th, td {
 
   th, td {
     font-size: 13px;
+  }
+
+  .tanggal-input input[type="date"] {
+    width: 100%;
   }
 }

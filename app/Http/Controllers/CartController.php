@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Produk;
@@ -182,60 +183,81 @@ class CartController extends Controller
         $items = CartItem::with('produk')->where('cart_id', $cart->id)->whereIn('id', $selectedArray)->get();
         if($items->isEmpty()) return redirect()->route('cart.index')->with('error','Item yang dipilih tidak ditemukan.');
 
-        $total = $items->sum(fn($i) => $i->harga_satuan * $i->jumlah);
+        $subtotal = $items->sum(fn($i) => $i->harga_satuan * $i->jumlah);
 
-        return view('user.checkout', compact('cart','items','total','selectedArray'));
+        return view('user.checkout', compact('cart','items','subtotal','selectedArray'));
     }
 
     // Proses sewa
     public function sewa(Request $request)
     {
         $request->validate([
+            'tanggal_sewa' => 'required|date|after_or_equal:today',
+            'tanggal_kembali' => 'nullable|date|after:tanggal_sewa',
             'delivery_method' => 'required|string',
-            'selected' => 'required|array'
+            'selected' => 'required|array|min:1'
         ]);
 
-        $cart = Cart::where('user_id', Auth::id())->where('status','pending')->first();
-        if(!$cart) return redirect()->route('cart.index')->with('error','Keranjang kosong.');
+        $cart = Cart::where('user_id', Auth::id())
+                    ->where('status', 'pending')
+                    ->firstOrFail();
 
-        $items = CartItem::with('produk')->where('cart_id',$cart->id)->whereIn('id',$request->selected)->get();
-        if($items->isEmpty()) return redirect()->route('cart.index')->with('error','Produk tidak ditemukan.');
+        $items = CartItem::with('produk')
+            ->where('cart_id', $cart->id)
+            ->whereIn('id', $request->selected)
+            ->get();
 
-        $totalHarga = $items->sum(fn($i) => $i->harga_satuan * $i->jumlah);
-
-        $sewa = Sewa::create([
-            'user_id' => Auth::id(),
-            'status' => 'menunggu_konfirmasi',
-            'tanggal_sewa' => now(),
-            'tanggal_kembali' => null,
-            'total_harga' => $totalHarga
-        ]);
-
-        foreach($items as $i){
-            SewaItem::create([
-                'sewa_id' => $sewa->id,
-                'produk_id' => $i->id_produk,
-                'ukuran' => $i->ukuran,
-                'jumlah' => $i->jumlah,
-                'harga_satuan' => $i->harga_satuan,
-                'subtotal' => $i->harga_satuan * $i->jumlah
-            ]);
-
-            if($i->ukuran){
-                \DB::table('ukuran_produk')->where('id_produk',$i->id_produk)->where('nama_ukuran',$i->ukuran)->decrement('stok',$i->jumlah);
-                $produk = Produk::find($i->id_produk);
-                $produk->updateStokTotal();
-            } else {
-                $i->produk->decrement('stok_produk',$i->jumlah);
-            }
+        if ($items->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Produk tidak ditemukan.');
         }
 
-        CartItem::whereIn('id', $request->selected)->delete();
+        DB::transaction(function () use ($request, $cart, $items, &$sewa) {
 
-        $cart->status = 'menunggu_konfirmasi';
-        $cart->delivery_method = $request->delivery_method;
-        $cart->save();
+            $totalHarga = $items->sum(fn($i) => $i->harga_satuan * $i->jumlah);
 
-        return redirect()->route('cart.status')->with('success','Checkout berhasil! Silakan tunggu konfirmasi admin.');
+            // Buat data sewa (final transaksi)
+            $sewa = Sewa::create([
+                'user_id'         => Auth::id(),
+                'cart_id'         => $cart->id,
+                'status'          => 'menunggu_konfirmasi',
+                'tanggal_sewa'    => $request->tanggal_sewa,
+                'tanggal_kembali' => $request->tanggal_kembali,
+                'delivery_method' => $request->delivery_method,
+                'total_harga'     => $totalHarga
+            ]);
+
+            // Pindahkan item + potong stok
+            foreach ($items as $i) {
+
+                SewaItem::create([
+                    'sewa_id'       => $sewa->id,
+                    'produk_id'     => $i->id_produk,
+                    'ukuran'        => $i->ukuran,
+                    'jumlah'        => $i->jumlah,
+                    'harga_satuan'  => $i->harga_satuan,
+                    'subtotal'      => $i->harga_satuan * $i->jumlah
+                ]);
+
+                // Kurangi stok sesuai jumlah
+                if ($i->ukuran) {
+                    DB::table('ukuran_produk')
+                        ->where('id_produk', $i->id_produk)
+                        ->where('nama_ukuran', $i->ukuran)
+                        ->decrement('stok', $i->jumlah);
+                } else {
+                    $i->produk->decrement('stok_produk', $i->jumlah);
+                }
+            }
+
+            // Hapus item yang dicheckout
+            CartItem::whereIn('id', $request->selected)->delete();
+
+            // Update status cart
+            $cart->update([
+                'status' => 'menunggu_konfirmasi'
+            ]);
+        });
+
+        return redirect()->route('checkout.success', $sewa);
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Message;
 use Illuminate\Support\Facades\Auth;
 use App\Events\MessageSent;
+use App\Models\Sewa;
 
 class ChatController extends Controller
 {
@@ -50,8 +51,8 @@ class ChatController extends Controller
             return [
                 'id'          => $msg->id,
                 'sender_id'   => $msg->sender_id,
-                'sender_name' => $msg->sender->name ?? 'Unknown', 
-                'sender_foto' => $msg->sender->foto ?? null, 
+                'sender_name' => $msg->sender->name ?? 'Unknown',
+                'sender_foto' => $msg->sender->foto ?? null,
                 'receiver_id' => $msg->receiver_id,
                 'message'     => $msg->message,
                 'time'        => $msg->created_at->format('H:i'),
@@ -94,5 +95,38 @@ class ChatController extends Controller
                     ->get();
 
         return response()->json($users);
+    }
+
+    public function orderChat($sewaId)
+    {
+        $sewa = Sewa::with('items.produk')->findOrFail($sewaId);
+
+        // CEK: pesan sistem sudah pernah dikirim?
+        if (!Message::where('sewa_id', $sewa->id)->where('sender_id', 1)->exists()) {
+
+            $text  = "📦 DETAIL PESANAN\n";
+            $text .= "--------------------------\n";
+            $text .= "Nama        : {$sewa->user->name}\n";
+            $text .= "Pengiriman  : {$sewa->cart->delivery_method}\n\n";
+
+            $text .= "Daftar Item:\n";
+            foreach ($sewa->items as $item) {
+                $text .= "- {$item->produk->nama_produk} ({$item->jumlah}x)\n";
+            }
+
+            $text .= "\n--------------------------\n";
+            $text .= "Total : Rp" . number_format($sewa->total_harga, 0, ',', '.');
+
+            Message::create([
+                'sewa_id' => $sewa->id,
+                'sender_id' => $sewa->user_id,
+                'receiver_id' => 1,
+                'message' => $text
+            ]);
+        }
+
+        $messages = Message::where('sewa_id', $sewa->id)->get();
+
+        return view('user.pesan', compact('sewa', 'messages'));
     }
 }

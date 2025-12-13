@@ -209,6 +209,7 @@ body {
 }
 
 /* ================= CHAT AREA ================= */
+/* ================= CHAT AREA FIX ================= */
 .chat-area {
     flex-grow: 1;
     display: flex;
@@ -216,7 +217,16 @@ body {
     background-color: var(--chat-bg);
     padding: 20px;
     position: relative;
+    min-width: 0;  /* flex tidak melebar karena konten */
+    max-width: 100%; /* tetap dalam container */
+    overflow: hidden; /* cegah konten memaksa melebar */
 }
+
+.chat-area, .chat-body {
+    min-width: 0; /* supaya flex container tidak melebar mengikuti child */
+    max-width: 100%; /* mencegah panel chat melebar saat user diklik */
+}
+
 
 .chat-header {
     display: flex;
@@ -271,13 +281,72 @@ body {
 
 .chat-body {
     flex-grow: 1;
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
-    padding-right: 10px;
-    padding-bottom: 50px;
     gap: 12px;
-    overscroll-behavior: auto; /* Scroll bisa diteruskan ke halaman */
+    overflow-y: auto;
+    min-width: 0;  /* flex tidak melebar */
+    max-width: 100%;
+    word-wrap: break-word; /* kata panjang akan break */
+}
+
+/* ================= EMPTY CHAT STATE ================= */
+.empty-chat-state {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-chat-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 260px;
+    max-width: 360px;
+    padding: 40px 30px;
+
+    text-align: center;
+    border-radius: 20px;
+    background: rgba(30, 30, 45, 0.6);
+    border: 1px dashed rgba(155, 89, 182, 0.35);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+    backdrop-filter: blur(6px);
+}
+
+.empty-chat-icon {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #9b59b6, #6f42c1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-chat-icon i {
+    font-size: 1.8em;
+    color: #ffffff;
+}
+
+.empty-chat-box h3 {
+    font-size: 1.15em;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 8px;
+}
+
+.empty-chat-box p {
+    font-size: 0.9em;
+    color: var(--text-faded);
+    line-height: 1.6;
 }
 
 /* ================= PESAN ================= */
@@ -306,14 +375,15 @@ body {
 .message-content {
     padding: 12px 16px;
     border-radius: 18px;
-    max-width: 60%;
+    max-width: 70%;
     position: relative;
-    word-wrap: break-word;
     font-size: 14px;
     line-height: 1.5;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    white-space: pre-line; /* jaga line break & spasi di text multi-line */
+    word-wrap: break-word;  /* kata panjang akan wrap */
+    overflow-wrap: anywhere; /* optional: pecah kata panjang yang melebihi container */
 }
-
 .message-content p {
     margin: 0;
 }

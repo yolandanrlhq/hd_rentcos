@@ -8,6 +8,12 @@ const chatHeader = document.getElementById('chat-header');
 const chatInputArea = document.getElementById('chat-input-area');
 const adminInput = document.getElementById('admin-chat-input');
 const sendBtn = document.getElementById('admin-send-btn');
+const emptyChatState = document.getElementById('empty-chat-state');
+
+/* ================= INIT STATE ================= */
+chatHeader.style.display = 'none';
+chatInputArea.style.display = 'none';
+emptyChatState.style.display = 'flex';
 
 /* ================= UTIL ================= */
 function scrollToBottom() {
@@ -15,20 +21,23 @@ function scrollToBottom() {
 }
 
 function renderMessage(msg) {
+    emptyChatState.style.display = 'none';
+
     if (msg.sender_id === ADMIN_ID) {
-        chatBody.innerHTML += `
+        chatBody.insertAdjacentHTML('beforeend', `
             <div class="message sent">
                 <div class="message-content">
                     <p>${msg.message}</p>
                     <div class="message-time">${msg.time ?? ''}</div>
                 </div>
-            </div>`;
+            </div>
+        `);
     } else {
-        const avatarSrc = msg.sender_foto 
+        const avatarSrc = msg.sender_foto
             ? `/storage/${msg.sender_foto}`
             : '/assets/default-profile.jpg';
 
-        chatBody.innerHTML += `
+        chatBody.insertAdjacentHTML('beforeend', `
             <div class="message received">
                 <div class="message-avatar">
                     <img src="${avatarSrc}" alt="${msg.sender_name}">
@@ -37,7 +46,8 @@ function renderMessage(msg) {
                     <p>${msg.message}</p>
                     <div class="message-time">${msg.time ?? ''}</div>
                 </div>
-            </div>`;
+            </div>
+        `);
     }
 }
 
@@ -52,8 +62,8 @@ function loadUsers() {
                 div.className = 'user-item';
                 div.onclick = () => selectUser(user.id, user.name, user.foto);
 
-                const avatarSrc = user.foto 
-                    ? `/storage/${user.foto}` 
+                const avatarSrc = user.foto
+                    ? `/storage/${user.foto}`
                     : '/assets/default-profile.jpg';
 
                 div.innerHTML = `
@@ -76,12 +86,12 @@ function selectUser(userId, name, foto = null) {
 
     chatHeader.style.display = 'flex';
     chatInputArea.style.display = 'flex';
+
     document.getElementById('chat-user-name').textContent = name;
 
-    // update avatar header
     const chatAvatarEl = document.querySelector('.chat-avatar');
-    const avatarSrc = foto 
-        ? `/storage/${foto}` 
+    const avatarSrc = foto
+        ? `/storage/${foto}`
         : '/assets/default-profile.jpg';
 
     chatAvatarEl.innerHTML = `<img src="${avatarSrc}" alt="${name}">`;
@@ -95,6 +105,14 @@ function loadChat(userId) {
         .then(res => res.json())
         .then(messages => {
             chatBody.innerHTML = '';
+
+            if (!messages || messages.length === 0) {
+                emptyChatState.style.display = 'flex';
+                return;
+            }
+
+            emptyChatState.style.display = 'none';
+
             messages.forEach(renderMessage);
             scrollToBottom();
         });
@@ -118,15 +136,17 @@ function sendMessageAdmin() {
         },
         body: JSON.stringify({
             receiver_id: currentUserId,
-            message: message
+            message
         })
     });
 
-    // tampilkan langsung (optimistic UI)
     renderMessage({
         sender_id: ADMIN_ID,
-        message: message,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        message,
+        time: new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+        })
     });
 
     adminInput.value = '';
