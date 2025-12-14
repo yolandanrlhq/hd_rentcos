@@ -12,6 +12,10 @@ use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
+use App\Http\Controllers\NotificationController;
+use App\Models\Notification;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 // ----------------------------
 // AUTH
@@ -154,3 +158,23 @@ Route::get('/rfid-scan', function () {
 Route::get('/admin/iot-control', function () {
     return view('admin.iotControl');
 })->name('admin.iotControl');
+
+Route::get('/notifikasi', function () {
+
+    $user = Auth::user();
+
+    // Ambil semua notifikasi user
+    $notifications = $user->notifications()
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    // ===============================
+    // TANDAI SEMUA NOTIFIKASI SUDAH DIBACA
+    // ===============================
+    $user->notifications()
+        ->where('is_read', false)
+        ->update(['is_read' => true]);
+
+    return view('user.notifikasi', compact('notifications'));
+
+})->middleware('auth')->name('user.notifikasi');

@@ -10,6 +10,10 @@ use App\Models\Produk;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Sewa;
 use App\Models\SewaItem;
+use App\Models\Notification;
+
+
+
 
 class CartController extends Controller
 {
@@ -225,6 +229,21 @@ class CartController extends Controller
                 'delivery_method' => $request->delivery_method,
                 'total_harga'     => $totalHarga
             ]);
+            
+            // ===============================
+// 🔔 NOTIFIKASI USER
+// ===============================
+$namaProduk = $items->pluck('produk.nama_produk')->implode(', ');
+
+Notification::create([
+    'user_id' => Auth::id(),
+    'judul'   => 'Pemesanan Berhasil',
+    'pesan'   => 'Anda berhasil memesan kostum: ' . $namaProduk . 
+                 '. Status pesanan: ' . $sewa->status,
+    'ikon'    => 'shopping-bag-3-fill',
+    'is_read' => false,
+]);
+
 
             // Pindahkan item + potong stok
             foreach ($items as $i) {

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Notification;
+use App\Models\Sewa;
+
 
 class AdminController extends Controller
 {
@@ -58,17 +61,43 @@ class AdminController extends Controller
     }
 
     public function updateStatusPesanan(Request $request, $id)
-    {
-        $request->validate([
-            'status' => 'required|in:menunggu_konfirmasi,diproses,dikirim,selesai,dibatalkan',
-        ]);
+{
+    $request->validate([
+        'status' => 'required|in:menunggu_konfirmasi,diproses,dikirim,selesai,dibatalkan',
+    ]);
 
-        $pesanan = \App\Models\Sewa::findOrFail($id);
-        $pesanan->status = $request->status;
-        $pesanan->save();
+    // Ambil pesanan + relasi
+    $pesanan = Sewa::with('items.produk')->findOrFail($id);
 
-        return response()->json(['success' => true]);
-    }
+    // Simpan status lama
+    $statusLama = $pesanan->status;
+
+    // Update status baru
+    $pesanan->status = $request->status;
+    $pesanan->save();
+
+    // Ambil nama kostum (bisa lebih dari satu)
+    $namaProduk = $pesanan->items
+        ->pluck('produk.nama_produk')
+        ->join(', ');
+
+    // ================= NOTIFIKASI USER =================
+    Notification::create([
+    'user_id' => $pesanan->user_id,
+    'judul'   => 'Status Pesanan',
+    'pesan'   => "Penyewaan {$namaProduk} sekarang {$pesanan->status}.",
+    'ikon'    => 'bell',
+    'is_read' => false,
+]);
+
+    // ===================================================
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Status pesanan berhasil diperbarui'
+    ]);
+}
+
 
     public function user()
     {

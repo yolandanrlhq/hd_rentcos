@@ -13,12 +13,23 @@
     </div>
 
     <div class="icons">
-      <a href="Notifikasi.html"><i class="ri-notification-3-fill"></i></a>
-      <a href="{{ route('cart.store') }}" class="{{ request()->routeIs('cart.store') ? 'active' : '' }}">
-        <i class="ri-shopping-cart-fill"></i></a>
-      <a href="{{ route('user.chat') }}" class="{{ request()->routeIs('user.chat') ? 'active' : '' }}">
-        <i class="ri-message-3-fill"></i></a>
-    </div>
+    <a href="{{ route('user.notifikasi') }}" class="notif-icon">
+        <i class="ri-notification-3-fill"></i>
+
+        @if(isset($unreadCount) && $unreadCount > 0)
+            <span class="notif-badge">{{ $unreadCount }}</span>
+        @endif
+    </a>
+
+    <a href="{{ route('cart.index') }}">
+        <i class="ri-shopping-cart-fill"></i>
+    </a>
+
+    <a href="{{ route('user.chat') }}">
+        <i class="ri-message-3-fill"></i>
+    </a>
+</div>
+
 
     <div class="profil">
       <!-- <a href="#" class="login">Login</a>

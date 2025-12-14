@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Event;
 use Illuminate\Support\Facades\Storage;
+use App\Models\User;
+use App\Models\Notification;
+
 
 class EventAdminController extends Controller
 {
@@ -20,24 +23,42 @@ class EventAdminController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'nama_event' => 'required|string|max:255',
-            'tempat_event' => 'required|string|max:255',
-            'tgl_event' => 'required|date',
-            'htm' => 'required|numeric|min:0',
-            'kontak_panitia' => 'required|string|max:50',
-            'gambar' => 'nullable|image|max:2048',
-        ]);
+{
+    $validated = $request->validate([
+        'nama_event' => 'required|string|max:255',
+        'tempat_event' => 'required|string|max:255',
+        'tgl_event' => 'required|date',
+        'htm' => 'required|numeric|min:0',
+        'kontak_panitia' => 'required|string|max:50',
+        'gambar' => 'nullable|image|max:2048',
+    ]);
 
-        if ($request->hasFile('gambar')) {
-            $validated['gambar'] = $request->file('gambar')->store('events', 'public');
-        }
-
-        Event::create($validated);
-
-        return redirect()->route('admin.event.index')->with('success', 'Event berhasil ditambahkan!');
+    if ($request->hasFile('gambar')) {
+        $validated['gambar'] = $request->file('gambar')->store('events', 'public');
     }
+
+    // ================= SIMPAN EVENT =================
+    $event = Event::create($validated);
+
+    // ================= NOTIFIKASI KE USER =================
+    $users = User::where('role', 'user')->get();
+
+    foreach ($users as $user) {
+        Notification::create([
+            'user_id' => $user->id,
+            'judul'   => 'Event Baru',
+            'pesan'   => "Event {$event->nama_event} akan dilaksanakan pada {$event->tgl_event}.",
+            'ikon'    => 'calendar-event',
+            'is_read' => false,
+        ]);
+    }
+    // =====================================================
+
+    return redirect()
+        ->route('admin.event.index')
+        ->with('success', 'Event berhasil ditambahkan & notifikasi terkirim!');
+}
+
 
     public function edit($id)
     {

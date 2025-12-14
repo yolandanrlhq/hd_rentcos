@@ -7,6 +7,9 @@ use App\Models\Kategori;
 use App\Models\UkuranProduk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Models\Notification;
+
 
 class AdminProdukController extends Controller
 {
@@ -87,7 +90,25 @@ class AdminProdukController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('admin.produk')->with('success', 'Produk berhasil ditambahkan!');
+
+// ================= NOTIFIKASI KE SEMUA USER =================
+$users = User::where('role', 'user')->get();
+
+foreach ($users as $user) {
+    Notification::create([
+        'user_id' => $user->id,
+        'judul'   => 'Kostum Baru Tersedia',
+        'pesan'   => "Kostum {$produk->nama_produk} baru saja ditambahkan.",
+        'ikon'    => 'shopping-bag',
+        'is_read' => false,
+    ]);
+}
+// ===========================================================
+
+return redirect()
+    ->route('admin.produk')
+    ->with('success', 'Produk berhasil ditambahkan!');
+
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Gagal menambahkan produk: ' . $e->getMessage());
