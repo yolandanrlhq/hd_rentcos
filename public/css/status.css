@@ -234,3 +234,63 @@
   }
 }
 
+.return-status {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #ccc;
+}
+
+.return-status .btn-return {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 6px 12px;
+    background: #6c5ce7;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.testimoni-form {
+    margin-top: 10px;
+    background: #1b1b26;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.testimoni-form label {
+    display: block;
+    margin-bottom: 4px;
+    color: #cfcfcf;
+}
+
+.testimoni-form textarea,
+.testimoni-form select {
+    width: 100%;
+    padding: 6px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background: #242432;
+    color: #fff;
+    resize: vertical;
+}
+
+.testimoni-form .btn-submit {
+    background: #b34bf5;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.testimoni-form .btn-submit:hover {
+    background: #9b36e6;
+}
+
+.user-testimoni {
+    margin-top: 8px;
+    padding: 8px;
+    background: #2a2a3a;
+    border-radius: 6px;
+}

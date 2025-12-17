@@ -103,7 +103,8 @@
   font-size: 13px;
   font-weight: 500;
   color: #fff;
-  background: #ef4444;
+  background: #fafafa;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -111,5 +112,5 @@
 }
 
 .card .remove-btn:hover {
-  background: #dc2626;
+  background: #e0e0e0;
 }

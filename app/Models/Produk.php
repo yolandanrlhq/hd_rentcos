@@ -56,4 +56,9 @@ class Produk extends Model
         $this->stok_produk = $total;
         $this->save();
     }
+
+    public function testimonis()
+    {
+        return $this->hasMany(Testimoni::class, 'produk_id', 'id_produk');
+    }
 }

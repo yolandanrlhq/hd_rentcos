@@ -11,83 +11,119 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Sewa;
 use App\Models\SewaItem;
 use App\Models\Notification;
-
-
-
+use App\Models\Pengembalian;
 
 class CartController extends Controller
 {
-    // Tampilkan keranjang user
+    // =====================
+    // Pastikan user login
+    // =====================
+    private function mustLogin()
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login')
+                ->with('error', 'Silakan login terlebih dahulu.');
+        }
+        return null;
+    }
+
+    // =====================
+    // Tampilkan keranjang
+    // =====================
     public function index()
     {
+        if ($redirect = $this->mustLogin()) return $redirect;
+
         $cart = Cart::where('user_id', Auth::id())
-                    ->where('status', 'pending')
-                    ->first();
+            ->where('status', 'pending')
+            ->first();
 
         $cartItems = $cart ? $cart->items()->with('produk')->get() : collect();
-        $total = $cartItems->sum(fn($item) => $item->harga_satuan * $item->jumlah);
+        $total = $cartItems->sum(fn ($item) => $item->harga_satuan * $item->jumlah);
 
         return view('user.cart', compact('cart', 'cartItems', 'total'));
     }
 
-    // Riwayat penyewaan dengan pagination
+    // =====================
+    // Riwayat penyewaan + filter
+    // =====================
     public function status($status = null)
     {
-        $userId = Auth::id();
+        if ($redirect = $this->mustLogin()) return $redirect;
 
-        $query = Sewa::with('items.produk')
-            ->where('user_id', $userId)
+        $query = Sewa::with(['items.produk', 'pengembalian'])
+            ->where('user_id', Auth::id())
             ->where('status', '!=', 'pending');
 
-        if ($status && $status != 'semua') {
+        if ($status && $status !== 'semua') {
             $query->where('status', $status);
         }
 
         $sewas = $query->orderBy('updated_at', 'DESC')->paginate(10);
 
         return view('user.status', [
-            'sewas' => $sewas,
+            'sewas'  => $sewas,
             'filter' => $status ?? 'semua'
         ]);
     }
 
-    // Tandai pesanan selesai
+    // =====================
+    // Tandai selesai
+    // =====================
     public function complete($id)
     {
-        $sewa = Sewa::where('id', $id)
-                    ->where('user_id', Auth::id())
-                    ->firstOrFail();
+        if ($redirect = $this->mustLogin()) return $redirect;
 
-        if($sewa->status !== 'dikirim'){
-            return back()->with('error', 'Pesanan belum dikirim, tidak bisa ditandai selesai.');
+        $sewa = Sewa::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        if ($sewa->status !== 'dikirim') {
+            return back()->with('error', 'Pesanan belum dikirim.');
         }
 
-        $sewa->status = 'selesai';
-        $sewa->save();
+        DB::transaction(function () use ($sewa) {
+            $sewa->update(['status' => 'selesai']);
 
-        return back()->with('success', 'Pesanan telah selesai.');
+            // Otomatis buat record pengembalian jika belum ada
+            if (!$sewa->pengembalian) {
+                Pengembalian::create([
+                    'sewa_id' => $sewa->id,
+                    'status'  => 'belum_dikembalikan',
+                ]);
+            }
+        });
+
+        return back()->with('success', 'Pesanan selesai.');
     }
 
+    // =====================
     // Batalkan pesanan
+    // =====================
     public function cancel($id)
     {
-        $sewa = Sewa::where('id', $id)
-                    ->where('user_id', Auth::id())
-                    ->firstOrFail();
+        if ($redirect = $this->mustLogin()) return $redirect;
 
-        if(in_array($sewa->status, ['pending','menunggu_konfirmasi','diproses'])){
-            $sewa->status = 'dibatalkan';
-            $sewa->save();
-            return back()->with('success', 'Pesanan telah dibatalkan.');
+        $sewa = Sewa::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        if (in_array($sewa->status, ['pending', 'menunggu_konfirmasi', 'diproses'])) {
+            $sewa->update(['status' => 'dibatalkan']);
+            return back()->with('success', 'Pesanan dibatalkan.');
         }
 
         return back()->with('error', 'Pesanan tidak bisa dibatalkan.');
     }
 
+    // =====================
     // Detail pesanan
+    // =====================
     public function detail($id)
     {
-        $sewa = Sewa::with('items.produk')
+        if ($redirect = $this->mustLogin()) return $redirect;
+
+        $sewa = Sewa::with(['items.produk', 'pengembalian'])
             ->where('id', $id)
             ->where('user_id', Auth::id())
             ->firstOrFail();
@@ -95,131 +131,158 @@ class CartController extends Controller
         return view('user.detail', compact('sewa'));
     }
 
-    // Tambah produk ke cart
+    // =====================
+    // Tambah ke cart
+    // =====================
     public function store(Request $request)
     {
+        if ($redirect = $this->mustLogin()) return $redirect;
+
         $request->validate([
             'id_produk' => 'required|exists:produk,id_produk',
-            'ukuran' => 'nullable|string',
-            'jumlah' => 'required|integer|min:1'
+            'ukuran'    => 'nullable|string',
+            'jumlah'    => 'required|integer|min:1'
         ]);
-
-        if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
-        }
 
         $produk = Produk::findOrFail($request->id_produk);
 
         $stokTersedia = $request->ukuran
-            ? (\DB::table('ukuran_produk')->where('id_produk', $produk->id_produk)->where('nama_ukuran', $request->ukuran)->value('stok') ?? 0)
+            ? (DB::table('ukuran_produk')
+                ->where('id_produk', $produk->id_produk)
+                ->where('nama_ukuran', $request->ukuran)
+                ->value('stok') ?? 0)
             : $produk->stok_produk;
 
         if ($request->jumlah > $stokTersedia) {
-            return back()->with('error', 'Jumlah melebihi stok tersedia.');
+            return back()->with('error', 'Jumlah melebihi stok.');
         }
 
-        $cart = Cart::firstOrCreate(['user_id' => Auth::id(), 'status' => 'pending']);
+        $cart = Cart::firstOrCreate([
+            'user_id' => Auth::id(),
+            'status'  => 'pending'
+        ]);
 
-        $cartItem = CartItem::where('cart_id', $cart->id)
-                            ->where('id_produk', $produk->id_produk)
-                            ->where('ukuran', $request->ukuran)
-                            ->first();
+        $item = CartItem::where('cart_id', $cart->id)
+            ->where('id_produk', $produk->id_produk)
+            ->where('ukuran', $request->ukuran)
+            ->first();
 
-        if($cartItem){
-            $newJumlah = $cartItem->jumlah + $request->jumlah;
-            if($newJumlah > $stokTersedia){
-                return back()->with('error', 'Jumlah melebihi stok tersedia.');
+        if ($item) {
+            $newJumlah = $item->jumlah + $request->jumlah;
+            if ($newJumlah > $stokTersedia) {
+                return back()->with('error', 'Jumlah melebihi stok.');
             }
-            $cartItem->jumlah = $newJumlah;
-            $cartItem->save();
+            $item->update(['jumlah' => $newJumlah]);
         } else {
             CartItem::create([
-                'cart_id' => $cart->id,
-                'id_produk' => $produk->id_produk,
-                'ukuran' => $request->ukuran,
-                'harga_satuan' => $produk->harga_produk,
-                'jumlah' => $request->jumlah,
+                'cart_id'       => $cart->id,
+                'id_produk'     => $produk->id_produk,
+                'ukuran'        => $request->ukuran,
+                'harga_satuan'  => $produk->harga_produk,
+                'jumlah'        => $request->jumlah,
             ]);
         }
 
-        return redirect()->route('cart.index')->with('success', 'Produk berhasil ditambahkan ke keranjang!');
+        return redirect()->route('cart.index')->with('success', 'Produk ditambahkan.');
     }
 
-    // Update jumlah item cart
+    // =====================
+    // Update jumlah item
+    // =====================
     public function update(Request $request, $id)
     {
+        if ($redirect = $this->mustLogin()) return $redirect;
+
         $item = CartItem::findOrFail($id);
         $produk = Produk::findOrFail($item->id_produk);
 
         $stokTersedia = $item->ukuran
-            ? (\DB::table('ukuran_produk')->where('id_produk', $produk->id_produk)->where('nama_ukuran', $item->ukuran)->value('stok') ?? 0)
+            ? (DB::table('ukuran_produk')
+                ->where('id_produk', $produk->id_produk)
+                ->where('nama_ukuran', $item->ukuran)
+                ->value('stok') ?? 0)
             : $produk->stok_produk;
 
-        if($request->jumlah > $stokTersedia){
-            return response()->json(['success' => false, 'message' => 'Jumlah melebihi stok tersedia.'], 400);
+        if ($request->jumlah > $stokTersedia) {
+            return response()->json(['success' => false], 400);
         }
 
-        $item->jumlah = $request->jumlah;
-        $item->save();
+        $item->update(['jumlah' => $request->jumlah]);
 
         return response()->json(['success' => true]);
     }
 
-    // Hapus item dari cart
+    // =====================
+    // Hapus item
+    // =====================
     public function destroy($id)
     {
+        if ($redirect = $this->mustLogin()) return $redirect;
+
         CartItem::findOrFail($id)->delete();
-        return back()->with('success', 'Produk dihapus dari keranjang.');
+
+        return back()->with('success', 'Item dihapus.');
     }
 
-    // Checkout page
+    // =====================
+    // Checkout
+    // =====================
     public function checkout(Request $request)
     {
-        if(!Auth::check()){
-            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
+        if ($redirect = $this->mustLogin()) return $redirect;
+
+        $cart = Cart::where('user_id', Auth::id())
+            ->where('status', 'pending')
+            ->first();
+
+        if (!$cart) {
+            return redirect()->route('cart.index')->with('error', 'Keranjang kosong.');
         }
 
-        $cart = Cart::where('user_id', Auth::id())->where('status','pending')->first();
-        if(!$cart) return redirect()->route('cart.index')->with('error','Keranjang tidak ditemukan.');
+        $selected = is_array($request->query('selected'))
+            ? $request->query('selected')
+            : explode(',', $request->query('selected', ''));
 
-        $selectedArray = is_array($request->query('selected', [])) ? $request->query('selected', []) : explode(',', $request->query('selected', ''));
+        $items = CartItem::with('produk')
+            ->where('cart_id', $cart->id)
+            ->whereIn('id', $selected)
+            ->get();
 
-        $items = CartItem::with('produk')->where('cart_id', $cart->id)->whereIn('id', $selectedArray)->get();
-        if($items->isEmpty()) return redirect()->route('cart.index')->with('error','Item yang dipilih tidak ditemukan.');
+        if ($items->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Item tidak ditemukan.');
+        }
 
-        $subtotal = $items->sum(fn($i) => $i->harga_satuan * $i->jumlah);
+        $subtotal = $items->sum(fn ($i) => $i->harga_satuan * $i->jumlah);
 
-        return view('user.checkout', compact('cart','items','subtotal','selectedArray'));
+        return view('user.checkout', compact('cart', 'items', 'subtotal', 'selected'));
     }
 
+    // =====================
     // Proses sewa
+    // =====================
     public function sewa(Request $request)
     {
+        if ($redirect = $this->mustLogin()) return $redirect;
+
         $request->validate([
-            'tanggal_sewa' => 'required|date|after_or_equal:today',
+            'tanggal_sewa'    => 'required|date|after_or_equal:today',
             'tanggal_kembali' => 'nullable|date|after:tanggal_sewa',
             'delivery_method' => 'required|string',
-            'selected' => 'required|array|min:1'
+            'selected'        => 'required|array|min:1'
         ]);
 
         $cart = Cart::where('user_id', Auth::id())
-                    ->where('status', 'pending')
-                    ->firstOrFail();
+            ->where('status', 'pending')
+            ->firstOrFail();
 
         $items = CartItem::with('produk')
             ->where('cart_id', $cart->id)
             ->whereIn('id', $request->selected)
             ->get();
 
-        if ($items->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Produk tidak ditemukan.');
-        }
-
         DB::transaction(function () use ($request, $cart, $items, &$sewa) {
+            $total = $items->sum(fn ($i) => $i->harga_satuan * $i->jumlah);
 
-            $totalHarga = $items->sum(fn($i) => $i->harga_satuan * $i->jumlah);
-
-            // Buat data sewa (final transaksi)
             $sewa = Sewa::create([
                 'user_id'         => Auth::id(),
                 'cart_id'         => $cart->id,
@@ -227,37 +290,28 @@ class CartController extends Controller
                 'tanggal_sewa'    => $request->tanggal_sewa,
                 'tanggal_kembali' => $request->tanggal_kembali,
                 'delivery_method' => $request->delivery_method,
-                'total_harga'     => $totalHarga
+                'total_harga'     => $total
             ]);
-            
-            // ===============================
-// 🔔 NOTIFIKASI USER
-// ===============================
-$namaProduk = $items->pluck('produk.nama_produk')->implode(', ');
 
-Notification::create([
-    'user_id' => Auth::id(),
-    'judul'   => 'Pemesanan Berhasil',
-    'pesan'   => 'Anda berhasil memesan kostum: ' . $namaProduk . 
-                 '. Status pesanan: ' . $sewa->status,
-    'ikon'    => 'shopping-bag-3-fill',
-    'is_read' => false,
-]);
+            Notification::create([
+                'user_id' => Auth::id(),
+                'judul'   => 'Pemesanan Berhasil',
+                'pesan'   => 'Pesanan berhasil dibuat.',
+                'ikon'    => 'shopping-bag-3-fill',
+                'is_read' => false,
+            ]);
 
-
-            // Pindahkan item + potong stok
             foreach ($items as $i) {
-
                 SewaItem::create([
-                    'sewa_id'       => $sewa->id,
-                    'produk_id'     => $i->id_produk,
-                    'ukuran'        => $i->ukuran,
-                    'jumlah'        => $i->jumlah,
-                    'harga_satuan'  => $i->harga_satuan,
-                    'subtotal'      => $i->harga_satuan * $i->jumlah
+                    'sewa_id'      => $sewa->id,
+                    'produk_id'    => $i->id_produk,
+                    'ukuran'       => $i->ukuran,
+                    'jumlah'       => $i->jumlah,
+                    'harga_satuan' => $i->harga_satuan,
+                    'subtotal'     => $i->harga_satuan * $i->jumlah
                 ]);
 
-                // Kurangi stok sesuai jumlah
+                // Kurangi stok
                 if ($i->ukuran) {
                     DB::table('ukuran_produk')
                         ->where('id_produk', $i->id_produk)
@@ -268,13 +322,9 @@ Notification::create([
                 }
             }
 
-            // Hapus item yang dicheckout
+            // Hapus item cart dan ubah status cart
             CartItem::whereIn('id', $request->selected)->delete();
-
-            // Update status cart
-            $cart->update([
-                'status' => 'menunggu_konfirmasi'
-            ]);
+            $cart->update(['status' => 'menunggu_konfirmasi']);
         });
 
         return redirect()->route('checkout.success', $sewa);

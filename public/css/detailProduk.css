@@ -25,6 +25,23 @@
   margin-bottom: 10px;
 }
 
+.wishlist-btn-wrapper {
+    margin: 10px 0;
+}
+
+.wishlist-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 26px;
+    color: #e11d48;
+    transition: transform .2s;
+}
+
+.wishlist-btn:hover {
+    transform: scale(1.2);
+}
+
 .rating {
   margin-bottom: 10px;
   color: #f5c518;

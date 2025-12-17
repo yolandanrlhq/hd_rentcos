@@ -8,91 +8,110 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Notification;
 
-
 class UserController extends Controller
 {
     /**
-     * Halaman dashboard user
+     * DASHBOARD - BOLEH TANPA LOGIN
      */
     public function index()
     {
-        $user = Auth::user();
-        if (!$user || $user->role !== 'user') {
-            abort(403, 'Akses ditolak.');
-        }
-
+        $user = Auth::user(); // boleh null
         return view('user.dashboard', compact('user'));
     }
 
+    /**
+     * CEK LOGIN MANUAL (PUSAT)
+     */
+    private function requireLogin()
+    {
+        if (!Auth::check()) {
+            return redirect('/login')
+                ->with('error', 'Silakan login terlebih dahulu.');
+        }
+        return null;
+    }
+
+    /**
+     * CHAT - WAJIB LOGIN
+     */
     public function chat()
     {
+        if ($redirect = $this->requireLogin()) return $redirect;
+
         $user = Auth::user();
         return view('user.pesan', compact('user'));
     }
 
+    /**
+     * PROFILE - WAJIB LOGIN
+     */
     public function profile()
     {
-        $user = Auth::user(); // Ambil data user yang login
+        if ($redirect = $this->requireLogin()) return $redirect;
+
+        $user = Auth::user();
         return view('user.profil', compact('user'));
     }
 
-    public function updateProfile(Request $request)
-{
-    $user = Auth::user();
-
-    // Validasi input
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-        'phone' => 'nullable|string|max:20',
-        'address' => 'nullable|string|max:255',
-        'password' => 'nullable|string|min:6|confirmed',
-        'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-    ]);
-
-    // Update field dasar
-    $user->name = $request->name;
-    $user->email = $request->email;
-    $user->phone = $request->phone;
-    $user->address = $request->address;
-
-    // Update password jika ada
-    if ($request->filled('password')) {
-        $user->password = Hash::make($request->password);
-    }
-
-    // Update foto jika ada
-    if ($request->hasFile('foto')) {
-        if ($user->foto && \Storage::exists('public/' . $user->foto)) {
-            \Storage::delete('public/' . $user->foto);
-        }
-
-        $path = $request->file('foto')->store('profile_photos', 'public');
-        $user->foto = $path;
-    }
-
-    // SIMPAN USER
-    $user->save();
-
-    // ================= NOTIFIKASI =================
-    Notification::create([
-        'user_id' => $user->id,
-        'judul'   => 'Profil Diperbarui',
-        'pesan'   => 'Profil Anda berhasil diperbarui.',
-        'ikon'    => 'user',
-        'is_read' => false,
-    ]);
-    // ==============================================
-
-    return redirect()
-        ->route('user.profile')
-        ->with('success', 'Profil berhasil diperbarui!');
-}
-
-
+    /**
+     * EDIT PROFILE - WAJIB LOGIN
+     */
     public function editProfile()
     {
-        $user = Auth::user(); // Ambil data user yang sedang login
+        if ($redirect = $this->requireLogin()) return $redirect;
+
+        $user = Auth::user();
         return view('user.editProfil', compact('user'));
+    }
+
+    /**
+     * UPDATE PROFILE - WAJIB LOGIN
+     */
+    public function updateProfile(Request $request)
+    {
+        if ($redirect = $this->requireLogin()) return $redirect;
+
+        $user = Auth::user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
+            'password' => 'nullable|string|min:6|confirmed',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'address' => $request->address,
+        ]);
+
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        if ($request->hasFile('foto')) {
+            if ($user->foto && \Storage::exists('public/' . $user->foto)) {
+                \Storage::delete('public/' . $user->foto);
+            }
+
+            $user->foto = $request->file('foto')->store('profile_photos', 'public');
+        }
+
+        $user->save();
+
+        Notification::create([
+            'user_id' => $user->id,
+            'judul' => 'Profil Diperbarui',
+            'pesan' => 'Profil Anda berhasil diperbarui.',
+            'ikon' => 'user',
+            'is_read' => false,
+        ]);
+
+        return redirect()->route('user.profile')
+            ->with('success', 'Profil berhasil diperbarui!');
     }
 }

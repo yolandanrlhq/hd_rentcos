@@ -72,8 +72,8 @@
             </div>
 
             <div class="form-buttons">
-            <button type="reset" class="cancel-btn">Batal</button>
-            <button type="submit" class="save-btn">Simpan</button>
+                <a href="{{ route('user.profile') }}" class="cancel-btn">Batal</a>
+                <button type="submit" class="save-btn">Simpan</button>
             </div>
         </form>
         </div>

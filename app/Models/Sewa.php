@@ -39,4 +39,13 @@ class Sewa extends Model
         return 'SEWA' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
     }
 
+    public function pengembalian()
+    {
+        return $this->hasOne(Pengembalian::class);
+    }
+
+    public function testimoni()
+    {
+        return $this->hasOne(Testimoni::class);
+    }
 }

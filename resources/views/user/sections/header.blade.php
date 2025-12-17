@@ -4,7 +4,7 @@
     <nav class="nav-links">
       <a href="{{ route('user.produk') }}" class="{{ request()->routeIs('user.sections.produk') ? 'active' : '' }}">Produk</a>
       <a href="{{ route('user.jadwalEvent') }}" class="{{ request()->routeIs('user.jadwalEvent') ? 'active' : '' }}">Jadwal Event</a>
-      <a href="{{ route('user.wishlist') }}" class="{{ request()->routeIs('user.wishlist') ? 'active' : '' }}">Wishlist</a>
+      <a href="{{ route('wishlist.index') }}" class="{{ request()->routeIs('user.wishlist') ? 'active' : '' }}">Wishlist</a>
     </nav>
 
     <div class="search-box">
@@ -13,29 +13,40 @@
     </div>
 
     <div class="icons">
-    <a href="{{ route('user.notifikasi') }}" class="notif-icon">
-        <i class="ri-notification-3-fill"></i>
+        <a href="{{ route('user.notifikasi') }}" class="notif-icon">
+            <i class="ri-notification-3-fill"></i>
 
-        @if(isset($unreadCount) && $unreadCount > 0)
-            <span class="notif-badge">{{ $unreadCount }}</span>
-        @endif
-    </a>
+            @if(isset($unreadCount) && $unreadCount > 0)
+                <span class="notif-badge">{{ $unreadCount }}</span>
+            @endif
+        </a>
 
-    <a href="{{ route('cart.index') }}">
-        <i class="ri-shopping-cart-fill"></i>
-    </a>
+        <a href="{{ route('cart.index') }}">
+            <i class="ri-shopping-cart-fill"></i>
+        </a>
 
-    <a href="{{ route('user.chat') }}">
-        <i class="ri-message-3-fill"></i>
-    </a>
-</div>
+        <a href="{{ route('user.chat') }}">
+            <i class="ri-message-3-fill"></i>
+        </a>
+    </div>
 
 
-    <div class="profil">
-      <!-- <a href="#" class="login">Login</a>
-      <span>|</span>
-      <a href="#" class="register">Register</a> -->
-      <a href="{{ route('user.profile') }}" class="{{ request()->routeIs('user.profile') ? 'active' : '' }}">
-        <i class="ri-user-3-fill"></i></a>
+    <div class="profil dropdown">
+        <button class="profile-btn" id="profileToggle">
+            <i class="ri-user-3-fill"></i>
+        </button>
+
+        <div class="dropdown-menu" id="profileMenu">
+            <a href="{{ route('user.profile') }}">
+                <i class="ri-user-line"></i> Lihat Profil
+            </a>
+
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="logout-btn">
+                    <i class="ri-logout-box-r-line"></i> Logout
+                </button>
+            </form>
+        </div>
     </div>
   </header>

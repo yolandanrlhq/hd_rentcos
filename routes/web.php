@@ -1,5 +1,9 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
@@ -9,172 +13,168 @@ use App\Http\Controllers\EventUserController;
 use App\Http\Controllers\EventAdminController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ChatController;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Http\Request;
-use App\Http\Controllers\NotificationController;
-use App\Models\Notification;
+use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\UserDashboardController;
+use App\Http\Controllers\PengembalianController;
+use App\Http\Controllers\TestimoniController;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 
-// ----------------------------
-// AUTH
-// ----------------------------
+/*
+|--------------------------------------------------------------------------
+| AUTH
+|--------------------------------------------------------------------------
+*/
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// ----------------------------
-// ADMIN (tanpa middleware)
-// ----------------------------
+/*
+|--------------------------------------------------------------------------
+| USER - PUBLIC (TANPA LOGIN)
+|--------------------------------------------------------------------------
+*/
+Route::get('/', function () {
+    return redirect('/user/dashboard');
+});
+
+Route::prefix('user')->group(function () {
+    Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('user.dashboard');
+    Route::get('/produk', [UserProdukController::class, 'index'])->name('user.produk');
+    Route::get('/produk/{id}', [UserProdukController::class, 'show'])->name('user.produk.show');
+    Route::get('/jadwal-event', [EventUserController::class, 'index'])->name('user.jadwalEvent');
+});
+
+/*
+|--------------------------------------------------------------------------
+| USER - WAJIB LOGIN (CEK DI CONTROLLER / ROUTE)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('user')->group(function () {
+
+    // PROFIL
+    Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
+    Route::get('/edit-profile', [UserController::class, 'editProfile'])->name('user.editProfile');
+    Route::put('/update-profile', [UserController::class, 'updateProfile'])->name('user.updateProfile');
+
+    // WISHLIST
+    Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::post('/wishlist/{produkId}', [WishlistController::class, 'store'])->name('wishlist.store');
+    Route::delete('/wishlist/{produkId}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
+
+    // CART
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart', [CartController::class, 'store'])->name('cart.store');
+    Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/delete/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
+
+    // CHECKOUT & SEWA & PENGEMBALIAN
+    Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+    Route::post('/sewa', [CartController::class, 'sewa'])->name('cart.sewa');
+    Route::get('/checkout/success/{sewa}', function ($sewa) {
+        return view('user.checkoutSuccess', compact('sewa'));})->name('checkout.success');
+
+    // STATUS SEWA
+    Route::get('/cart/status/{status?}', [CartController::class, 'status'])->name('cart.status');
+    Route::get('/cart/detail/{id}', [CartController::class, 'detail'])->name('cart.detail');
+    Route::post('/cart/complete/{id}', [CartController::class, 'complete'])->name('cart.complete');
+    Route::post('/cart/cancel/{id}', [CartController::class, 'cancel'])->name('cart.cancel');
+    Route::post('/testimoni/{sewa}', [TestimoniController::class, 'store'])->name('user.testimoni.store');
+    Route::get('/testimoni/create/{sewa}', [TestimoniController::class, 'create'])->name('user.testimoni.create');
+
+    // CHAT
+    Route::get('/chat', [UserController::class, 'chat'])->name('user.chat');
+    Route::get('/chat/messages/{adminId}', [ChatController::class, 'fetchUserMessages'])->name('user.chat.messages');
+    Route::post('/chat/send', [ChatController::class, 'send'])->name('user.chat.send');
+
+    // NOTIFIKASI (TANPA MIDDLEWARE)
+    Route::get('/notifikasi', function () {
+        if (!Auth::check()) {
+            return redirect('/login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        $user = Auth::user();
+        $notifications = $user->notifications()->latest()->get();
+        $user->notifications()->where('is_read', false)->update(['is_read' => true]);
+
+        return view('user.notifikasi', compact('notifications'));
+    })->name('user.notifikasi');
+});
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN - WAJIB LOGIN & ROLE ADMIN
+|--------------------------------------------------------------------------
+*/
 Route::prefix('admin')->group(function () {
+
     Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/users', [AdminController::class, 'manageUsers'])->name('admin.users');
     Route::post('/logout', [AdminController::class, 'logout'])->name('admin.logout');
 
-    // Produk
+    // PRODUK
     Route::get('/produk', [AdminProdukController::class, 'produk'])->name('admin.produk');
     Route::get('/produk/create', [AdminProdukController::class, 'create'])->name('admin.create');
     Route::post('/produk', [AdminProdukController::class, 'store'])->name('admin.produk.store');
     Route::get('/produk/{id}/edit', [AdminProdukController::class, 'edit'])->name('admin.editProduk');
     Route::put('/produk/{id}', [AdminProdukController::class, 'update'])->name('admin.produk.update');
     Route::delete('/produk/{id}', [AdminProdukController::class, 'destroy'])->name('admin.produk.destroy');
+
+    // EVENT
     Route::get('/event', [EventAdminController::class, 'index'])->name('admin.event.index');
     Route::get('/event/create', [EventAdminController::class, 'create'])->name('admin.event.create');
     Route::post('/event', [EventAdminController::class, 'store'])->name('admin.event.store');
     Route::get('/event/{id}/edit', [EventAdminController::class, 'edit'])->name('admin.event.edit');
     Route::put('/event/{id}', [EventAdminController::class, 'update'])->name('admin.event.update');
     Route::delete('/event/{id}', [EventAdminController::class, 'destroy'])->name('admin.event.destroy');
+
+    // PESANAN
     Route::get('/pesanan', [AdminController::class, 'pesanan'])->name('admin.pesanan');
     Route::post('/pesanan/{id}/status', [AdminController::class, 'updateStatusPesanan'])->name('admin.pesanan.updateStatus');
-    Route::get('/user', [AdminController::class, 'user'])->name('admin.user');
+    Route::get('pengembalian', [PengembalianController::class, 'index'])->name('admin.pengembalian.index');
+    Route::get('pengembalian/{id}/edit', [PengembalianController::class, 'edit'])->name('admin.pengembalian.edit');
+    Route::put('pengembalian/{id}', [PengembalianController::class, 'update'])->name('admin.pengembalian.update');
+
+    // CHAT ADMIN
     Route::get('/pesan', [AdminController::class, 'pesan'])->name('admin.pesan');
     Route::get('/chat/users', [ChatController::class, 'getChatUsers'])->name('admin.chat.users');
     Route::get('/chat/messages/{userId}', [ChatController::class, 'fetchAdminMessages'])->name('admin.chat.messages');
     Route::post('/chat/send', [ChatController::class, 'send'])->name('admin.chat.send');
+    Route::get('/iot-control', function() {
+        return view('admin.iotControl');})->name('admin.iotControl');
 });
 
-// ----------------------------
-// USER (tanpa middleware)
-// ----------------------------
-Route::prefix('user')->group(function () {
-    Route::get('/dashboard', [UserController::class, 'index'])->name('user.dashboard');
-    Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
-    Route::get('/edit-profile', [UserController::class, 'editProfile'])->name('user.editProfile');
-    Route::put('/update-profile', [UserController::class, 'updateProfile'])->name('user.updateProfile');
-    Route::get('/produk', [UserProdukController::class, 'index'])->name('user.produk');
-    Route::get('/produk/{id}', [UserProdukController::class, 'show'])->name('user.produk.show');
-    Route::get('/jadwal-event', [EventUserController::class, 'index'])->name('user.jadwalEvent');
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart', [CartController::class, 'store'])->name('cart.store');
-    Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
-    Route::delete('/cart/delete/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
-    Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
-    Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout.post');
-    Route::get('/checkout/success/{sewa}', function ($sewa) {
-        return view('user.checkoutSuccess', ['sewa' => $sewa]);})->name('checkout.success');
-    Route::get('/chat/order/{sewa}', [ChatController::class, 'orderChat'])->name('chat.order');
-    Route::post('/sewa', [CartController::class, 'sewa'])->name('cart.sewa');
-    Route::get('/cart/status/{status?}', [CartController::class, 'status'])->name('cart.status');
-    Route::get('/cart/detail/{id}', [CartController::class, 'detail'])->name('cart.detail');
-    Route::post('/cart/complete/{id}', [CartController::class, 'complete'])->name('cart.complete');
-    Route::post('/cart/cancel/{id}', [CartController::class, 'cancel'])->name('cart.cancel');
-    Route::get('/chat', [UserController::class, 'chat'])->name('user.chat');
-    Route::get('/chat/messages/{adminId}', [ChatController::class, 'fetchUserMessages'])->name('user.chat.messages');
-    Route::post('/chat/send', [ChatController::class, 'send'])->name('user.chat.send');
-    // Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('user.notifikasi');
-    Route::get('/admin/chat/users', function() {
-    return App\Models\User::select('id', 'name', 'foto')->get();
-});
-
-});
-Route::get('/wishlist', function () {
-    return view('user.wishlist');
-})->name('user.wishlist');
-
-
-// ===================== LED CONTROL =====================
+/*
+|--------------------------------------------------------------------------
+| IoT / RFID (TETAP)
+|--------------------------------------------------------------------------
+*/
 Route::get('/control-led/{command}', function ($command) {
-    $validCommands = ['naruto', 'sasuke', 'sakura', 'off'];
-
-    if (!in_array(strtolower($command), $validCommands)) {
-        return response()->json(['response' => 'Invalid command!']);
+    $valid = ['naruto', 'sasuke', 'sakura', 'off'];
+    if (!in_array(strtolower($command), $valid)) {
+        return response()->json(['response' => 'Invalid command']);
     }
 
-    $esp32_ip = 'http://10.230.141.139/control?command=' . $command;
-    $context = stream_context_create([
-        'http' => ['timeout' => 1] // biar tidak nunggu lama
-    ]);
+    $url = 'http://10.230.141.139/control?command=' . $command;
+    $context = stream_context_create(['http' => ['timeout' => 1]]);
+    $response = @file_get_contents($url, false, $context);
 
-    $response = @file_get_contents($esp32_ip, false, $context);
-
-    if (!$response) {
-        return response()->json(['response' => 'ESP32 tidak merespon']);
-    }
-
-    preg_match('/<p><b>Status LED:<\/b>\s*(.*?)<\/p>/', $response, $matches);
-    $status = $matches[1] ?? 'Status tidak diketahui';
-
-    return response()->json(['response' => $status]);
+    return response()->json(['response' => $response ?: 'ESP32 tidak merespon']);
 });
 
-
-// ===================== RFID SCAN (VERSI CEPAT, TANPA LAG) =====================
 Route::get('/rfid-scan', function () {
-
-    // Ambil data dari cache dulu
-    $cached = Cache::get('rfid_data');
-    if ($cached) {
+    if ($cached = Cache::get('rfid_data')) {
         return response()->json($cached);
     }
 
-    $esp32_ip = 'http://10.230.141.139/rfid-scan';
+    $url = 'http://10.230.141.139/rfid-scan';
+    $context = stream_context_create(['http' => ['timeout' => 0.5]]);
+    $response = @file_get_contents($url, false, $context);
 
-    $context = stream_context_create([
-        'http' => ['timeout' => 0.5] // timeout 0.5 detik biar web tidak ngelag
-    ]);
-
-    $response = @file_get_contents($esp32_ip, false, $context);
-
-    if ($response === false) {
-        // Jika ESP32 tidak merespon → tetap balikin data ringan
-        return response()->json([
-            'tag' => null,
-            'kostum' => null
-        ]);
-    }
-
-    // Simpan ke cache selama 3 detik
-    $json = json_decode($response, true);
+    $json = $response ? json_decode($response, true) : ['tag' => null, 'kostum' => null];
     Cache::put('rfid_data', $json, 3);
 
     return response()->json($json);
 });
-
-
-// ===================== HALAMAN ADMIN IoT =====================
-Route::get('/admin/iot-control', function () {
-    return view('admin.iotControl');
-})->name('admin.iotControl');
-
-Route::get('/notifikasi', function () {
-
-    $user = Auth::user();
-
-    // Ambil semua notifikasi user
-    $notifications = $user->notifications()
-        ->orderBy('created_at', 'desc')
-        ->get();
-
-    // ===============================
-    // TANDAI SEMUA NOTIFIKASI SUDAH DIBACA
-    // ===============================
-    $user->notifications()
-        ->where('is_read', false)
-        ->update(['is_read' => true]);
-
-    return view('user.notifikasi', compact('notifications'));
-
-})->middleware('auth')->name('user.notifikasi');
