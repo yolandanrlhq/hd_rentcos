@@ -11,7 +11,15 @@
                     <li class="{{ request()->routeIs('admin.user') ? 'active' : '' }}"><a href="{{ route('admin.users') }}"><i class="fas fa-user-friends"></i> User</a></li>
                     <li class="{{ request()->routeIs('admin.pesan') ? 'active' : '' }}"><a href="{{ route('admin.pesan') }}"><i class="fas fa-envelope"></i> Pesan</a></li>
                     <li class="{{ request()->routeIs('admin.iotControl') ? 'active' : '' }}"><a href="{{ route('admin.iotControl') }}"><i class="fa-solid fa-wrench"></i> IoT Control</a></li>
-                    <li class="{{ request()->routeIs('admin.produk') ? 'active' : '' }}"><a href="{{ route('admin.produk') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    <li>
+    <form action="{{ route('admin.logout') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin logout?')">
+        @csrf
+        <button type="submit" style="background:none;border:none;color:inherit;cursor:pointer;">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </form>
+</li>
+
                 </ul>
             </nav>
     </aside>

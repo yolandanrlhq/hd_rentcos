@@ -39,7 +39,10 @@ class AdminController extends Controller
      */
     public function manageUsers()
     {
-        if ($redirect = $this->requireAdmin()) return $redirect;
+        $user = Auth::user();
+        if (!$user || $user->role !== 'admin') {
+            abort(403, 'Akses ditolak.');
+        }
 
         $users = User::all();
         return view('admin.users', compact('users'));
@@ -160,11 +163,17 @@ class AdminController extends Controller
      * HALAMAN USER ADMIN
      */
     public function user()
-    {
-        if ($redirect = $this->requireAdmin()) return $redirect;
-
-        return view('admin.user');
+{
+    $admin = Auth::user();
+    if (!$admin || $admin->role !== 'admin') {
+        abort(403, 'Akses ditolak.');
     }
+
+    // Ambil semua user (atau filter role user)
+    $users = User::where('role', 'user')->get();
+
+    return view('admin.user', compact('users'));
+}
 
     /**
      * PESAN ADMIN

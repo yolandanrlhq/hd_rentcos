@@ -29,6 +29,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
 /*
 |--------------------------------------------------------------------------
@@ -112,7 +113,7 @@ Route::prefix('admin')->group(function () {
 
     Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/users', [AdminController::class, 'manageUsers'])->name('admin.users');
-    Route::post('/logout', [AdminController::class, 'logout'])->name('admin.logout');
+    
 
     // PRODUK
     Route::get('/produk', [AdminProdukController::class, 'produk'])->name('admin.produk');
@@ -178,3 +179,18 @@ Route::get('/rfid-scan', function () {
 
     return response()->json($json);
 });
+
+
+
+//footer link
+
+Route::view('/faq', 'user.faq')->name('faq');
+Route::view('/cararental', 'user.rental')->name('rental');
+Route::view('/denda', 'user.denda')->name('denda');
+Route::view('/refund', 'user.refund')->name('refund');
+Route::view('/pengembalian', 'user.pengembalian')->name('pengembalian');
+Route::view('/persyaratan', 'user.persyaratan')->name('persyaratan');
+
+
+
+

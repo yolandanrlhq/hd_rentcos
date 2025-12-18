@@ -1,5 +1,10 @@
 <header class="navbar">
-    <a href="{{ route('user.dashboard') }}" class="logo">HD <span>RENTCOS</span></a>
+    <a href="{{ route('user.dashboard') }}" class="logo">
+    <img src="{{ asset('images/logo.jpg') }}" alt="HD RENTCOS Logo" class="logo-img">
+    <span class="logo-text">HD <span>RENTCOS</span></span>
+</a>
+
+
 
     <nav class="nav-links">
       <a href="{{ route('user.produk') }}" class="{{ request()->routeIs('user.sections.produk') ? 'active' : '' }}">Produk</a>
@@ -7,10 +12,16 @@
       <a href="{{ route('wishlist.index') }}" class="{{ request()->routeIs('user.wishlist') ? 'active' : '' }}">Wishlist</a>
     </nav>
 
-    <div class="search-box">
-      <i class="fas fa-search"></i>
-      <input type="text" placeholder="Search">
-    </div>
+    <form action="{{ route('user.produk') }}" method="GET" class="search-box">
+    <i class="fas fa-search"></i>
+    <input 
+        type="text" 
+        name="q"
+        placeholder="Cari produk..."
+        value="{{ request('q') }}"
+    >
+</form>
+
 
     <div class="icons">
         <a href="{{ route('user.notifikasi') }}" class="notif-icon">
@@ -25,28 +36,49 @@
             <i class="ri-shopping-cart-fill"></i>
         </a>
 
-        <a href="{{ route('user.chat') }}">
-            <i class="ri-message-3-fill"></i>
+        <a href="{{ route('user.chat') }}" class="chat-icon" style="position:relative;">
+    <i class="ri-message-3-fill"></i>
+
+    @if(isset($unreadChatCount) && $unreadChatCount > 0)
+        <span class="notif-badge">
+            {{ $unreadChatCount }}
+        </span>
+    @endif
+</a>
+    </div>
+
+
+    @if(Auth::check())
+    <button type="button" class="profile-btn avatar-btn" id="profileToggle">
+        @if(Auth::user()->foto)
+            <img 
+                src="{{ asset('storage/' . Auth::user()->foto) }}" 
+                alt="Avatar"
+                class="avatar-img"
+            >
+        @else
+            <div class="avatar-letter">
+                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+            </div>
+        @endif
+    </button>
+
+    <div class="dropdown-menu" id="profileMenu">
+        <a href="{{ route('user.profile') }}">
+            <i class="ri-user-line"></i> Lihat Profil
         </a>
+
+        <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="submit" class="logout-btn">
+                <i class="ri-logout-box-r-line"></i> Logout
+            </button>
+        </form>
     </div>
-
-
-    <div class="profil dropdown">
-        <button class="profile-btn" id="profileToggle">
-            <i class="ri-user-3-fill"></i>
-        </button>
-
-        <div class="dropdown-menu" id="profileMenu">
-            <a href="{{ route('user.profile') }}">
-                <i class="ri-user-line"></i> Lihat Profil
-            </a>
-
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="logout-btn">
-                    <i class="ri-logout-box-r-line"></i> Logout
-                </button>
-            </form>
-        </div>
-    </div>
-  </header>
+@else
+    {{-- JIKA BELUM LOGIN --}}
+    <a href="{{ route('login') }}" class="login-btn">
+        Login
+    </a>
+@endif
+</header>

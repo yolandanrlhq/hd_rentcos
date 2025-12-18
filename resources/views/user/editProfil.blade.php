@@ -1,3 +1,7 @@
+@php
+use Illuminate\Support\Str;
+@endphp
+
 @extends('layouts.user')
 
 @section('title', 'Detail Produk - HD RENTCOS')
@@ -14,17 +18,25 @@
         <!-- Kiri: Foto Profil -->
         <div class="profile-left">
         <div class="profile-img-wrapper">
-            <img
-            src="{{ $user->foto ? asset('storage/' . $user->foto) : asset('assets/default-profile.jpg') }}"
+    @if ($user->foto)
+        <img
+            src="{{ asset('storage/' . $user->foto) }}"
             alt="Foto Profil"
             id="previewImg"
-            >
-
-            <!-- Ikon kamera, sekarang terhubung ke input file yang ada di form -->
-            <label for="uploadProfile" class="upload-btn" title="Ubah Foto">
-            <i class="ri-camera-fill"></i>
-            </label>
+            class="profile-img"
+        >
+    @else
+        <div class="profile-avatar" id="previewAvatar">
+            {{ Str::upper(Str::substr($user->name, 0, 1)) }}
         </div>
+    @endif
+
+    <label for="uploadProfile" class="upload-btn" title="Ubah Foto">
+        <i class="ri-camera-fill"></i>
+    </label>
+</div>
+
+
 
         <h2 class="profile-name">{{ $user->name }}</h2>
         </div>

@@ -1,0 +1,324 @@
+/* Import font Poppins dari Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/* Variabel Warna */
+:root {
+    --primary-color: #000; /* Hitam */
+    --secondary-color: #5d933e; /* Hijau */
+    --text-dark: #252b42; /* Hampir hitam */
+    --text-light: #737373; /* Abu-abu terang */
+    --background-light: #fff; /* Putih */
+    --background-gray: #f2f2f2; /* Abu-abu pada card */
+    --link-hover-color: #5d933e; 
+}
+
+/* Reset CSS Dasar */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-dark);
+    background-color: var(--background-light);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+a {
+    text-decoration: none;
+    color: var(--text-dark);
+}
+
+
+/* --- CONTENT SECTION STYLES --- */
+.content-section {
+    padding: 60px 0 100px;
+}
+
+.main-title {
+    font-size: 32px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 50px;
+    color: var(--primary-color);
+    line-height: 1.2;
+}
+
+.card-container {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.card {
+    flex: 1;
+    background-color: var(--background-gray);
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.card-indramayu {
+    background-color: #f7f9f6; /* Warna yang lebih terang untuk card kiri */
+}
+
+.card-luar-indramayu {
+    background-color: #f7f9f6; /* Warna yang lebih terang untuk card kanan */
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.dot-green {
+    background-color: var(--secondary-color);
+}
+
+.card-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.list {
+    list-style: none; /* Menghilangkan bullet default */
+    padding-left: 0;
+}
+
+.list > li {
+    position: relative;
+    padding-left: 20px; /* Ruang untuk bullet custom */
+    margin-bottom: 20px;
+}
+
+.list > li:last-child {
+    margin-bottom: 0;
+}
+
+/* Custom bullet point */
+.list > li::before {
+    content: "\2022"; /* Bullet point */
+    color: var(--secondary-color);
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.list p, .list li ul {
+    font-size: 14px;
+    color: var(--text-light);
+    font-weight: 400;
+}
+
+.list strong {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.list li ul {
+    list-style: disc; /* Bullet default untuk sub-list */
+    padding-left: 20px;
+    margin-top: 5px;
+}
+
+.list li ul li {
+    margin-bottom: 5px;
+}
+
+/* ===============================
+   CARD EKSPEDISI
+================================ */
+
+.card-ekspedisi-list {
+    max-width: 700px;
+    margin: 40px auto 0;
+    background: #f9fafb;
+    border-radius: 14px;
+    padding: 28px 32px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.06);
+}
+
+/* HEADER */
+.card-ekspedisi-list .card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.card-ekspedisi-list .card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111;
+}
+
+/* LIST GRID */
+.card-ekspedisi-list .list-column {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 24px;
+}
+
+/* ITEM */
+.card-ekspedisi-list .list-column li {
+    background: #ffffff;
+    padding: 12px 16px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* HOVER */
+.card-ekspedisi-list .list-column li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+/* TEXT */
+.card-ekspedisi-list .list-column p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 600px) {
+    .card-ekspedisi-list {
+        padding: 22px;
+    }
+
+    .card-ekspedisi-list .list-column {
+        grid-template-columns: 1fr;
+    }
+
+    .card-ekspedisi-list .list-column p {
+        font-size: 13px;
+    }
+}
+
+
+/* --- FOOTER STYLES --- */
+.footer {
+    background-color: var(--background-light);
+    padding-top: 30px;
+}
+
+.footer-divider {
+    border: none;
+    height: 1px;
+    background-color: #e0e0e0;
+    margin-bottom: 40px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 40px;
+}
+
+.footer-brand {
+    max-width: 250px;
+}
+
+.footer-brand .logo {
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+.footer-brand p {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-bottom: 20px;
+}
+
+.social-icons a {
+    font-size: 18px;
+    margin-right: 15px;
+    color: var(--text-light);
+    transition: color 0.3s;
+}
+
+.social-icons a:hover {
+    color: var(--link-hover-color);
+}
+
+.footer-links {
+    display: flex;
+    gap: 80px;
+}
+
+.footer-col h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.footer-col ul {
+    list-style: none;
+}
+
+.footer-col ul li {
+    margin-bottom: 10px;
+}
+
+.footer-col ul li a {
+    font-size: 14px;
+    color: var(--text-light);
+    transition: color 0.3s;
+}
+
+.footer-col ul li a:hover {
+    color: var(--link-hover-color);
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-top: 1px solid #e0e0e0;
+    background-color: #f7f7f7;
+    font-size: 14px;
+    color: var(--text-light);
+}
+
+.footer-bottom p {
+    margin: 0;
+}
+
+.payment-methods img {
+    height: 20px;
+    margin-left: 10px;
+    /* Dalam implementasi nyata, ganti dengan gambar ikon pembayaran asli */
+    border: 1px solid #e0e0e0; 
+    border-radius: 3px;
+}

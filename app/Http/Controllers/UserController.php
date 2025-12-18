@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Notification;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -68,50 +69,72 @@ class UserController extends Controller
      * UPDATE PROFILE - WAJIB LOGIN
      */
     public function updateProfile(Request $request)
-    {
-        if ($redirect = $this->requireLogin()) return $redirect;
+{
+    if ($redirect = $this->requireLogin()) return $redirect;
 
-        $user = Auth::user();
+    $user = Auth::user();
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:255',
-            'password' => 'nullable|string|min:6|confirmed',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
+    $request->validate([
+        'name'     => 'required|string|max:255',
+        'email'    => 'required|email|max:255|unique:users,email,' . $user->id,
+        'phone'    => 'nullable|string|max:20',
+        'address'  => 'nullable|string|max:255',
+        'password' => 'nullable|string|min:6|confirmed',
+        'foto'     => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+    ]);
 
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'address' => $request->address,
-        ]);
+    // =========================
+    // UPDATE DATA DASAR
+    // =========================
+    $user->name    = $request->name;
+    $user->email   = $request->email;
+    $user->phone   = $request->phone;
+    $user->address = $request->address;
 
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
-        }
-
-        if ($request->hasFile('foto')) {
-            if ($user->foto && \Storage::exists('public/' . $user->foto)) {
-                \Storage::delete('public/' . $user->foto);
-            }
-
-            $user->foto = $request->file('foto')->store('profile_photos', 'public');
-        }
-
-        $user->save();
-
-        Notification::create([
-            'user_id' => $user->id,
-            'judul' => 'Profil Diperbarui',
-            'pesan' => 'Profil Anda berhasil diperbarui.',
-            'ikon' => 'user',
-            'is_read' => false,
-        ]);
-
-        return redirect()->route('user.profile')
-            ->with('success', 'Profil berhasil diperbarui!');
+    // =========================
+    // UPDATE PASSWORD (JIKA ADA)
+    // =========================
+    if ($request->filled('password')) {
+        $user->password = Hash::make($request->password);
     }
+
+    // =========================
+    // UPDATE FOTO PROFIL
+    // =========================
+    if ($request->hasFile('foto')) {
+
+        // hapus foto lama jika ada
+        if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+            Storage::disk('public')->delete($user->foto);
+        }
+
+        // simpan foto baru
+        $path = $request->file('foto')->store('profile_photos', 'public');
+        $user->foto = $path;
+    }
+
+    // SIMPAN SEMUA PERUBAHAN
+    $user->save();
+
+    // =========================
+    // NOTIFIKASI
+    // =========================
+    Notification::create([
+        'user_id' => $user->id,
+        'judul'   => 'Profil Diperbarui',
+        'pesan'   => 'Profil Anda berhasil diperbarui.',
+        'ikon'    => 'user',
+        'is_read' => false,
+    ]);
+
+    return redirect()
+        ->route('user.profile')
+        ->with('success', 'Profil berhasil diperbarui!');
+}   
+
+
+
+
+
+
 }

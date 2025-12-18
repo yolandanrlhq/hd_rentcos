@@ -1,0 +1,151 @@
+/* ===============================
+   NOTIFIKASI PAGE
+================================ */
+
+.notifikasi-container {
+    max-width: 880px;
+    margin: 32px auto;
+    padding: 0 16px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.notifikasi-container h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #111;
+}
+
+/* ===============================
+   GROUP (Hari ini, Kemarin, dll)
+================================ */
+
+.notif-group {
+    margin-bottom: 26px;
+}
+
+.notif-group-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    margin: 0 0 10px;
+}
+
+/* ===============================
+   LIST
+================================ */
+
+.notifikasi-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ===============================
+   ITEM
+================================ */
+
+.notifikasi-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: all 0.2s ease;
+    border-left: 4px solid transparent;
+}
+
+.notifikasi-item:hover {
+    background: #f9fafb;
+    transform: translateY(-1px);
+}
+
+/* NOTIFIKASI BARU */
+.notifikasi-item.new {
+    background: #eef5ff;
+    border-left-color: #2563eb;
+}
+
+/* ===============================
+   ICON
+================================ */
+
+.notifikasi-item .icon {
+    font-size: 22px;
+    color: #2563eb;
+    margin-top: 3px;
+    min-width: 26px;
+}
+
+/* ===============================
+   TEXT
+================================ */
+
+.notifikasi-text {
+    flex: 1;
+}
+
+.notifikasi-text h4,
+.notifikasi-text h5 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+}
+
+.notifikasi-text p {
+    margin: 4px 0;
+    font-size: 13px;
+    color: #444;
+    line-height: 1.5;
+}
+
+/* TIME */
+.notifikasi-text .time {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 11px;
+    color: #888;
+}
+
+/* ===============================
+   EMPTY STATE
+================================ */
+
+.notifikasi-container > p {
+    font-size: 14px;
+    color: #666;
+    background: #fafafa;
+    padding: 18px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 600px) {
+    .notifikasi-container {
+        padding: 0 12px;
+    }
+
+    .notifikasi-item {
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .notifikasi-item .icon {
+        font-size: 20px;
+    }
+
+    .notifikasi-text h4,
+    .notifikasi-text h5 {
+        font-size: 13px;
+    }
+
+    .notifikasi-text p {
+        font-size: 12.5px;
+    }
+}

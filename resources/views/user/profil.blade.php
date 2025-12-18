@@ -1,3 +1,7 @@
+@php
+use Illuminate\Support\Str;
+@endphp
+
 @extends('layouts.user')
 
 @section('title', 'Detail Produk - HD RENTCOS')
@@ -13,12 +17,20 @@
             <!-- Kiri: Foto Profil -->
             <div class="profile-left">
             <div class="profile-img-wrapper">
-                <img
-                src="{{ $user->foto ? asset('storage/' . $user->foto) : asset('assets/default-profile.jpg') }}"
-                alt="Foto Profil"
-                id="previewImg"
-                >
-            </div>
+    @if ($user->foto)
+        <img
+            src="{{ asset('storage/' . $user->foto) }}"
+            alt="Foto Profil"
+            class="profile-img"
+        >
+    @else
+        <div class="profile-avatar">
+            {{ Str::upper(Str::substr($user->name, 0, 1)) }}
+        </div>
+    @endif
+</div>
+
+
 
             <h2 class="profile-name">{{ $user->name }}</h2>
             <p class="profile-location">{{ $user->address ?? 'Belum ada alamat' }}</p>

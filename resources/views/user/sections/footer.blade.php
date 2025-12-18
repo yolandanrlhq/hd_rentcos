@@ -42,10 +42,12 @@
           <div class="footer-section">
             <h3>FAQ</h3>
             <ul>
-              <li><a href="#">Akun</a></li>
-              <li><a href="#">Kelola Pesanan</a></li>
-              <li><a href="#">Pengiriman</a></li>
-              <li><a href="#">Pembayaran</a></li>
+              <li><a href="{{ route('faq') }}">FAQ</a></li>
+              <li><a href="{{ route('rental') }}">Cara Rental</a></li>
+              <li><a href="{{ route('denda') }}">Ketentuan Denda</a></li>
+              <li><a href="{{ route('refund') }}">Kebijakan Refund</a></li>
+              <li><a href="{{ route('pengembalian') }}">Ketentuan Pengembalian</a></li>
+              <li><a href="{{ route('persyaratan') }}">Persyaatan Rental</a></li>
             </ul>
           </div>
 

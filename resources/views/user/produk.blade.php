@@ -13,8 +13,13 @@
     <div class="container">
         <h2 class="section-title">Produk Kami</h2>
 
+        {{-- FORM SEARCH (TIDAK MERUBAH TAMPILAN) --}}
+        <form method="GET" action="{{ route('user.produk') }}">
+            {{-- input search ada di header, ini hanya penampung GET --}}
+        </form>
+
         <div class="products-grid">
-            @foreach ($produks as $produk)
+            @forelse ($produks as $produk)
                 @php
                     $avg   = round($produk->testimonis_avg_rating ?? 0, 1);
                     $total = $produk->testimonis_count ?? 0;
@@ -67,7 +72,9 @@
                         </div>
                     </article>
                 </a>
-            @endforeach
+            @empty
+                <p>Tidak ada produk ditemukan.</p>
+            @endforelse
         </div>
     </div>
 </main>

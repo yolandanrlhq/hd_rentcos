@@ -1,0 +1,176 @@
+/* 3.css 
+    Gaya CSS untuk mencocokkan tampilan pada gambar
+*/
+
+/* Global Styles and Font Reset */
+:root {
+    --primary-color: #000;
+    --text-color: #333;
+    --light-text-color: #666;
+    --background-color: #fff;
+    --link-color: #000;
+    --grey-bg: #f5f5f5; /* Untuk bagian footer */
+    --green-line: #4CAF50; /* Warna garis hijau */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--background-color);
+}
+
+a {
+    text-decoration: none;
+    color: var(--link-color);
+}
+
+/* --- Header / Navbar Styles --- */
+
+
+/* --- Main Content / Refund Policy Styles --- */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 80px;
+}
+
+.main-title {
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 50px;
+    max-width: 800px;
+}
+
+.refund-box {
+    padding: 40px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    max-width: 800px;
+    background-color: var(--background-color);
+}
+
+.refund-title-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.title-line {
+    width: 4px;
+    height: 20px;
+    background-color: var(--green-line);
+    margin-right: 10px;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--primary-color);
+    letter-spacing: 1px;
+}
+
+.refund-content p {
+    margin: 15px 0 5px 0;
+    font-size: 15px;
+}
+
+.refund-content ul {
+    list-style: disc;
+    margin-left: 30px;
+    padding-left: 0;
+}
+
+.refund-content li {
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+/* --- Footer Styles --- */
+.footer {
+    background-color: var(--background-color);
+    padding: 40px 80px 20px 80px;
+    border-top: 1px solid #eee;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr repeat(4, 1fr);
+    gap: 40px;
+    margin-bottom: 40px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.logo-footer {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.footer-col p {
+    font-size: 14px;
+    color: var(--light-text-color);
+    margin-bottom: 15px;
+}
+
+.social-icons i {
+    font-size: 16px;
+    margin-right: 15px;
+    color: var(--primary-color);
+}
+
+.footer-col h3 {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.footer-col ul {
+    list-style: none;
+}
+
+.footer-col ul li a {
+    font-size: 14px;
+    color: var(--light-text-color);
+    display: block;
+    margin-bottom: 10px;
+}
+
+.footer-col ul li a:hover {
+    text-decoration: underline;
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.footer-bottom p {
+    font-size: 14px;
+    color: var(--light-text-color);
+}
+
+.payment-methods img {
+    height: 20px; /* Menyesuaikan ukuran placeholder agar terlihat lebih realistis */
+    margin-left: 5px;
+    border: 1px solid #eee; /* Menambah border agar terlihat seperti icon kartu */
+    border-radius: 3px;
+}

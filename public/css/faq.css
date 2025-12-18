@@ -1,0 +1,227 @@
+/* Reset Dasar */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Perkiraan Warna dari gambar */
+    --color-dark: #333333;
+    --color-light-gray: #F0F0F0; /* Untuk latar belakang FAQ item */
+    --color-greenish: #A9D1C2; /* Untuk garis pada CTA box */
+    --color-purple: #7B3E8C; /* Untuk tombol Send Email */
+    --color-text-body: #666;
+    --color-text-light: #999;
+    --color-white: #ffffff;
+
+    /* Perkiraan Font */
+    /* Menggunakan 'serif' untuk Heading/Logo yang terlihat elegan */
+    --font-heading: 'Georgia', 'Times New Roman', serif;
+    /* Menggunakan 'sans-serif' untuk Body/Link */
+    --font-body: 'Arial', 'Helvetica', sans-serif;
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--color-dark);
+    line-height: 1.6;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+a {
+    text-decoration: none;
+    color: var(--color-dark);
+}
+
+ul {
+    list-style: none;
+}
+
+
+
+/* --- Main Content: FAQ Section Styling --- */
+.faq-section {
+    padding: 80px 0;
+}
+
+.faq-section .container {
+    display: flex;
+    justify-content: space-between;
+    gap: 50px;
+}
+
+.left-content {
+    flex: 1;
+    padding-right: 50px;
+}
+
+.right-content {
+    flex: 2;
+    max-width: 700px;
+}
+
+.main-title {
+    font-family: var(--font-heading);
+    font-size: 3.5rem; /* Ukuran besar, bold */
+    font-weight: 500;
+    line-height: 1.1;
+    margin-bottom: 40px;
+}
+
+/* CTA Box Styling */
+.cta-box {
+    background: var(--color-light-gray);
+    padding: 40px;
+    border-radius: 5px;
+    position: relative;
+}
+
+.cta-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 40px;
+    width: 60%;
+    height: 3px;
+    background-color: var(--color-greenish);
+}
+
+.cta-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: var(--color-dark);
+}
+
+.cta-text {
+    font-size: 0.95rem;
+    color: var(--color-text-body);
+    margin-bottom: 25px;
+}
+
+.email-btn {
+    background: var(--color-purple);
+    color: var(--color-white);
+    border: none;
+    padding: 12px 30px;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.email-btn:hover {
+    background: #6a3579;
+}
+
+/* FAQ Items Styling */
+.faq-item {
+    background: var(--color-light-gray);
+    padding: 25px 30px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.faq-item:hover {
+    background: #e0e0e0;
+}
+
+.faq-item i {
+    font-size: 1.2rem;
+    color: var(--color-dark);
+    margin-right: 20px;
+}
+
+.faq-item p {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--color-dark);
+}
+
+/* --- Footer Styling --- */
+.footer {
+    border-top: 1px solid #e0e0e0;
+    padding-top: 50px;
+    color: var(--color-text-body);
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 50px;
+}
+
+.footer-col {
+    width: 18%; /* Memberi ruang yang kurang lebih sama */
+}
+
+.about-col {
+    width: 25%;
+}
+
+.footer-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 25px;
+    color: var(--color-dark);
+}
+
+.about-col .logo {
+    font-size: 1.5rem;
+}
+
+.about-text {
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.social-icons i {
+    font-size: 1.2rem;
+    margin-right: 15px;
+    color: var(--color-dark);
+    cursor: pointer;
+}
+
+.footer-col ul li {
+    margin-bottom: 10px;
+}
+
+.footer-col ul a {
+    color: var(--color-text-body);
+    font-size: 0.9rem;
+}
+
+.footer-col ul a:hover {
+    color: var(--color-dark);
+}
+
+.copyright-section {
+    border-top: 1px solid #e0e0e0;
+    padding: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.copyright {
+    font-size: 0.85rem;
+    color: var(--color-text-body);
+}
+
+.payment-icons i {
+    font-size: 1.5rem;
+    margin-left: 10px;
+    color: var(--color-text-body);
+}

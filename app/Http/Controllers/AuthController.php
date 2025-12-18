@@ -81,12 +81,20 @@ class AuthController extends Controller
      * LOGOUT
      */
     public function logout(Request $request)
-    {
-        Auth::logout();
+{
+    $role = Auth::user()?->role;
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+    Auth::logout();
 
-        return redirect('/');
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    // Redirect sesuai role
+    if ($role === 'admin') {
+        return redirect('/login')->with('success', 'Admin berhasil logout');
     }
+
+    return redirect('/login')->with('success', 'Berhasil logout');
+}
+
 }

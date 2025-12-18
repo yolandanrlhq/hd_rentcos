@@ -12,14 +12,23 @@ class UserProdukController extends Controller
     /**
      * Halaman list produk (user)
      */
-    public function index()
-    {
-        $produks = Produk::withAvg('testimonis', 'rating')
-            ->withCount('testimonis')
-            ->get();
+    public function index(Request $request)
+{
+    $query = Produk::withAvg('testimonis', 'rating')
+        ->withCount('testimonis');
 
-        return view('user.produk', compact('produks'));
+    // ======================
+    // 🔍 SEARCH PRODUK
+    // ======================
+    if ($request->filled('q')) {
+        $query->where('nama_produk', 'LIKE', '%' . $request->q . '%');
     }
+
+    $produks = $query->get();
+
+    return view('user.produk', compact('produks'));
+}
+
 
     /**
      * Halaman detail produk

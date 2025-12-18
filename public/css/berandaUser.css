@@ -32,10 +32,29 @@ body {
     flex-wrap: wrap;
 }
 
+/* LOGO HEADER */
 .logo {
-    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.logo-img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.logo-text {
     font-weight: 700;
-    color: #222;
+    font-size: 18px;
+    color: #111;
+}
+
+.logo-text span {
+    color: #000000; /* biru RENTCOS */
 }
 
 .nav-links a {
@@ -470,3 +489,43 @@ body {
     line-height: 1;
 }
 
+
+/* ===== AVATAR PROFIL ===== */
+.avatar-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+/* Foto avatar */
+.avatar-img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #2563eb;
+}
+
+/* Avatar huruf */
+.avatar-letter {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #2563eb;
+    color: #fff;
+    font-weight: 600;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* LOGIN BUTTON */
+.login-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: #2563eb;
+    color: white;
+    font-size: 13px;
+    text-decoration: none;
+}
