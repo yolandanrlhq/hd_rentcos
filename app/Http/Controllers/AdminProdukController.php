@@ -7,15 +7,36 @@ use App\Models\Kategori;
 use App\Models\UkuranProduk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Models\Notification;
 
-
 class AdminProdukController extends Controller
 {
-    public function produk()
+    public function produk(Request $request)
     {
-        $produk = Produk::with(['kategori', 'ukuran'])->paginate(10);
+        $search = $request->get('search');
+
+        // ===== SORTING (AMAN) =====
+        $allowedSort = ['id_produk', 'nama_produk', 'harga_produk', 'stok_produk'];
+        $sort = in_array($request->get('sort'), $allowedSort)
+            ? $request->get('sort')
+            : 'id_produk';
+
+        $direction = $request->get('direction') === 'desc' ? 'desc' : 'asc';
+
+        // ===== QUERY UTAMA =====
+        $produk = Produk::with(['kategori', 'ukuran'])
+            ->when($search, function ($q) use ($search) {
+                $q->where('nama_produk', 'like', "%{$search}%")
+                ->orWhereHas('kategori', function ($q2) use ($search) {
+                    $q2->where('nama_kategori', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy($sort, $direction)
+            ->paginate(10)
+            ->withQueryString(); // ⬅ penting biar search & sort kebawa
+
         return view('admin.produk', compact('produk'));
     }
 
@@ -196,5 +217,19 @@ return redirect()
         }
     }
 
+    public function destroy($id)
+    {
+        $produk = Produk::findOrFail($id);
 
+        // kalau ada foto di storage (opsional)
+        if ($produk->foto) {
+            Storage::delete('public/' . $produk->foto);
+        }
+
+        $produk->delete();
+
+        return redirect()
+            ->route('admin.produk')
+            ->with('success', 'Produk berhasil dihapus');
+    }
 }

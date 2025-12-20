@@ -19,7 +19,21 @@
                     <i class="fas fa-search"></i>
                     <input type="text" id="search-user" placeholder="Cari pelanggan...">
                 </div>
-                <div id="user-list" class="contact-list"></div>
+                <div id="user-list" class="contact-list">
+                    <!-- Contoh user-item, nanti bisa di-render lewat Blade/JS -->
+                    @foreach($users as $user)
+                        <div class="user-item" data-user-id="{{ $user->id }}">
+                            <div class="user-avatar">
+                                @if($user->foto)
+                                    <img src="{{ asset('storage/'.$user->foto) }}" alt="{{ $user->name }}">
+                                @else
+                                    <i class="fas fa-user-circle"></i>
+                                @endif
+                            </div>
+                            <div class="user-name">{{ $user->name }}</div>
+                        </div>
+                    @endforeach
+                </div>
             </section>
 
             <!-- RIGHT SIDE – CHAT AREA -->
@@ -44,7 +58,6 @@
                             <p>Pilih pelanggan di sebelah kiri untuk mulai membalas pesan.</p>
                         </div>
                     </div>
-
                 </div>
 
                 <div id="chat-input-area" class="chat-input-placeholder" style="display:none;">
@@ -54,6 +67,7 @@
             </section>
         </div>
     </main>
+
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
         const ADMIN_CHAT_SEND_URL = "{{ route('admin.chat.send') }}";
@@ -61,8 +75,7 @@
         const PUSHER_KEY = "{{ env('PUSHER_APP_KEY') }}";
         const PUSHER_CLUSTER = "{{ env('PUSHER_APP_CLUSTER') }}";
     </script>
-
-    <script src="{{ asset('js/pesanAdmin.js') }}"></script>
-
+    
+    <script src="{{ asset('js/pesanAdmin.js') }}" defer></script>
 </div>
 @endsection

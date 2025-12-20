@@ -26,7 +26,7 @@
       <div class="alamat">
         {!! nl2br(e(auth()->user()->address ?? '')) !!}
       </div>
-      <a href="{{ route('user.profile') }}" class="ubah">Ubah</a>
+      <a href="{{ route('user.editProfile') }}" class="ubah">Ubah</a>
     </div>
   </section>
 

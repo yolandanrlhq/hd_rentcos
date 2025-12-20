@@ -10,6 +10,22 @@
 <div class="dashboard-container">
     @include('admin.sections.sidebar')
     <main class="main-content">
+        <header class="main-header">
+            <h2>PESANAN</h2>
+            <div class="filters">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="Cari Pesanan...">
+                </div>
+                <div class="date-filters">
+                    <label>Start Date:</label>
+                    <input type="date" id="start-date">
+                    <label>End Date:</label>
+                    <input type="date" id="end-date">
+                    <button id="filter-date-btn">Filter</button>
+                </div>
+            </div>
+        </header>
         <section class="stat-cards-container">
             <div class="stat-card total">
                 <div class="card-icon"><i class="fas fa-receipt"></i></div>
@@ -17,7 +33,6 @@
                     <span class="card-title">Total Pesanan</span>
                     <span class="card-value">{{ $total }}</span>
                 </div>
-                <button class="card-options"><i class="fas fa-ellipsis-v"></i></button>
             </div>
 
             <div class="stat-card success">
@@ -26,7 +41,6 @@
                     <span class="card-title">Berhasil</span>
                     <span class="card-value">{{ $berhasil }}</span>
                 </div>
-                <button class="card-options"><i class="fas fa-ellipsis-v"></i></button>
             </div>
 
             <div class="stat-card failed">
@@ -35,7 +49,6 @@
                     <span class="card-title">Gagal</span>
                     <span class="card-value">{{ $gagal }}</span>
                 </div>
-                <button class="card-options"><i class="fas fa-ellipsis-v"></i></button>
             </div>
 
             <div class="stat-card pending">
@@ -44,7 +57,6 @@
                     <span class="card-title">Dalam Proses</span>
                     <span class="card-value">{{ $diproses + $pending + $dikirim }}</span>
                 </div>
-                <button class="card-options"><i class="fas fa-ellipsis-v"></i></button>
             </div>
         </section>
 
@@ -53,13 +65,13 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>id_sewa</th>
-                            <th>nama</th>
-                            <th>kostum</th>
-                            <th>harga</th>
-                            <th>tgl_sewa</th>
-                            <th>tgl_kembali</th>
-                            <th>status</th>
+                            <th class="sortable" data-sort="id">ID SEWA</th>
+                            <th class="sortable" data-sort="name">NAMA</th>
+                            <th class="sortable" data-sort="kostum">KOSTUM</th>
+                            <th class="sortable" data-sort="harga">HARGA</th>
+                            <th class="sortable" data-sort="tgl_sewa">TGL SEWA</th>
+                            <th class="sortable" data-sort="tgl_kembali">TGL KEMBALI</th>
+                            <th>STATUS</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -120,39 +132,6 @@
 @endsection
 
 @section('scripts')
-<script>
-document.querySelectorAll('.status-select').forEach(select => {
-    select.addEventListener('change', function() {
-        const sewaId = this.dataset.id;
-        const newStatus = this.value;
-
-        // ✅ Tambahkan console.log di sini
-        console.log('Sewa ID yang diklik:', sewaId);
-        console.log('Status yang dipilih:', newStatus);
-
-        fetch(`/admin/pesanan/${sewaId}/status`, { // pastikan prefix admin sesuai route
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ status: newStatus })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.success){
-                // replace select dengan text untuk semua status
-                const text = newStatus.replace('_',' ').replace(/\b\w/g, l => l.toUpperCase());
-                this.outerHTML = `<span>${text}</span>`;
-            } else {
-                alert('Gagal memperbarui status.');
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            alert('Terjadi kesalahan.');
-        });
-    });
-});
-</script>
+<script src="{{ asset('js/pesananAdmin.js') }}"></script>
 @endsection
+

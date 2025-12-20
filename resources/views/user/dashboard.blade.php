@@ -8,15 +8,19 @@
 <!-- ================= HERO ================= -->
 <section class="hero">
     <div class="hero-text">
-        <h4>Cosplay for the Modern Hero</h4>
-        <h1>Level Up Your Style <br> Like Your Favorite Hero</h1>
-        <p>Sewa kostum cosplay berkualitas, tampil maksimal di setiap event.</p>
+        <h4>Cosplay untuk Kamu yang Berani Tampil Beda</h4>
+        <h1>Tampil Total <br> Jadi Karakter Favoritmu</h1>
+        <p>Sewa kostum cosplay keren, siap bikin kamu jadi pusat perhatian.</p>
         <a href="{{ route('user.produk') }}">
-            <button>Explore Kostum</button>
+            <button>Lihat Koleksi</button>
         </a>
     </div>
-    <div class="hero-img">
-        <img src="{{ asset('assets/heroImage.png') }}" alt="Hero Image">
+    <div class="hero-img slider">
+        <div class="slider-track">
+            <img src="{{ asset('assets/anime11.png') }}" class="slide active">
+            <img src="{{ asset('assets/anime22.png') }}" class="slide">
+            <img src="{{ asset('assets/anime33.png') }}" class="slide">
+        </div>
     </div>
 </section>
 
@@ -46,8 +50,8 @@
 
 <!-- ================= TERBARU ================= -->
 <section class="latest">
-    <h2>Latest Arrivals</h2>
-    <p>Koleksi terbaru kami</p>
+    <h2>Koleksi Terbaru</h2>
+    <p>Kostum terbaru kami</p>
 
     <div class="cards">
         @foreach($latest as $item)
@@ -64,22 +68,53 @@
 
 <!-- ================= TESTIMONI ================= -->
 <section class="testimonials">
-    <h2>Our Happy Customers</h2>
+    <h2>Pelanggan Puas Kami</h2>
     <div class="reviews">
-        <div class="review">
-            <p>"Kostumnya bersih dan detail banget!"</p>
-            <span>★★★★★</span>
-        </div>
-        <div class="review">
-            <p>"Pelayanan cepat, recommended buat event."</p>
-            <span>★★★★★</span>
-        </div>
-        <div class="review">
-            <p>"Harga masuk akal, kualitas premium."</p>
-            <span>★★★★☆</span>
-        </div>
+        @foreach($testimoni as $review)
+            <div class="review">
+                @if($review->foto)
+                    <div class="review-img">
+                        <img src="{{ asset('storage/' . $review->foto) }}" alt="Foto Testimoni">
+                    </div>
+                @endif
+                <div class="review-content">
+                    <p class="review-text">"{{ $review->isi }}"</p>
+                    <div class="review-rating">
+                        @for($i=1; $i<=5; $i++)
+                            <span class="star {{ $i <= $review->rating ? 'filled' : '' }}">&#9733;</span>
+                        @endfor
+                    </div>
+                </div>
+            </div>
+        @endforeach
     </div>
 </section>
 
 @include('user.sections.footer')
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const slides = document.querySelectorAll('.slide');
+    let current = 0;
+
+    slides.forEach(slide => {
+        slide.classList.remove('active', 'exit');
+    });
+
+    slides[0].classList.add('active');
+
+    setInterval(() => {
+        const prev = current;
+        current = (current + 1) % slides.length;
+
+        slides.forEach(slide => {
+            slide.classList.remove('active', 'exit');
+        });
+
+        slides[prev].classList.add('exit');
+        slides[current].classList.add('active');
+
+    }, 3500);
+});
+</script>
 @endsection

@@ -10,12 +10,13 @@
       <a href="{{ route('user.produk') }}" class="{{ request()->routeIs('user.sections.produk') ? 'active' : '' }}">Produk</a>
       <a href="{{ route('user.jadwalEvent') }}" class="{{ request()->routeIs('user.jadwalEvent') ? 'active' : '' }}">Jadwal Event</a>
       <a href="{{ route('wishlist.index') }}" class="{{ request()->routeIs('user.wishlist') ? 'active' : '' }}">Wishlist</a>
+      <a href="{{ route('faq') }}" class="{{ request()->routeIs('user.faq') ? 'active' : '' }}">FAQ</a>
     </nav>
 
     <form action="{{ route('user.produk') }}" method="GET" class="search-box">
     <i class="fas fa-search"></i>
-    <input 
-        type="text" 
+    <input
+        type="text"
         name="q"
         placeholder="Cari produk..."
         value="{{ request('q') }}"
@@ -51,8 +52,8 @@
     @if(Auth::check())
     <button type="button" class="profile-btn avatar-btn" id="profileToggle">
         @if(Auth::user()->foto)
-            <img 
-                src="{{ asset('storage/' . Auth::user()->foto) }}" 
+            <img
+                src="{{ asset('storage/' . Auth::user()->foto) }}"
                 alt="Avatar"
                 class="avatar-img"
             >

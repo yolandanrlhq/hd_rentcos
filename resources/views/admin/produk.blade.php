@@ -13,8 +13,10 @@
             <header class="main-header">
                 <h2>Daftar Produk</h2>
                 <div class="search-bar">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search for...">
+                    <form id="searchForm" action="{{ route('admin.produk') }}" method="GET">
+                        <i class="fas fa-search"></i>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Produk...">
+                    </form>
                 </div>
                 <a href="{{ route('admin.create') }}" class="add-button">
                     Tambah Kostum
@@ -23,6 +25,21 @@
 
             </header>
 
+            @php
+                $currentSort = request('sort');
+                $currentDir  = request('direction', 'asc');
+
+                function sortLink($column) {
+                    $dir = request('sort') === $column && request('direction') === 'asc'
+                        ? 'desc'
+                        : 'asc';
+
+                    return request()->fullUrlWithQuery([
+                        'sort' => $column,
+                        'direction' => $dir
+                    ]);
+                }
+            @endphp
             <section class="data-table-section">
                 <div class="table-info">
                     <span class="status">semua produk</span>
@@ -31,22 +48,47 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>id</th>
-                                <th>nama</th>
-                                <th>kategori</th>
-                                <th>harga</th>
-                                <th>stok</th>
-                                <th>ukuran</th>
-                                <th>deskripsi</th>
-                                <th>foto</th>
-                                <th>aksi</th>
+                                <th class="sortable {{ $currentSort=='id_produk' ? $currentDir : '' }}">
+                                    <a href="{{ sortLink('id_produk') }}">
+                                        ID
+                                        <i class="sort-icon"></i>
+                                    </a>
+                                </th>
+
+                                <th class="sortable {{ $currentSort=='nama_produk' ? $currentDir : '' }}">
+                                    <a href="{{ sortLink('nama_produk') }}">
+                                        Nama
+                                        <i class="sort-icon"></i>
+                                    </a>
+                                </th>
+
+                                <th>Kategori</th>
+
+                                <th class="sortable {{ $currentSort=='harga_produk' ? $currentDir : '' }}">
+                                    <a href="{{ sortLink('harga_produk') }}">
+                                        Harga
+                                        <i class="sort-icon"></i>
+                                    </a>
+                                </th>
+
+                                <th class="sortable {{ $currentSort=='stok_produk' ? $currentDir : '' }}">
+                                    <a href="{{ sortLink('stok_produk') }}">
+                                        Stok
+                                        <i class="sort-icon"></i>
+                                    </a>
+                                </th>
+
+                                <th>Ukuran</th>
+                                <th>Deskripsi</th>
+                                <th>Foto</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($produk as $item)
                             <tr>
                                 <td>{{ $item->id_produk }}</td>
-                                <td>{{ $item->nama_produk }}</td>
+                                <td style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $item->nama_produk }}</td>
                                 <td>{{ $item->kategori->nama_kategori }}</td>
                                 <td>Rp{{ number_format($item->harga_produk, 0, ',', '.') }}</td>
                                 <td>{{ $item->stok_produk }}</td>
@@ -119,4 +161,22 @@
             </section>
      </main>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.querySelector('.search-bar input');
+    const tableRows = document.querySelectorAll('.data-table tbody tr');
+
+    searchInput.addEventListener('keyup', function() {
+        const query = this.value.toLowerCase().trim();
+
+        tableRows.forEach(row => {
+            const rowText = row.textContent.toLowerCase();
+            row.style.display = rowText.includes(query) ? '' : 'none';
+        });
+    });
+});
+</script>
 @endsection

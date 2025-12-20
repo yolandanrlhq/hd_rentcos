@@ -10,7 +10,7 @@ class EventUserController extends Controller
     public function index()
     {
         // Ambil semua event (bisa urut tanggal terbaru)
-        $events = Event::orderBy('tgl_event', 'asc')->get();
+        $events = Event::orderBy('tgl_event', 'desc')->get();
 
         return view('user.jadwalEvent', compact('events'));
     }

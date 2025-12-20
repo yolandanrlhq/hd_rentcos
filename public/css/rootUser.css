@@ -155,6 +155,67 @@ body {
     color: #ff6b6b;
 }
 
+/* ===============================
+   NOTIFICATION BADGE
+================================ */
+.notif-icon {
+    position: relative;
+}
+
+.notif-badge {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background-color: red;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 50%;
+    line-height: 1;
+}
+
+
+/* ===== AVATAR PROFIL ===== */
+.avatar-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+/* Foto avatar */
+.avatar-img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #2563eb;
+}
+
+/* Avatar huruf */
+.avatar-letter {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #2563eb;
+    color: #fff;
+    font-weight: 600;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* LOGIN BUTTON */
+.login-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: #2563eb;
+    color: white;
+    font-size: 13px;
+    text-decoration: none;
+}
+
 @media (max-width: 900px) {
     .navbar {
         flex-direction: column;
@@ -226,6 +287,44 @@ body {
     border-radius: 15px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.12);
     object-fit: cover;
+}
+
+.hero-img.slider {
+    width: 560px;
+    height: 650px;
+    overflow: hidden;
+    position: relative;
+    border-radius: 24px;
+}
+
+.slider-track {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center top;
+
+    transform: translateX(100%);
+    opacity: 0;
+    transition: transform 0.8s ease, opacity 0.8s ease;
+}
+
+.slide.active {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.slide.exit {
+    transform: translateX(-100%);
+    opacity: 0;
 }
 
 /* ===== Product / Hero Collection ===== */
@@ -308,7 +407,7 @@ body {
     transform: scale(1.05);
 }
 
-/* ===== Testimonials ===== */
+/* testi */
 .testimonials {
     background: #fff;
     text-align: center;
@@ -326,67 +425,100 @@ body {
 }
 
 .review {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     background: #f9f9f9;
     padding: 20px;
     border-radius: 15px;
-    width: 250px;
+    width: 260px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .review:hover {
     transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.1);
 }
 
-/* ===== Footer ===== */
+.review-img img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 12px;
+    border: 2px solid #2563eb;
+}
+
+.review-text {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 10px;
+    line-height: 1.4;
+    min-height: 50px; /* supaya semua card seimbang */
+}
+
+.review-rating {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+}
+
+.review-rating .star {
+    color: #ccc;
+    font-size: 14px;
+}
+
+.review-rating .star.filled {
+    color: #ffb400; /* warna bintang kuning */
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .reviews {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .review {
+        width: 90%;
+    }
+}
+
+/* ===== FOOTER ===== */
 .footer {
   background-color: #f4f4f4;
   padding: 60px 80px 20px;
   font-family: 'Poppins', sans-serif;
-  color: #333;
+  color: #555;
 }
 
 .footer-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 40px;
-  margin-bottom: 40px;
+    display: grid;
+    grid-template-columns: 2fr 0.8fr 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 40px;
 }
 
+/* BRAND */
 .footer-brand h2 {
-  font-size: 22px;
-  font-weight: 700;
-  color: #000;
-  margin-bottom: 10px;
+    font-size: 22px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 10px;
+    padding-right: 30px;
 }
 
 .footer-brand p {
   font-size: 14px;
   color: #555;
-  margin-bottom: 15px;
   line-height: 1.6;
+  margin-bottom: 10px;
 }
 
-.social-icons a {
-  display: inline-block;
-  margin-right: 10px;
-  color: #333;
-  background: #fff;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  text-align: center;
-  line-height: 30px;
-  font-size: 14px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  transition: 0.3s;
-}
-
-.social-icons a:hover {
-  background: #222;
-  color: #fff;
-}
-
+/* SECTION */
 .footer-section h3 {
   font-size: 14px;
   font-weight: 700;
@@ -397,30 +529,63 @@ body {
 
 .footer-section ul {
   list-style: none;
+  padding: 0;
 }
 
 .footer-section ul li {
+  font-size: 13px;
+  color: #555;
+  display: flex;
+  align-items: flex-start;
+  line-height: 1.6;
   margin-bottom: 10px;
 }
 
-.footer-section ul li a {
-  text-decoration: none;
-  color: #555;
+/* ICON */
+.footer-section ul li i {
+  margin-right: 10px;
   font-size: 13px;
-  transition: color 0.3s;
+  color: #555;
+  flex-shrink: 0;
+}
+
+/* LINK */
+.footer-section ul li a,
+.footer-section ul li span {
+  color: inherit;
+  font-size: inherit;
+  text-decoration: none;
 }
 
 .footer-section ul li a:hover {
   color: #000;
 }
 
-.footer-bottom {
-  display: flex;
-  justify-content: space-between;
+/* SOCIAL */
+.social-icons a {
+  display: inline-flex;
   align-items: center;
-  flex-wrap: wrap;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background: #fff;
+  color: #333;
+  border-radius: 50%;
+  font-size: 14px;
+  margin-right: 10px;
+  transition: 0.3s;
+}
+
+.social-icons a:hover {
+  background: #222;
+  color: #fff;
+}
+
+/* FOOTER BOTTOM */
+.footer-bottom {
   border-top: 1px solid #ddd;
   padding-top: 15px;
+  text-align: left;
 }
 
 .footer-bottom p {
@@ -467,65 +632,4 @@ body {
     .hero-text p {
         font-size: 0.95rem;
     }
-}
-
-/* ===============================
-   NOTIFICATION BADGE
-================================ */
-.notif-icon {
-    position: relative;
-}
-
-.notif-badge {
-    position: absolute;
-    top: -6px;
-    right: -8px;
-    background-color: red;
-    color: white;
-    font-size: 11px;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 50%;
-    line-height: 1;
-}
-
-
-/* ===== AVATAR PROFIL ===== */
-.avatar-btn {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-}
-
-/* Foto avatar */
-.avatar-img {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #2563eb;
-}
-
-/* Avatar huruf */
-.avatar-letter {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: #2563eb;
-    color: #fff;
-    font-weight: 600;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-/* LOGIN BUTTON */
-.login-btn {
-    padding: 6px 14px;
-    border-radius: 20px;
-    background: #2563eb;
-    color: white;
-    font-size: 13px;
-    text-decoration: none;
 }

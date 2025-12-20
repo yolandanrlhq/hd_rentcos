@@ -18,14 +18,26 @@
         <div class="product-image">
             @if($produk->fotos->count() > 0)
             <div class="slider-container">
-                <img id="mainPhoto" src="{{ asset('storage/' . $produk->fotos->first()->foto_path) }}" alt="{{ $produk->nama_produk }}">
-                <div class="slider-controls">
-                    <button type="button" id="prevBtn">&#10094;</button>
-                    <button type="button" id="nextBtn">&#10095;</button>
-                </div>
-                <div class="thumbnail-container">
+                <div class="slider-track" id="sliderTrack">
                     @foreach($produk->fotos as $foto)
-                        <img class="thumbnail" src="{{ asset('storage/' . $foto->foto_path) }}" alt="{{ $produk->nama_produk }}">
+                        <img src="{{ asset('storage/' . $foto->foto_path) }}" />
+                    @endforeach
+                </div>
+
+                <div class="slider-controls">
+                    <button type="button" id="prevBtn">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button type="button" id="nextBtn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <div class="thumbnail-container">
+                    @foreach($produk->fotos as $index => $foto)
+                        <img class="thumbnail {{ $index==0?'active':'' }}"
+                            data-index="{{ $index }}"
+                            src="{{ asset('storage/' . $foto->foto_path) }}">
                     @endforeach
                 </div>
             </div>
@@ -95,44 +107,67 @@
                         <button type="button" id="plusBtn" class="disabled">+</button>
                     </div>
 
-                    <button type="submit" id="addCartBtn" class="add-cart-btn disabled" disabled>
-                        + Tambah ke Keranjang
-                    </button>
+                    <div class="action-buttons">
+                        <!-- TAMBAH KERANJANG -->
+                        <button type="submit"
+                                id="addCartBtn"
+                                name="action"
+                                value="add"
+                                class="add-cart-btn disabled"
+                                disabled>
+                            + Tambah ke Keranjang
+                        </button>
+
+                        <!-- CHECKOUT SEKARANG -->
+                        <button type="submit"
+                                id="checkoutNowBtn"
+                                name="action"
+                                value="checkout"
+                                class="checkout-now-btn disabled"
+                                disabled>
+                            Checkout Sekarang
+                        </button>
+                    </div>
                 </div>
+
             </form>
         </div>
     </div>
 
-    <!-- ================= TAB ================= -->
     <section class="tab-section">
         <div class="tab-buttons">
             <button class="active">Detail Produk</button>
             <button>Ulasan</button>
-            <button>FAQ</button>
         </div>
 
         <div class="tab-content active">
-            <p>{{ $produk->deskripsi ?? 'Belum ada deskripsi produk.' }}</p>
+            <div class="produk-deskripsi">
+                {!! nl2br(e($produk->deskripsi)) !!}
+            </div>
         </div>
 
         <div class="tab-content">
             @if($produk->testimonis && $produk->testimonis->count() > 0)
                 @foreach($produk->testimonis as $testi)
-                <div class="testimoni-bubble">
-                    <strong>{{ $testi->sewa->user->name ?? 'User' }}</strong>
-                    <p>{{ $testi->isi }}</p>
-                    <small>Rating: {{ $testi->rating }} ⭐</small>
-                    @if($testi->foto)
-                        <img src="{{ asset('storage/' . $testi->foto) }}" alt="Foto testimoni" class="testimoni-foto">
-                    @endif
-                </div>
+                    <div class="testimoni-card">
+                        <div class="testimoni-header">
+                            <strong>{{ $testi->sewa->user->name ?? 'User' }}</strong>
+                            <span class="rating">⭐ {{ $testi->rating }}</span>
+                        </div>
+
+                        <p class="testimoni-text">{{ $testi->isi }}</p>
+
+                        @if($testi->foto)
+                            <img src="{{ asset('storage/' . $testi->foto) }}"
+                                alt="Foto testimoni"
+                                class="testimoni-foto">
+                        @endif
+                    </div>
                 @endforeach
             @else
-                <p>Belum ada ulasan.</p>
+                <p class="empty-text">Belum ada ulasan.</p>
             @endif
         </div>
-
-        <div class="tab-content"><p>Tidak ada pertanyaan.</p></div>
     </section>
 
     <!-- ================= REKOMENDASI ================= -->
@@ -173,6 +208,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const sizeInput=document.getElementById('selectedSize');
     const qtyInput=document.getElementById('selectedQty');
     const addBtn=document.getElementById('addCartBtn');
+    const checkoutBtn = document.getElementById('checkoutNowBtn');
+
 
     document.querySelectorAll('.ukuran-btn').forEach(btn=>{
         btn.onclick=()=>{
@@ -183,7 +220,12 @@ document.addEventListener('DOMContentLoaded', () => {
             sizeInput.value=btn.dataset.ukuran;
             qty=1; qtyDisp.textContent=1; qtyInput.value=1;
             info.textContent=`Stok tersedia: ${max}`;
-            addBtn.disabled=false; addBtn.classList.remove('disabled');
+            addBtn.disabled = false;
+            addBtn.classList.remove('disabled');
+
+            checkoutBtn.disabled = false;
+            checkoutBtn.classList.remove('disabled');
+
             plus.disabled=max<=1;
         }
     });
@@ -206,6 +248,68 @@ document.addEventListener('DOMContentLoaded', () => {
             icon.classList.toggle('far',data.status==='removed');
         }
     }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    const track = document.getElementById('sliderTrack');
+    const slides = track.children;
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const thumbs = document.querySelectorAll('.thumbnail');
+
+    let index = 0;
+    let startX = 0;
+    const threshold = 40;
+
+    const updateSlide = () => {
+        track.style.transform = `translateX(-${index * 100}%)`;
+
+        thumbs.forEach(t => t.classList.remove('active'));
+        thumbs[index]?.classList.add('active');
+
+        // disable button di ujung
+        prevBtn.classList.toggle('disabled', index === 0);
+        nextBtn.classList.toggle('disabled', index === slides.length - 1);
+    };
+
+    nextBtn.onclick = () => {
+        if (index < slides.length - 1) {
+            index++;
+            updateSlide();
+        }
+    };
+
+    prevBtn.onclick = () => {
+        if (index > 0) {
+            index--;
+            updateSlide();
+        }
+    };
+
+    thumbs.forEach(t => {
+        t.onclick = () => {
+            index = parseInt(t.dataset.index);
+            updateSlide();
+        };
+    });
+
+    /* ===== SWIPE ===== */
+    track.addEventListener('touchstart', e => {
+        startX = e.touches[0].clientX;
+    }, { passive: true });
+
+    track.addEventListener('touchend', e => {
+        const diff = startX - e.changedTouches[0].clientX;
+
+        if (Math.abs(diff) > threshold) {
+            if (diff > 0 && index < slides.length - 1) index++;     // swipe kiri
+            if (diff < 0 && index > 0) index--;                     // swipe kanan
+            updateSlide();
+        }
+    });
+
+    updateSlide();
 });
 </script>
 @endsection

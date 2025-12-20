@@ -53,16 +53,29 @@
                 @endif
 
                 {{-- BUTTON TESTIMONI --}}
-                @if($sewa->pengembalian && $sewa->pengembalian->status == 'selesai')
+                @if($sewa->status === 'selesai')
+                    {{-- BELUM ADA TESTIMONI --}}
                     @if(!$sewa->testimoni)
                         <a href="{{ route('user.testimoni.create', $sewa->id) }}" class="btn-testimoni">
+                            <i class="fas fa-star"></i>
                             Berikan Penilaian
                         </a>
+
+                    {{-- SUDAH ADA TESTIMONI --}}
                     @else
-                        <div class="user-testimoni">
-                            <strong>Testimoni Anda:</strong>
-                            <p>{{ $sewa->testimoni->isi }}</p>
-                            <p>Rating: {{ $sewa->testimoni->rating }} ⭐</p>
+                        <div class="testimoni-done">
+
+                            {{-- RATING --}}
+                            <div class="rating-stars">
+                                @for($i = 1; $i <= 5; $i++)
+                                    <i class="fas fa-star {{ $i <= $sewa->testimoni->rating ? 'active' : '' }}"></i>
+                                @endfor
+                            </div>
+
+                            <a href="{{ route('user.testimoni.show', $sewa->id) }}"
+                            class="btn-lihat-testimoni">
+                                Lihat Testimoni
+                            </a>
                         </div>
                     @endif
                 @endif
@@ -73,10 +86,40 @@
         <p class="no-data">Belum ada riwayat penyewaan.</p>
         @endforelse
 
-        {{-- PAGINASI --}}
-        <div class="pagination-wrapper">
-            {{ $sewas->links() }}
+        @if ($sewas->hasPages())
+        <div class="simple-pagination">
+
+            {{-- INFO --}}
+            <div class="page-info">
+                {{ $sewas->firstItem() }}–{{ $sewas->lastItem() }} of {{ $sewas->total() }}
+            </div>
+
+            {{-- RIGHT SIDE --}}
+            <div class="page-controls">
+
+                {{-- ROWS PER PAGE --}}
+                <div class="rows-per-page">
+                    Rows per page:
+                    <span>{{ $sewas->perPage() }}</span>
+                </div>
+
+                {{-- PREV --}}
+                @if ($sewas->onFirstPage())
+                    <span class="nav disabled">‹</span>
+                @else
+                    <a href="{{ $sewas->previousPageUrl() }}" class="nav">‹</a>
+                @endif
+
+                {{-- NEXT --}}
+                @if ($sewas->hasMorePages())
+                    <a href="{{ $sewas->nextPageUrl() }}" class="nav">›</a>
+                @else
+                    <span class="nav disabled">›</span>
+                @endif
+
+            </div>
         </div>
+        @endif
     </div>
 </main>
 

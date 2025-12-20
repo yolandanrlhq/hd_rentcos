@@ -12,6 +12,7 @@ use App\Models\Sewa;
 use App\Models\SewaItem;
 use App\Models\Notification;
 use App\Models\Pengembalian;
+use App\Models\Message;
 
 class CartController extends Controller
 {
@@ -183,7 +184,23 @@ class CartController extends Controller
             ]);
         }
 
-        return redirect()->route('cart.index')->with('success', 'Produk ditambahkan.');
+                        // ambil item cart yang barusan diproses
+                $cartItem = CartItem::where('cart_id', $cart->id)
+                    ->where('id_produk', $produk->id_produk)
+                    ->where('ukuran', $request->ukuran)
+                    ->first();
+
+                // JIKA CHECKOUT SEKARANG
+                if ($request->action === 'checkout') {
+                    return redirect()->route('cart.checkout', [
+                        'selected' => [$cartItem->id]
+                    ]);
+                }
+
+                // DEFAULT: TAMBAH KERANJANG
+                return redirect()->route('cart.index')
+                    ->with('success', 'Produk ditambahkan ke keranjang.');
+
     }
 
     // =====================
@@ -293,6 +310,7 @@ class CartController extends Controller
                 'total_harga'     => $total
             ]);
 
+
             Notification::create([
                 'user_id' => Auth::id(),
                 'judul'   => 'Pemesanan Berhasil',
@@ -310,6 +328,43 @@ class CartController extends Controller
                     'harga_satuan' => $i->harga_satuan,
                     'subtotal'     => $i->harga_satuan * $i->jumlah
                 ]);
+                            // =====================
+            // KIRIM PESAN OTOMATIS KE ADMIN (TAMBAHAN)
+            // =====================
+            $adminId = 1;
+            $user = Auth::user();
+
+            // Susun daftar item
+            $itemList = '';
+            foreach ($items as $i) {
+                $itemList .= "- {$i->produk->nama_produk}";
+                if ($i->ukuran) {
+                    $itemList .= " ({$i->ukuran})";
+                }
+                $itemList .= " ({$i->jumlah}x)\n";
+            }
+
+            // Ambil alamat user (jika ada)
+            $alamat = $user->address ?? '-';
+
+            // Susun pesan
+            $pesan  = "📦 DETAIL PESANAN\n";
+            $pesan .= "--------------------------\n";
+            $pesan .= "Nama      : {$user->name}\n";
+            $pesan .= "Alamat    : {$alamat}\n";
+            $pesan .= "Pengiriman: {$request->delivery_method}\n\n";
+            $pesan .= "Daftar Item:\n{$itemList}\n";
+            $pesan .= "--------------------------\n";
+            $pesan .= "Total : Rp" . number_format($total, 0, ',', '.');
+
+            // SIMPAN PESAN KE CHAT
+            Message::create([
+                'sender_id'   => $user->id,
+                'receiver_id' => $adminId,
+                'message'     => $pesan,
+                'is_read'     => false,
+            ]);
+
 
                 // Kurangi stok
                 if ($i->ukuran) {
@@ -324,7 +379,7 @@ class CartController extends Controller
 
             // Hapus item cart dan ubah status cart
             CartItem::whereIn('id', $request->selected)->delete();
-            $cart->update(['status' => 'menunggu_konfirmasi']);
+
         });
 
         return redirect()->route('checkout.success', $sewa);

@@ -1,50 +1,70 @@
-/* ================= VARIABEL WARNA ================= */
+/* ============================= */
+/*        ROOT VARIABLES         */
+/* ============================= */
 :root {
     --bg-dark: #12121e;
     --sidebar-bg: #1e1e2d;
+
     --text-light: #f0f0f0;
     --text-faded: #a0a0c0;
+
     --accent-purple: #9b59b6;
-    --chat-bg: #191928;
-    --contact-active-bg: #14141e;
-    --bubble-received: #2a2a3e;
-    --bubble-sent: #7f6e9b;
-    --call-button-bg: #523e7f;
+    --accent-purple-soft: rgba(155, 89, 182, 0.25);
+
+    --search-bg: #2a2a3e;
+
+    --table-header-bg: #4a3d5f;
+    --table-row-bg: #433857;
+    --table-border: #444;
+
+    --card-bg: #523e7f;
+
+    --accent-blue: #4a5496;
+    --accent-green: #38b17c;
+    --accent-red: #d9489f;
+    --accent-cyan: #38a5b1;
 }
 
-/* ================= RESET ================= */
+/* ============================= */
+/*          RESET BASE           */
+/* ============================= */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
 }
 
 body {
-    background-color: var(--bg-dark);
+    background: var(--bg-dark);
     color: var(--text-light);
     line-height: 1.6;
 }
 
-/* ================= DASHBOARD ================= */
+/* ============================= */
+/*        DASHBOARD LAYOUT       */
+/* ============================= */
 .dashboard-container {
     display: flex;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
-/* ================= SIDEBAR ================= */
+/* ============================= */
+/*            SIDEBAR            */
+/* ============================= */
 .sidebar {
-    width: 210px;
-    background-color: var(--sidebar-bg);
+    width: 220px;
+    background: var(--sidebar-bg);
     padding: 20px 0;
     flex-shrink: 0;
 }
 
 .logo {
     font-size: 1.5em;
-    font-weight: bold;
-    color: var(--text-light);
+    font-weight: 700;
     padding: 0 20px 30px 20px;
+    color: var(--text-light);
     text-align: left;
 }
 
@@ -58,25 +78,80 @@ body {
     padding: 12px 20px;
     color: var(--text-faded);
     text-decoration: none;
+    transition: 0.25s;
     font-size: 0.95em;
     transition: background-color 0.2s;
 }
 
+/* ICON SIDEBAR FIX */
 .nav-menu li a i {
+    width: 32px;
+    height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.06);
+    font-size: 0.95em;
     margin-right: 15px;
-    font-size: 1.1em;
-    width: 20px;
 }
 
+/* ACTIVE */
 .nav-menu li.active a {
-    color: var(--accent-purple);
+    background: linear-gradient(
+        90deg,
+        rgba(155,89,182,0.25),
+        transparent
+    );
+    color: #fff;
+    border-right: 4px solid var(--accent-purple);
     background-color: var(--bg-dark);
     border-right: 5px solid var(--accent-purple);
     font-weight: bold;
 }
 
+.nav-menu li.active a i {
+    background: linear-gradient(135deg, #9b59b6, #7c63c6);
+    color: #fff;
+}
+
+.nav-menu li a:hover {
+    background: rgba(255,255,255,0.05);
+}
+
 .nav-menu li:hover a:not(.active) {
     background-color: #2c2c40;
+}
+
+.nav-menu li .logout-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    color: var(--text-faded);
+    font-size: 0.95em;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.2s;
+}
+
+.nav-menu li .logout-btn i {
+    margin-right: 15px;
+    font-size: 1.1em;
+    width: 20px;
+}
+
+.nav-menu li:hover .logout-btn {
+    background-color: #2c2c40;
+}
+
+.nav-menu li.active .logout-btn {
+    color: var(--accent-purple);
+    background-color: var(--bg-dark);
+    border-right: 5px solid var(--accent-purple);
+    font-weight: bold;
 }
 
 /* ================= MAIN CONTENT ================= */

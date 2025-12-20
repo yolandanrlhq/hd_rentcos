@@ -1,52 +1,70 @@
-/* Variabel Warna (Sama seperti sebelumnya untuk konsistensi dashboard) */
+/* ============================= */
+/*        ROOT VARIABLES         */
+/* ============================= */
 :root {
-    --bg-dark: #12121e; /* Background Utama Gelap */
-    --sidebar-bg: #1e1e2d; /* Background Sidebar */
-    --text-light: #f0f0f0; /* Teks Cerah */
-    --text-faded: #a0a0c0; /* Teks Faded/Sekunder */
-    --accent-purple: #9b59b6; /* Ungu untuk Aksen/Aktif */
-    --accent-pink: #d9489f; /* Pink/Magenta */
-    --search-bg: #2a2a3e; /* Background Search Bar */
-    --table-header-bg: #2b3a4a; /* Header Tabel */
-    --table-row-bg-odd: #202b3a; /* Warna cell di body yang lebih gelap */
-    --table-row-bg-highlight: #314050; /* Baris pertama di body yang sedikit lebih terang */
-    --table-border: #444; /* Border Tabel */
-    --table-cell-padding: 8px 12px;
+    --bg-dark: #12121e;
+    --sidebar-bg: #1e1e2d;
+
+    --text-light: #f0f0f0;
+    --text-faded: #a0a0c0;
+
+    --accent-purple: #9b59b6;
+    --accent-purple-soft: rgba(155, 89, 182, 0.25);
+
+    --search-bg: #2a2a3e;
+
+    --table-header-bg: #4a3d5f;
+    --table-row-bg: #433857;
+    --table-border: #444;
+
+    --card-bg: #523e7f;
+
+    --accent-blue: #4a5496;
+    --accent-green: #38b17c;
+    --accent-red: #d9489f;
+    --accent-cyan: #38a5b1;
 }
 
-/* Reset Dasar */
+/* ============================= */
+/*          RESET BASE           */
+/* ============================= */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
 }
 
 body {
-    background-color: var(--bg-dark);
+    background: var(--bg-dark);
     color: var(--text-light);
     line-height: 1.6;
 }
 
-/* --- Container Dashboard Utama --- */
+/* ============================= */
+/*        DASHBOARD LAYOUT       */
+/* ============================= */
 .dashboard-container {
     display: flex;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
-/* --- Sidebar (Menu Kiri) --- */
+/* ============================= */
+/*            SIDEBAR            */
+/* ============================= */
 .sidebar {
-    width: 210px;
-    background-color: var(--sidebar-bg);
+    width: 220px;
+    background: var(--sidebar-bg);
     padding: 20px 0;
     flex-shrink: 0;
 }
 
 .logo {
     font-size: 1.5em;
-    font-weight: bold;
-    color: var(--text-light);
+    font-weight: 700;
     padding: 0 20px 30px 20px;
+    color: var(--text-light);
     text-align: left;
 }
 
@@ -60,26 +78,80 @@ body {
     padding: 12px 20px;
     color: var(--text-faded);
     text-decoration: none;
+    transition: 0.25s;
     font-size: 0.95em;
     transition: background-color 0.2s;
 }
 
+/* ICON SIDEBAR FIX */
 .nav-menu li a i {
+    width: 32px;
+    height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.06);
+    font-size: 0.95em;
     margin-right: 15px;
-    font-size: 1.1em;
-    width: 20px;
 }
 
-/* Mengubah .active untuk Event */
+/* ACTIVE */
 .nav-menu li.active a {
-    color: var(--accent-purple);
+    background: linear-gradient(
+        90deg,
+        rgba(155,89,182,0.25),
+        transparent
+    );
+    color: #fff;
+    border-right: 4px solid var(--accent-purple);
     background-color: var(--bg-dark);
     border-right: 5px solid var(--accent-purple);
     font-weight: bold;
 }
 
+.nav-menu li.active a i {
+    background: linear-gradient(135deg, #9b59b6, #7c63c6);
+    color: #fff;
+}
+
+.nav-menu li a:hover {
+    background: rgba(255,255,255,0.05);
+}
+
 .nav-menu li:hover a:not(.active) {
     background-color: #2c2c40;
+}
+
+.nav-menu li .logout-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    color: var(--text-faded);
+    font-size: 0.95em;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.2s;
+}
+
+.nav-menu li .logout-btn i {
+    margin-right: 15px;
+    font-size: 1.1em;
+    width: 20px;
+}
+
+.nav-menu li:hover .logout-btn {
+    background-color: #2c2c40;
+}
+
+.nav-menu li.active .logout-btn {
+    color: var(--accent-purple);
+    background-color: var(--bg-dark);
+    border-right: 5px solid var(--accent-purple);
+    font-weight: bold;
 }
 
 /* --- Main Content (Area Utama Kanan) --- */
@@ -211,6 +283,7 @@ body {
     text-transform: uppercase;
     color: var(--text-light);
     border-bottom: 2px solid var(--accent-purple);
+    padding: 10px 16px;
 }
 
 .data-table tbody tr {
@@ -225,6 +298,7 @@ body {
     background-color: var(--table-row-bg-odd);
     color: var(--text-faded);
     font-size: 0.9em;
+    padding: 10px 16px;
 }
 
 .data-table td.tempat-event {
@@ -288,4 +362,129 @@ body {
 
 .nav-button i {
     font-size: 0.9em;
+}
+
+/* ============================= */
+/*     SORTABLE TH INTERACTION   */
+/* ============================= */
+
+.data-table th.sortable {
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Hover */
+.data-table th.sortable:hover {
+    background: linear-gradient(90deg, #5d4b7a, #6f58a8);
+    color: #fff;
+}
+
+/* Icon default */
+.data-table th.sortable .sort-icon::before {
+    content: "\f0dc";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 0.75em;
+    margin-left: 6px;
+    opacity: 0.35;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Hover icon */
+.data-table th.sortable:hover .sort-icon::before {
+    opacity: 0.8;
+    transform: translateY(-1px);
+}
+
+/* Active ASC */
+.data-table th.sortable.asc {
+    background: linear-gradient(90deg, #6f58a8, #7c63c6);
+    color: #fff;
+}
+
+.data-table th.sortable.asc .sort-icon::before {
+    content: "\f0de";
+    opacity: 1;
+    color: #c084fc;
+}
+
+/* Active DESC */
+.data-table th.sortable.desc {
+    background: linear-gradient(90deg, #6f58a8, #7c63c6);
+    color: #fff;
+}
+
+.data-table th.sortable.desc .sort-icon::before {
+    content: "\f0dd";
+    opacity: 1;
+    color: #c084fc;
+}
+
+/* ================= AKSI BUTTON ================= */
+.aksi {
+    display: flex;
+    align-items: center;
+}
+
+/* base button */
+.aksi-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1f2937; /* dark soft */
+    border: 1px solid #2b3445;
+    cursor: pointer;
+    transition: all .25s ease;
+}
+
+/* icon */
+.aksi-btn i {
+    font-size: 14px;
+    transition: transform .25s ease;
+}
+
+/* ================= EDIT ================= */
+.aksi-btn.edit {
+    color: #c084fc; /* ungu */
+}
+
+.aksi-btn.edit:hover {
+    background: rgba(192, 132, 252, 0.15);
+    border-color: #c084fc;
+    box-shadow: 0 0 12px rgba(192, 132, 252, 0.4);
+}
+
+.aksi-btn.edit:hover i {
+    transform: rotate(-8deg) scale(1.15);
+}
+
+/* ================= DELETE ================= */
+.aksi-btn.delete {
+    color: #ff6b6b;
+    background: transparent;
+}
+
+.aksi-btn.delete:hover {
+    background: rgba(255, 107, 107, 0.15);
+    border-color: #ff6b6b;
+    box-shadow: 0 0 12px rgba(255, 107, 107, 0.45);
+}
+
+.aksi-btn.delete:hover i {
+    transform: rotate(10deg) scale(1.15);
+}
+
+/* remove default button style */
+.aksi form {
+    margin: 0;
+}
+
+.aksi form button {
+    border: none;
+    background: none;
+    padding: 0;
 }

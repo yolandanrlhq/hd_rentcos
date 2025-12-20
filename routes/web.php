@@ -82,13 +82,15 @@ Route::prefix('user')->group(function () {
     Route::get('/cart/detail/{id}', [CartController::class, 'detail'])->name('cart.detail');
     Route::post('/cart/complete/{id}', [CartController::class, 'complete'])->name('cart.complete');
     Route::post('/cart/cancel/{id}', [CartController::class, 'cancel'])->name('cart.cancel');
-    Route::post('/testimoni/{sewa}', [TestimoniController::class, 'store'])->name('user.testimoni.store');
     Route::get('/testimoni/create/{sewa}', [TestimoniController::class, 'create'])->name('user.testimoni.create');
+    Route::post('/testimoni/{sewa}', [TestimoniController::class, 'store'])->name('user.testimoni.store');
+    Route::get('/testimoni/{sewa}', [TestimoniController::class, 'show'])->name('user.testimoni.show');
 
     // CHAT
     Route::get('/chat', [UserController::class, 'chat'])->name('user.chat');
     Route::get('/chat/messages/{adminId}', [ChatController::class, 'fetchUserMessages'])->name('user.chat.messages');
     Route::post('/chat/send', [ChatController::class, 'send'])->name('user.chat.send');
+    Route::get('/chat/order/{sewa}', [ChatController::class, 'chatOrder'])->name('chat.order');
 
     // NOTIFIKASI (TANPA MIDDLEWARE)
     Route::get('/notifikasi', function () {
@@ -110,10 +112,10 @@ Route::prefix('user')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::prefix('admin')->group(function () {
-
     Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/dashboard/data', [AdminController::class, 'dashboardData'])->name('admin.dashboardData');
     Route::get('/users', [AdminController::class, 'manageUsers'])->name('admin.users');
-    
+
 
     // PRODUK
     Route::get('/produk', [AdminProdukController::class, 'produk'])->name('admin.produk');
@@ -190,7 +192,6 @@ Route::view('/denda', 'user.denda')->name('denda');
 Route::view('/refund', 'user.refund')->name('refund');
 Route::view('/pengembalian', 'user.pengembalian')->name('pengembalian');
 Route::view('/persyaratan', 'user.persyaratan')->name('persyaratan');
-
 
 
 

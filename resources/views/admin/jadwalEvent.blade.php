@@ -31,12 +31,12 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>id</th>
-                                <th>nama</th>
-                                <th>tempat</th>
-                                <th>tgl</th>
-                                <th>htm</th>
-                                <th>kontak</th>
+                                <th class="sortable" data-sort="number">id <span class="sort-icon"></span></th>
+                                <th class="sortable" data-sort="text">nama <span class="sort-icon"></span></th>
+                                <th class="sortable" data-sort="text">tempat <span class="sort-icon"></span></th>
+                                <th class="sortable" data-sort="date">tgl <span class="sort-icon"></span></th>
+                                <th class="sortable" data-sort="number">htm <span class="sort-icon"></span></th>
+                                <th class="sortable" data-sort="text">kontak <span class="sort-icon"></span></th>
                                 <th>foto</th>
                                 <th>aksi</th>
                             </tr>
@@ -58,19 +58,22 @@
                                 @endif
                             </td>
                             <td>
-                                <!-- Edit -->
-                                <a href="{{ route('admin.event.edit', $event->id_event) }}">
-                                    <i class="fas fa-pen"></i>
-                                </a>
+                                <div class="aksi">
+                                    <!-- Edit -->
+                                    <a href="{{ route('admin.event.edit', $event->id_event) }}" class="aksi-btn edit">
+                                        <i class="fas fa-pen"></i>
+                                    </a>
 
-                                <!-- Delete -->
-                                <form action="{{ route('admin.event.destroy', $event->id_event) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn-delete" onclick="return confirm('Yakin hapus event ini?')">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </form>
+                                    <!-- Delete -->
+                                    <form action="{{ route('admin.event.destroy', $event->id_event) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="aksi-btn delete"
+                                            onclick="return confirm('Yakin hapus event ini?')">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         @endforeach
@@ -102,4 +105,68 @@
             </div>
     </main>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.querySelector('.search-bar input');
+    const tableRows = document.querySelectorAll('.data-table tbody tr');
+
+    searchInput.addEventListener('keyup', function() {
+        const query = this.value.toLowerCase().trim();
+
+        tableRows.forEach(row => {
+            // Ambil semua teks di row
+            const rowText = row.textContent.toLowerCase();
+            // Tampilkan row jika mengandung query, sembunyikan jika tidak
+            if(rowText.includes(query)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+});
+
+document.querySelectorAll('.data-table th.sortable').forEach((th, index) => {
+    let asc = true;
+
+    th.addEventListener('click', () => {
+        const tbody = th.closest('table').querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const type = th.dataset.sort;
+
+        rows.sort((a, b) => {
+            let aText = a.cells[index].textContent.trim();
+            let bText = b.cells[index].textContent.trim();
+
+            if (type === 'number') {
+                aText = parseInt(aText.replace(/\D/g,'')) || 0;
+                bText = parseInt(bText.replace(/\D/g,'')) || 0;
+                return asc ? aText - bText : bText - aText;
+            }
+
+            if (type === 'date') {
+                return asc
+                    ? new Date(aText) - new Date(bText)
+                    : new Date(bText) - new Date(aText);
+            }
+
+            return asc
+                ? aText.localeCompare(bText, 'id')
+                : bText.localeCompare(aText, 'id');
+        });
+
+        // reset icon semua header
+        th.parentElement.querySelectorAll('th.sortable')
+            .forEach(h => h.classList.remove('asc','desc'));
+
+        th.classList.add(asc ? 'asc' : 'desc');
+        asc = !asc;
+
+        rows.forEach(row => tbody.appendChild(row));
+    });
+});
+</script>
 @endsection

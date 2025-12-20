@@ -17,13 +17,16 @@
             Untuk melanjutkan pembayaran, silakan hubungi admin melalui chat.
         </p>
 
-        @if(isset($sewa))
-        <a href="{{ route('chat.order', $sewa) }}" class="btn-chat">
+                @if(!empty($sewa))
+        <a href="{{ route('user.chat') }}" class="btn-chat">
             💬 Lanjut ke Chat Admin
         </a>
         @else
-        <span class="btn-chat-disabled">💬 Chat tidak tersedia</span>
+        <span class="btn-chat-disabled">
+            💬 Chat tersedia setelah pesanan dibuat
+        </span>
         @endif
+
     </div>
 </main>
 

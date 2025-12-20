@@ -12,6 +12,23 @@
 <main class="products-section">
     <div class="container">
         <h2 class="section-title">Produk Kami</h2>
+        {{-- FILTER KATEGORI --}}
+        <div class="filter-buttons">
+            <a href="{{ route('user.produk') }}"
+            class="filter-btn {{ request('kategori') == null ? 'active' : '' }}">
+                Semua
+            </a>
+
+            <a href="{{ route('user.produk', ['kategori' => 1]) }}"
+            class="filter-btn {{ request('kategori') == 1 ? 'active' : '' }}">
+                Kostum Anime
+            </a>
+
+            <a href="{{ route('user.produk', ['kategori' => 2]) }}"
+            class="filter-btn {{ request('kategori') == 2 ? 'active' : '' }}">
+                Kostum Game
+            </a>
+        </div>
 
         {{-- FORM SEARCH (TIDAK MERUBAH TAMPILAN) --}}
         <form method="GET" action="{{ route('user.produk') }}">

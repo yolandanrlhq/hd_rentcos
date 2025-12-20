@@ -1,50 +1,72 @@
+/* ============================= */
+/*        ROOT VARIABLES         */
+/* ============================= */
 :root {
     --bg-dark: #12121e;
     --sidebar-bg: #1e1e2d;
+
     --text-light: #f0f0f0;
     --text-faded: #a0a0c0;
+
     --accent-purple: #9b59b6;
-    --accent-pink: #d9489f;
+    --accent-purple-soft: rgba(155, 89, 182, 0.25);
+
     --search-bg: #2a2a3e;
-    --table-header-bg: #2b3a4a;
-    --table-row-bg-odd: #202b3a;
-    --table-row-bg-highlight: #314050;
+
+    --table-header-bg: #4a3d5f;
+    --table-row-bg: #433857;
     --table-border: #444;
-    --table-cell-padding: 8px 12px;
+
+    --card-bg: #523e7f;
+
+    --accent-blue: #4a5496;
+    --accent-green: #38b17c;
+    --accent-red: #d9489f;
+    --accent-cyan: #38a5b1;
+    /* --table-cell-padding: 10px 10px; /* ⬅️ PAS, TIDAK SEMPIT * */
 }
 
+/* ============================= */
+/*          RESET BASE           */
+/* ============================= */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
 }
 
 body {
-    background-color: var(--bg-dark);
+    background: var(--bg-dark);
     color: var(--text-light);
     line-height: 1.6;
 }
 
-/* --- Container Dashboard Utama --- */
+/* ============================= */
+/*        DASHBOARD LAYOUT       */
+/* ============================= */
 .dashboard-container {
     display: flex;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
-/* --- Sidebar --- */
+/* ============================= */
+/*            SIDEBAR            */
+/* ============================= */
 .sidebar {
-    width: 210px;
-    background-color: var(--sidebar-bg);
+    width: 220px;
+    background: var(--sidebar-bg);
     padding: 20px 0;
     flex-shrink: 0;
 }
 
 .logo {
     font-size: 1.5em;
-    font-weight: bold;
-    color: var(--text-light);
+    font-weight: 700;
     padding: 0 20px 30px 20px;
+    color: var(--text-light);
+    text-align: left;
 }
 
 .nav-menu ul {
@@ -57,25 +79,80 @@ body {
     padding: 12px 20px;
     color: var(--text-faded);
     text-decoration: none;
+    transition: 0.25s;
     font-size: 0.95em;
-    transition: .2s;
+    transition: background-color 0.2s;
 }
 
+/* ICON SIDEBAR FIX */
 .nav-menu li a i {
+    width: 32px;
+    height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.06);
+    font-size: 0.95em;
     margin-right: 15px;
-    font-size: 1.1em;
-    width: 20px;
 }
 
+/* ACTIVE */
 .nav-menu li.active a {
-    color: var(--accent-purple);
+    background: linear-gradient(
+        90deg,
+        rgba(155,89,182,0.25),
+        transparent
+    );
+    color: #fff;
+    border-right: 4px solid var(--accent-purple);
     background-color: var(--bg-dark);
     border-right: 5px solid var(--accent-purple);
     font-weight: bold;
 }
 
+.nav-menu li.active a i {
+    background: linear-gradient(135deg, #9b59b6, #7c63c6);
+    color: #fff;
+}
+
+.nav-menu li a:hover {
+    background: rgba(255,255,255,0.05);
+}
+
 .nav-menu li:hover a:not(.active) {
     background-color: #2c2c40;
+}
+
+.nav-menu li .logout-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    color: var(--text-faded);
+    font-size: 0.95em;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.2s;
+}
+
+.nav-menu li .logout-btn i {
+    margin-right: 15px;
+    font-size: 1.1em;
+    width: 20px;
+}
+
+.nav-menu li:hover .logout-btn {
+    background-color: #2c2c40;
+}
+
+.nav-menu li.active .logout-btn {
+    color: var(--accent-purple);
+    background-color: var(--bg-dark);
+    border-right: 5px solid var(--accent-purple);
+    font-weight: bold;
 }
 
 /* --- Main Content --- */
@@ -93,6 +170,7 @@ body {
     gap: 20px;
     margin-bottom: 20px;
 }
+
 
 .search-bar {
     display: flex;
@@ -118,7 +196,28 @@ body {
     outline: none;
 }
 .search-bar input::placeholder {
-    color: var(--text-faded);
+    color: #5f5f5f;
+}
+
+.search-bar form {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* jarak antara icon dan input */
+    border-radius: 6px;
+    width: 250px; /* bisa sesuaikan */
+}
+
+.search-bar form i {
+    color: #a3a3a3;
+    font-size: 14px;
+}
+
+.search-bar form input {
+    border: none;
+    outline: none;
+    flex-grow: 1;
+    font-size: 14px;
+    background: transparent;
 }
 
 /* Tombol Tambah Produk */
@@ -175,11 +274,13 @@ body {
     width: 100%;
     border-collapse: collapse;
     color: var(--text-light);
+    /* table-layout: fixed; */
 }
 
 .data-table th,
 .data-table td {
     padding: var(--table-cell-padding);
+    vertical-align: middle;
     white-space: nowrap;
     border-right: 1px solid #202b3a;
 }
@@ -190,6 +291,9 @@ body {
     font-weight: 500;
     text-transform: uppercase;
     border-bottom: 2px solid var(--accent-purple);
+    padding: 12px 14px;
+    font-size: 0.8em;
+    letter-spacing: 0.05em;
 }
 
 .data-table tbody tr {
@@ -210,6 +314,24 @@ body {
     font-size: 0.9em;
     color: white;
     transition: .25s;
+    padding: 10px 16px;
+}
+
+.data-table th a {
+    color: #e5e7eb;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.data-table th a:hover {
+    color: var(--accent-purple);
+}
+
+.data-table th i {
+    font-size: 0.7em;
+    opacity: 0.8;
 }
 
 /* .data-table tbody tr:first-child td {
@@ -257,10 +379,54 @@ tbody tr:nth-child(even) {
     position: relative;
 }
 
+/* ============================= */
+/*       SORTABLE TABLE ICON     */
+/* ============================= */
+
+.data-table th.sortable a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: inherit;
+    text-decoration: none;
+    position: relative;
+}
+
+/* icon default */
+.data-table th.sortable .sort-icon::before {
+    content: "\f0dc"; /* sort */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 0.75em;
+    opacity: 0.45;
+    transition: 0.2s;
+}
+
+/* ASC */
+.data-table th.sortable.asc .sort-icon::before {
+    content: "\f0de"; /* sort-up */
+    opacity: 1;
+    color: #c084fc;
+}
+
+/* DESC */
+.data-table th.sortable.desc .sort-icon::before {
+    content: "\f0dd"; /* sort-down */
+    opacity: 1;
+    color: #c084fc;
+}
+
+/* hover */
+.data-table th.sortable:hover {
+    background: linear-gradient(90deg, #5d4b7a, #6f58a8);
+    color: #fff;
+}
+
 .aksi {
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: center;
 }
 
 /* Edit */
@@ -346,4 +512,61 @@ tbody tr:nth-child(even) {
 .nav-button.disabled {
     opacity: 0.5;
     cursor: default;
+}
+
+/* ============================= */
+/*     SORTABLE TH INTERACTION   */
+/* ============================= */
+
+.data-table th.sortable {
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Hover */
+.data-table th.sortable:hover {
+    background: linear-gradient(90deg, #5d4b7a, #6f58a8);
+    color: #fff;
+}
+
+/* Icon default */
+.data-table th.sortable .sort-icon::before {
+    content: "\f0dc";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 0.75em;
+    margin-left: 6px;
+    opacity: 0.35;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Hover icon */
+.data-table th.sortable:hover .sort-icon::before {
+    opacity: 0.8;
+    transform: translateY(-1px);
+}
+
+/* Active ASC */
+.data-table th.sortable.asc {
+    background: linear-gradient(90deg, #6f58a8, #7c63c6);
+    color: #fff;
+}
+
+.data-table th.sortable.asc .sort-icon::before {
+    content: "\f0de";
+    opacity: 1;
+    color: #c084fc;
+}
+
+/* Active DESC */
+.data-table th.sortable.desc {
+    background: linear-gradient(90deg, #6f58a8, #7c63c6);
+    color: #fff;
+}
+
+.data-table th.sortable.desc .sort-icon::before {
+    content: "\f0dd";
+    opacity: 1;
+    color: #c084fc;
 }

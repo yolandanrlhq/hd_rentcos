@@ -1,0 +1,44 @@
+.testimoni-detail-page {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.testimoni-detail-card {
+    max-width: 500px;
+    width: 100%;
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.rating-stars i {
+    color: #ddd;
+    font-size: 20px;
+}
+
+.rating-stars i.active {
+    color: #f5b301;
+}
+
+.testimoni-text {
+    margin: 15px 0;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.testimoni-foto {
+    margin-top: 15px;
+    max-width: 100%;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.btn-back {
+    display: inline-block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: #555;
+}

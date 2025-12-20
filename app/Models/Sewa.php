@@ -46,6 +46,6 @@ class Sewa extends Model
 
     public function testimoni()
     {
-        return $this->hasOne(Testimoni::class);
+        return $this->hasOne(Testimoni::class, 'sewa_id');
     }
 }

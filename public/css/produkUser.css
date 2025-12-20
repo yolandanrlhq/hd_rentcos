@@ -41,6 +41,35 @@
     border-radius: 2px;
 }
 
+/* ================= FILTER BUTTON ================= */
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0 30px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #333;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.filter-btn:hover {
+  background: #f3f3f3;
+}
+
+.filter-btn.active {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
 /* Products Grid */
 .products-grid {
   display: grid;

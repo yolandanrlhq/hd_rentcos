@@ -1,82 +1,68 @@
-<footer>
-       <footer class="footer">
-        <div class="footer-container">
-          <!-- Brand & Deskripsi -->
-          <div class="footer-brand">
+<footer class="footer">
+    <div class="footer-container">
+
+        {{-- BRAND --}}
+        <div class="footer-brand">
             <h2>HD RENTCOS</h2>
             <p>
-              Kami menyediakan berbagai kostum cosplay berkualitas untuk disewa.
-              Tampil memukau di setiap event dengan karakter favoritmu!
+                Kami menyediakan berbagai kostum cosplay berkualitas untuk disewa,
+                mulai dari karakter anime, game, hingga tokoh film favorit.
+                Setiap kostum dirawat dengan baik agar kamu bisa tampil maksimal
+                dan percaya diri di setiap event.
             </p>
+
             <div class="social-icons">
-              <a href="#"><i class="fab fa-facebook-f"></i></a>
-              <a href="#"><i class="fab fa-instagram"></i></a>
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-tiktok"></i></a>
+                <a href="https://www.instagram.com/hd.rentcos" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://wa.me/6283121638156" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
             </div>
-          </div>
-
-          <!-- Company -->
-          <div class="footer-section">
-            <h3>PERUSAHAAN</h3>
-            <ul>
-              <li><a href="#">Tentang Kami</a></li>
-              <li><a href="#">Layanan</a></li>
-              <li><a href="#">Portofolio</a></li>
-              <li><a href="#">Karier</a></li>
-            </ul>
-          </div>
-
-          <!-- Help -->
-          <div class="footer-section">
-            <h3>BANTUAN</h3>
-            <ul>
-              <li><a href="#">Dukungan Pelanggan</a></li>
-              <li><a href="#">Detail Pengiriman</a></li>
-              <li><a href="#">Syarat & Ketentuan</a></li>
-              <li><a href="#">Kebijakan Privasi</a></li>
-            </ul>
-          </div>
-
-          <!-- FAQ -->
-          <div class="footer-section">
-            <h3>FAQ</h3>
-            <ul>
-              <li><a href="{{ route('faq') }}">FAQ</a></li>
-              <li><a href="{{ route('rental') }}">Cara Rental</a></li>
-              <li><a href="{{ route('denda') }}">Ketentuan Denda</a></li>
-              <li><a href="{{ route('refund') }}">Kebijakan Refund</a></li>
-              <li><a href="{{ route('pengembalian') }}">Ketentuan Pengembalian</a></li>
-              <li><a href="{{ route('persyaratan') }}">Persyaatan Rental</a></li>
-            </ul>
-          </div>
-
-          <!-- Resources -->
-          <div class="footer-section">
-            <h3>SUMBER DAYA</h3>
-            <ul>
-              <li><a href="#">Panduan Cosplayer</a></li>
-              <li><a href="#">Tutorial Makeup</a></li>
-              <li><a href="#">Blog Kostum</a></li>
-              <li><a href="#">Video Inspirasi</a></li>
-            </ul>
-          </div>
         </div>
 
-        <div class="footer-bottom">
-          <p>HD RENTCOS © 2025, Semua Hak Dilindungi</p>
-          <div class="payment-icons">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/Apple_Pay_logo.svg" alt="Apple Pay">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_Pay_Logo.svg" alt="Google Pay">
-          </div>
+        {{-- MENU --}}
+        <div class="footer-section">
+            <h3>Menu</h3>
+            <ul>
+                <li><a href="{{ route('user.dashboard') }}">Beranda</a></li>
+                <li><a href="{{ route('user.produk') }}">Produk</a></li>
+                <li><a href="{{ route('user.jadwalEvent') }}">Event</a></li>
+            </ul>
         </div>
-      </footer>
 
-      <!-- Font Awesome -->
-      <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-      />
-    </footer>
+        {{-- BANTUAN --}}
+        <div class="footer-section">
+            <h3>Bantuan</h3>
+            <ul>
+                <li><a href="{{ route('faq') }}">FAQ</a></li>
+                <li><a href="{{ route('rental') }}">Cara Rental</a></li>
+                <li><a href="{{ route('pengembalian') }}">Pengembalian</a></li>
+                <li><a href="{{ route('denda') }}">Ketentuan Denda</a></li>
+            </ul>
+        </div>
+
+        {{-- KONTAK --}}
+        <div class="footer-section">
+            <h3>Kontak</h3>
+            <ul>
+                <li>
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>
+                        Perumahan Prawira Kepolo, Jl. Anggrek 7 Blok D1-9,
+                        Desa Singaraja, Kec. Indramayu, Kab. Indramayu
+                    </span>
+                </li>
+                <li>
+                    <i class="fas fa-phone"></i>
+                    <span>083121638156</span>
+                </li>
+                <li>
+                    <i class="fas fa-envelope"></i>
+                    <span>info@hdrentcos.com</span>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        <p>© {{ date('Y') }} HD RENTCOS. All rights reserved.</p>
+    </div>
+</footer>

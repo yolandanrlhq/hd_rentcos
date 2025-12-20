@@ -68,7 +68,7 @@ function loadUsers() {
 
                 div.innerHTML = `
                     <div class="contact-avatar">
-                        <img src="${avatarSrc}" alt="${user.name}">
+                        <img src="${avatarSrc}" alt="${user.name}" width="50" height="50">
                     </div>
                     <div class="contact-info">
                         <span class="contact-name">${user.name}</span>
@@ -170,3 +170,18 @@ adminChannel.bind('message.sent', data => {
 
 /* ================= INIT ================= */
 loadUsers();
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-user');
+    const userList = document.getElementById('user-list');
+
+    searchInput.addEventListener('keyup', function() {
+        const query = this.value.toLowerCase().trim();
+        const userItems = userList.querySelectorAll('.user-item');
+
+        userItems.forEach(user => {
+            const name = user.querySelector('.contact-name')?.textContent.toLowerCase() || '';
+            user.style.display = name.includes(query) ? '' : 'none';
+        });
+    });
+});
