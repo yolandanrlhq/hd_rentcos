@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
+
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
@@ -33,7 +36,48 @@ Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.log
 
 /*
 |--------------------------------------------------------------------------
-| USER - PUBLIC (TANPA LOGIN)
+| EMAIL VERIFICATION
+|--------------------------------------------------------------------------
+*/
+
+// halaman pemberitahuan cek email
+Route::get('/email/verify', function () {return view('auth.verifyEmail');})
+    ->middleware('auth')->name('verification.notice');
+
+Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
+
+    $user = User::findOrFail($id);
+
+    // cek hash email
+    if (!hash_equals(
+        sha1($user->getEmailForVerification()),
+        $hash
+    )) {
+        abort(403, 'Link verifikasi tidak valid.');
+    }
+
+    // set verified
+    if (!$user->hasVerifiedEmail()) {
+        $user->markEmailAsVerified();
+    }
+
+    // login otomatis setelah klik link
+    Auth::login($user);
+
+    return redirect('/user/dashboard')
+        ->with('success', 'Email berhasil diverifikasi.');
+
+})->name('verification.verify');
+
+// resend link verifikasi
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return back()->with('message', 'Link verifikasi berhasil dikirim ulang.');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+/*
+|--------------------------------------------------------------------------
+| USER - PUBLIC
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
@@ -45,6 +89,7 @@ Route::prefix('user')->group(function () {
     Route::get('/produk', [UserProdukController::class, 'index'])->name('user.produk');
     Route::get('/produk/{id}', [UserProdukController::class, 'show'])->name('user.produk.show');
     Route::get('/jadwal-event', [EventUserController::class, 'index'])->name('user.jadwalEvent');
+    Route::get('/user/faq', function () {return view('user.faq');})->name('user.faq');
 });
 
 /*

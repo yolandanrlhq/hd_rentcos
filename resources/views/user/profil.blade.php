@@ -30,8 +30,6 @@ use Illuminate\Support\Str;
     @endif
 </div>
 
-
-
             <h2 class="profile-name">{{ $user->name }}</h2>
             <p class="profile-location">{{ $user->address ?? 'Belum ada alamat' }}</p>
             </div>

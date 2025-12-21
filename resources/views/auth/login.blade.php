@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
   <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
@@ -15,18 +17,17 @@
 
       <!-- Email -->
       <div class="input-group">
-        <span class="icon">📧</span>
         <input type="email" name="email" placeholder="Email" required>
       </div>
 
       <!-- Password -->
-      <div class="input-group">
-        <span class="icon">🔒</span>
-        <input type="password" name="password" placeholder="Password" required>
-      </div>
+    <div class="input-group password-group">
+    <input type="password" name="password" id="password" placeholder="Password" required>
+    <i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
+    </div>
 
       <div class="options">
-        <label><input type="checkbox" name="remember"> Remember me</label>
+        {{-- <label><input type="checkbox" name="remember"> Remember me</label> --}}
         <a href="#">Forgot Password</a>
       </div>
 
@@ -45,5 +46,22 @@
       @endif
     </form>
   </div>
+  <script>
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+
+    togglePassword.addEventListener('click', () => {
+        if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        togglePassword.classList.remove('fa-eye');
+        togglePassword.classList.add('fa-eye-slash');
+        } else {
+        passwordInput.type = 'password';
+        togglePassword.classList.remove('fa-eye-slash');
+        togglePassword.classList.add('fa-eye');
+        }
+    });
+    </script>
+
 </body>
 </html>

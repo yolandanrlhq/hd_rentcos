@@ -3,10 +3,10 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
   height: 100vh;
   background: url('../assets/backgroundLogin.jpg') no-repeat center center/cover;
   background-attachment: fixed;
@@ -181,4 +181,22 @@ body {
 .register-box::after {
   content: "";
   position: absolute;
+}
+
+.password-group {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #777;
+  font-size: 15px;
+}
+
+.toggle-password:hover {
+  color: #000;
 }

@@ -54,7 +54,7 @@ body {
 }
 
 .logo-text span {
-    color: #000000; /* biru RENTCOS */
+    color: #000000;
 }
 
 .nav-links a {
@@ -118,8 +118,8 @@ body {
 
 .dropdown-menu {
     position: absolute;
-    right: 0;
-    top: 45px;
+    right: 20px;
+    top: 60px;
     background: #eaeaea;
     border-radius: 15px;
     min-width: 180px;
@@ -155,9 +155,7 @@ body {
     color: #ff6b6b;
 }
 
-/* ===============================
-   NOTIFICATION BADGE
-================================ */
+/* NOTIFICATION BADGE */
 .notif-icon {
     position: relative;
 }
@@ -175,8 +173,7 @@ body {
     line-height: 1;
 }
 
-
-/* ===== AVATAR PROFIL ===== */
+/* AVATAR */
 .avatar-btn {
     background: none;
     border: none;
@@ -184,7 +181,6 @@ body {
     cursor: pointer;
 }
 
-/* Foto avatar */
 .avatar-img {
     width: 38px;
     height: 38px;
@@ -193,7 +189,6 @@ body {
     border: 2px solid #2563eb;
 }
 
-/* Avatar huruf */
 .avatar-letter {
     width: 38px;
     height: 38px;
@@ -206,7 +201,7 @@ body {
     align-items: center;
     justify-content: center;
 }
-/* LOGIN BUTTON */
+
 .login-btn {
     padding: 6px 14px;
     border-radius: 20px;
@@ -214,20 +209,116 @@ body {
     color: white;
     font-size: 13px;
     text-decoration: none;
+    display: none;
+    width: auto;
+    text-align: center;
+    display: inline-block;
 }
 
+/* =====================================================
+   🔥 HAMBURGER MENU (TAMBAHAN TANPA MERUSAK KODE ASLI)
+===================================================== */
+
+/* tombol hamburger */
+.burger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.burger span {
+    width: 24px;
+    height: 3px;
+    background: #222;
+    border-radius: 3px;
+}
+
+/* AKTIF → JADI SILANG */
+.burger.toggle span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.burger.toggle span:nth-child(2) {
+    opacity: 0;
+}
+
+.burger.toggle span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* MOBILE */
 @media (max-width: 900px) {
-    .navbar {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-    .nav-links {
+    .burger {
         display: flex;
-        flex-wrap: wrap;
     }
-    .search-box {
+
+    .navbar {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .nav-links,
+    .search-box,
+    .icons {
+        display: none;
         width: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: #eaeaea;
+    }
+
+    .nav-links.active,
+    .icons.active {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .search-box.active {
+        display: flex;
+        flex-direction: row; /* 🔥 PENTING */
+        align-items: center;
+    }
+
+    .nav-links a {
+        padding: 0;
+        margin-top: 15px;
+    }
+
+    /* 🔴 INI KUNCI: HILANGIN JARAK BG */
+    .nav-links.active {
+        margin-top: 0;
+    }
+
+    .search-box {
+        margin: 15px;
+        background-color: #fff;
+        width: 100%;
+        align-items: center;
+        padding: 8px;
+    }
+
+    .search-box i {
+        margin-right: 8px;
+        line-height: 1;
+        flex-shrink: 0;
+        margin-left: 10px;
+    }
+
+    .search-box input {
+        line-height: 1;
+        padding: 0;
+        height: auto;
+    }
+
+    .login-btn {
+        display: none;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .login-btn.active {
+        display: block;
     }
 }
 
@@ -346,17 +437,7 @@ body {
     margin-top: 6px;
 }
 
-.card h3 {
-    font-size: 15px;
-    margin-top: 10px;
-}
-
-.card p {
-    font-weight: 600;
-    color: #222;
-    margin-top: 5px;
-}
-
+/* ===== CARDS WRAPPER ===== */
 .cards {
     display: flex;
     justify-content: center;
@@ -371,18 +452,66 @@ body {
     padding: 15px;
     border-radius: 15px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    /* PENTING */
+    transform: scale(2);
+
+    transition: transform var(--transition), box-shadow var(--transition);
 }
 
 .card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+    box-shadow: 0 20px 35px rgba(0,0,0,0.15);
+    transform: translateY(-8px);
 }
 
+/* FIKFIKIT ANIMATION */
+@keyframes cardFloat {
+    0% {
+        transform: translateY(0) scale(1) rotate(0);
+    }
+    30% {
+        transform: translateY(-6px) scale(1.03) rotate(-0.3deg);
+    }
+    60% {
+        transform: translateY(-10px) scale(1.04) rotate(0.3deg);
+    }
+    100% {
+        transform: translateY(-10px) scale(1.04) rotate(0.4deg);
+    }
+}
+
+/* ===== IMAGE ===== */
 .card img {
     width: 100%;
     border-radius: 12px;
     object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.card:hover img {
+    transform: scale(1.06);
+}
+
+/* ===== TEXT ===== */
+.card h3 {
+    font-size: 15px;
+    margin-top: 10px;
+    transition: transform 0.3s ease;
+}
+
+.card p {
+    font-weight: 600;
+    color: #222;
+    margin-top: 5px;
+    transition: transform 0.3s ease;
+}
+
+.card:hover h3 {
+    transform: translateY(-3px);
+}
+
+.card:hover p {
+    transform: translateY(-2px);
 }
 
 .lihat-semua-container {
@@ -435,6 +564,13 @@ body {
     width: 260px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+.review.show {
+    opacity: 1;
+    transform: scale(1);
 }
 
 .review:hover {
@@ -485,6 +621,305 @@ body {
     .review {
         width: 90%;
     }
+}
+
+/* ================= EVENT HIGHLIGHT ================= */
+.event-highlight {
+    padding: 80px 8%;
+    display: flex;
+    justify-content: center;
+}
+
+/* card utama */
+.event-box {
+    background: linear-gradient(135deg, #f3f3f3, #e5e5e5);
+    border-radius: 32px;
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    padding: 50px;
+    max-width: 1150px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.9s ease forwards;
+}
+
+/* efek glow ungu */
+.event-box::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 32px;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    opacity: 0.15;
+    z-index: 0;
+}
+
+/* ================= IMAGE ================= */
+.event-image {
+    position: relative;
+    z-index: 1;
+}
+
+.event-image img {
+    width: 320px;
+    object-fit: contain;
+    filter: drop-shadow(0 25px 40px rgba(0,0,0,0.35));
+    animation: floatImage 4s ease-in-out infinite;
+    border-radius: 20px;
+}
+
+/* ================= CONTENT ================= */
+.event-content {
+    position: relative;
+    z-index: 1;
+    max-width: 420px;
+}
+
+.event-content h2 {
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #111;
+}
+
+.event-content p {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 22px;
+    line-height: 1.6;
+}
+
+/* ================= COUNTDOWN ================= */
+.countdown {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.time-box {
+    background: #fff;
+    width: 80px;
+    height: 80px;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    animation: pulse 1.6s infinite;
+}
+
+.time-box span {
+    font-size: 24px;
+    font-weight: 600;
+    color: #111;
+}
+
+.time-box small {
+    font-size: 11px;
+    color: #666;
+    letter-spacing: 0.5px;
+}
+
+/* ================= BUTTON ================= */
+.event-btn {
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    color: #fff;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 24px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.event-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(236,72,153,0.45);
+}
+
+/* ================= EMPTY STATE ================= */
+.empty-event {
+    justify-content: center;
+    text-align: center;
+    font-size: 15px;
+    color: #555;
+}
+
+/* ================= ANIMATIONS ================= */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes floatImage {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-14px);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 rgba(168,85,247,0.35);
+    }
+    70% {
+        box-shadow: 0 0 20px rgba(168,85,247,0.45);
+    }
+    100% {
+        box-shadow: 0 0 0 rgba(168,85,247,0);
+    }
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 900px) {
+    .event-box {
+        flex-direction: column;
+        text-align: center;
+        gap: 30px;
+    }
+
+    .event-image img {
+        width: 260px;
+    }
+
+    .countdown {
+        justify-content: center;
+    }
+}
+
+/* ================= FAQ PREVIEW ================= */
+/* ================= FAQ SECTION BACKGROUND ================= */
+.faq-section {
+    background: white;
+    padding: 90px 8% 100px;
+    position: relative;
+    border-radius: 30px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+}
+
+/* .faq-section::before {
+    content: "";
+    position: absolute;
+    top: -90px;
+    left: 0;
+    width: 100%;
+    height: 90px;
+    background: linear-gradient(
+        180deg,
+        rgba(255,255,255,0) 0%,
+        #f6f4ff 100%
+    );
+} */
+/* ================= FAQ PREVIEW ================= */
+.faq-preview {
+    text-align: center;
+}
+
+.faq-preview-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 26px;
+    margin-top: 40px;
+    margin-left: 30px;
+}
+
+.faq-preview-item {
+    background: #ffffff;
+    border-radius: 22px;
+    padding: 26px;
+    position: relative;
+    box-shadow: 0 14px 30px rgba(0,0,0,0.12);
+
+    transform: translateY(0) scale(1);
+    transition:
+        transform 0.6s cubic-bezier(.22,.61,.36,1),
+        box-shadow 0.6s cubic-bezier(.22,.61,.36,1);
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* soft color accent */
+.faq-preview-item::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 22px;
+    opacity: 0.12;
+    z-index: 0;
+}
+
+/* warna beda tiap card */
+.faq-preview-item:nth-child(1)::before {
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+}
+.faq-preview-item:nth-child(2)::before {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+.faq-preview-item:nth-child(3)::before {
+    background: linear-gradient(135deg, #9333ea, #c084fc);
+}
+
+.faq-preview-item:hover {
+    transform: translateY(-8px) scale(1.035);
+    box-shadow: 0 28px 55px rgba(124,58,237,0.32);
+}
+
+@keyframes microFloat {
+    0%   { transform: translateY(-8px) scale(1.035); }
+    50%  { transform: translateY(-10px) scale(1.035); }
+    100% { transform: translateY(-8px) scale(1.035); }
+}
+
+/* content */
+.faq-preview-item h4,
+.faq-preview-item p {
+    position: relative;
+    z-index: 1;
+}
+
+.faq-preview-item h4 {
+    font-size: 15px;
+    margin-bottom: 10px;
+    color: #111;
+}
+
+.faq-preview-item p {
+    font-size: 13px;
+    color: #444;
+    line-height: 1.6;
+}
+
+.faq-preview h2 {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.faq-preview > p {
+    font-size: 14px;
+    opacity: 0.75;
+    margin-bottom: 10px;
 }
 
 /* ===== FOOTER ===== */
@@ -604,6 +1039,59 @@ body {
   opacity: 1;
 }
 
+@media (max-width: 900px) {
+  .footer {
+    padding: 50px 40px 20px;
+  }
+
+  .footer-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  .footer-brand {
+    grid-column: span 2;
+  }
+
+  .footer-bottom {
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .footer {
+    padding: 40px 20px 15px;
+  }
+
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .footer-brand h2 {
+    font-size: 20px;
+  }
+
+  .footer-section h3 {
+    font-size: 13px;
+  }
+
+  .footer-bottom {
+    text-align: center;
+  }
+
+  .payment-icons {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .payment-icons img {
+    margin: 5px;
+  }
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
     .hero {
@@ -632,4 +1120,83 @@ body {
     .hero-text p {
         font-size: 0.95rem;
     }
+}
+
+/* ===== HERO ANIMATION ===== */
+.hero {
+    animation: heroFade 1s ease forwards;
+}
+
+.hero-text {
+    animation: slideLeft 1s ease forwards;
+}
+
+.hero-img {
+    animation: slideRight 1s ease forwards;
+}
+
+@keyframes heroFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideRight {
+    from {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ===== CARD ANIMATION ===== */
+.card {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: 0.6s ease;
+}
+
+.card.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.hero-text button,
+.lihat-semua-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-text button::after,
+.lihat-semua-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.2);
+    transform: translateX(-100%);
+    transition: 0.4s;
+}
+
+.hero-text button:hover::after,
+.lihat-semua-btn:hover::after {
+    transform: translateX(0);
+}
+
+/* FIX: tampilkan card di halaman wishlist */
+.hero-collection .card {
+    opacity: 1 !important;
+    transform: none !important;
 }

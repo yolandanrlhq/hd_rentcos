@@ -476,7 +476,7 @@ body {
 }
 
 .message.received .message-content {
-    background-color: var(--bubble-received);
+    background-color: #2c2c40;
     color: var(--text-light);
     border-radius: 18px;
 }
@@ -497,7 +497,7 @@ body {
 }
 
 .message.sent .message-content {
-    background-color: var(--bubble-sent);
+    background-color: #9b59b6;
     color: var(--text-light);
     border-radius: 18px;
     margin-left: auto;

@@ -5,7 +5,6 @@
 @section('extra-css')
 <link rel="stylesheet" href="{{ asset('css/faq.css') }}">
 @endsection
-
 @section('content')
 @include('user.sections.header')
 

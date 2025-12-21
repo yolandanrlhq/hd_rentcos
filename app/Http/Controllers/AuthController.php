@@ -27,23 +27,27 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-
-            $user = Auth::user();
-
-            // Redirect berdasarkan role
-            if ($user->role === 'admin') {
-                return redirect('/admin/dashboard');
-            }
-
-            // default user
-            return redirect('/user/dashboard');
+        if (!Auth::attempt($credentials)) {
+            return back()->withErrors([
+                'email' => 'Email atau password salah.',
+            ])->withInput();
         }
 
-        return back()->withErrors([
-            'email' => 'Email atau password salah.',
-        ])->withInput();
+        $request->session()->regenerate();
+
+        $user = Auth::user();
+
+        // ✅ JANGAN logout, arahkan ke verifikasi
+        if (!$user->hasVerifiedEmail()) {
+            return redirect()->route('verification.notice');
+        }
+
+        // Redirect berdasarkan role
+        if ($user->role === 'admin') {
+            return redirect('/admin/dashboard');
+        }
+
+        return redirect('/user/dashboard');
     }
 
     /**
@@ -65,18 +69,21 @@ class AuthController extends Controller
             'password' => 'required|min:6|confirmed',
         ]);
 
-        User::create([
+        $user = User::create([
             'name'     => $validated['name'],
             'email'    => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role'     => 'user',
         ]);
 
-        // ❌ JANGAN auto login
-        return redirect('/login')
-            ->with('success', 'Registrasi berhasil! Silakan login.');
-    }
+        // 🔥 KIRIM EMAIL VERIFIKASI
+        $user->sendEmailVerificationNotification();
 
+        // login dulu biar bisa buka halaman verify
+        Auth::login($user);
+
+        return redirect()->route('verification.notice');
+    }
     /**
      * LOGOUT
      */

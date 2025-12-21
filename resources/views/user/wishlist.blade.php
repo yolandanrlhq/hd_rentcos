@@ -18,7 +18,7 @@
         <div class="cards">
             @foreach($wishlists as $item)
                 <div class="card">
-                    <a href="{{ route('user.produk.show', $item->produk->id_produk) }}">
+                    <a href="{{ route('user.produk.show', $item->produk->id_produk) }}" class="card-link">
                         <img
                             src="{{ asset('storage/' . $item->produk->foto) }}"
                             alt="{{ $item->produk->nama_produk }}"
